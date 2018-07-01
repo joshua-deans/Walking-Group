@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,13 +64,18 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Create a user based on the information provided
     private void CreateUser(String name, String email, String password, String confirm_password) {
-        if(name == null || email == null){
-            // if possible we will Dialog(AlertDialog) to prevent user to go to next activity
+        if (name == null || name.matches("")) {
+            Toast.makeText(SignUpActivity.this, R.string.please_enter_name, Toast.LENGTH_SHORT).show();
+        } else if (email == null || email.matches("")) {
+            Toast.makeText(SignUpActivity.this, R.string.please_enter_email, Toast.LENGTH_SHORT).show();
+        } else if (password.length() == 0) {
+            Toast.makeText(SignUpActivity.this, R.string.password_empty, Toast.LENGTH_SHORT).show();
+        } else if (!(password.equals(confirm_password))) {
+            Toast.makeText(SignUpActivity.this, R.string.passwords_dont_match, Toast.LENGTH_SHORT).show();
+        } else {
+            user = new User(name, email, password);
+            insertIntoServer();
         }
-        if(password.equalsIgnoreCase(confirm_password)){
-            // if possible we will Dialog(AlertDialog) to prevent user to go to next activity
-        }
-        user = new User(name, email, password);
     }
 
     // Insert the successfully created user into the server

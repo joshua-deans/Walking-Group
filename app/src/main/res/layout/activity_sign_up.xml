@@ -1,10 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".app.SignUpActivity">
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="409dp"
+        android:layout_above="@+id/signup_btn"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/signup_txtview"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/signup_txtview"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/full_name_sign"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/email_information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/e_mail_hint"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/create_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/email_information"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/create_password"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="@string/confirm_password_hint"
+                android:inputType="textPassword" />
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/signup_txtview"
@@ -13,69 +72,9 @@
 
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:text="@string/signup_txtview"
         android:textSize="24sp" />
-
-    <EditText
-        android:id="@+id/email_information"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/create_password"
-        android:layout_marginTop="183dp"
-        android:ems="10"
-        android:hint="@string/email_address"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/create_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/input_pass_txtview"
-        android:layout_toEndOf="@+id/input_pass_txtview"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/confirm_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/email_information"
-        android:layout_marginBottom="143dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <TextView
-        android:id="@+id/input_email_txtview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/email_information"
-        android:layout_alignStart="@+id/sign_user_name"
-        android:layout_marginBottom="-183dp"
-        android:text="@string/input_email_txtview"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/input_pass_txtview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/input_email_txtview"
-        android:layout_centerVertical="true"
-        android:text="@string/input_pass_txtview"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/confirm_pass_txtview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/input_email_txtview"
-        android:layout_marginBottom="178dp"
-        android:text="@string/confirm_pass_txtview"
-        android:textSize="16sp" />
 
     <Button
         android:id="@+id/signup_btn"
@@ -83,28 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/signup_btn" />
-
-    <TextView
-        android:id="@+id/sign_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="49dp"
-        android:layout_marginTop="98dp"
-        android:text="@string/name"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/sign_user_name"
-        android:ems="10"
-        android:hint="@string/full_name_sign"
-        android:inputType="textPersonName" />
 
 </RelativeLayout>
