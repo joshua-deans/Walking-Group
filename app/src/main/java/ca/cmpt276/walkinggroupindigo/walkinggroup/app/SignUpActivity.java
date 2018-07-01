@@ -7,10 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import java.net.HttpURLConnection;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.SendDeviceDetails;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
@@ -72,8 +72,24 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Insert the successfully created user into the server
     private void insertIntoServer() {
-        HttpURLConnection connection;
-
         builder = ProxyBuilder.getProxy(getString(R.string.apikey), null);
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("name", user.getName());
+            postData.put("email", user.getEmail());
+            postData.put("password", user.getPassword());
+            /*
+             * for future extension (maybe for second or third iteration)
+            postData.put("address", user.getAddress());
+            postData.put("grade", user.getGrade);
+            postData.put(""teacherName", user.getTeacherName());
+            postData.put(""emergencyContactInfo", user.getEmergencyContanctInfo());
+            */
+
+            new SendDeviceDetails.execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
     }
 }
