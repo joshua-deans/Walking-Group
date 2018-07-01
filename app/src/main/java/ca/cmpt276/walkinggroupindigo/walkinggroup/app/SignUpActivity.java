@@ -7,8 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.SendDeviceDetails;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -86,10 +88,12 @@ public class SignUpActivity extends AppCompatActivity {
             postData.put(""emergencyContactInfo", user.getEmergencyContanctInfo());
             */
 
-            new SendDeviceDetails.execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
+            //SendDeviceDetails.execute execute = new SendDeviceDetails.execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+        if(postData.length() > 0){
+            new SendDeviceDetails().execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
+        }
     }
 }
