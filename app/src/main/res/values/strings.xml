@@ -3,5 +3,13 @@
 
     <!--Hardcode your API key like this. Don't use this test one!-->
     <string name="apikey">51B4A229-C683-477B-B37E-1ABF72610F869</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="loginTitle">Login</string>
+    <string name="emailEdit">E-mail</string>
+    <string name="password">Password</string>
+    <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
+    <string name="signup_txtview">Sign Up</string>
+    <string name="input_email_txtview">Please enter your Email: </string>
+    <string name="input_pass_txtview">Choose a password:</string>
+    <string name="confirm_pass_txtview">Confirm your password:</string>
+    <string name="signup_btn">Sign Up</string>
 </resources>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".app.LoginActivity">
+
+    <TextView
+        android:id="@+id/loginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="12dp"
+        android:text="@string/loginTitle"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/emailEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"
+        android:hint="@string/emailEdit"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/passEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emailEdit"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/login_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/passEdit"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="0dp"
+        android:text="Log In" />
+
+    <Button
+        android:id="@+id/signup_btn"
+        style="@android:style/Widget.Material.Button.Borderless"
+        android:layout_width="186dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="0dp"
+        android:text="@string/sign_up_prompt"
+        android:textColor="?attr/colorPrimaryDark" />
+
+</RelativeLayout>
