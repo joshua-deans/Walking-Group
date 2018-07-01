@@ -20,6 +20,7 @@ import retrofit2.Call;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginScreen";
     private WGServerProxy proxy;
+    private String apiKey = null;
 
 //    User user;
 
@@ -29,12 +30,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        String apikey = null;
-        proxy = ProxyBuilder.getProxy(getString(R.string.apikey),null);
+        getApiKey();
 //        user = User.getInstance();
 
         setUpLoginButton();
         setUpSignUpButton();
+    }
+
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        proxy = ProxyBuilder.getProxy(apiKey,null);
     }
 
     private void setUpLoginButton() {
