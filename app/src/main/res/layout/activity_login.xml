@@ -46,16 +46,4 @@
         android:layout_margin="0dp"
         android:text="Log In" />
 
-    <Button
-        android:id="@+id/signup_btn"
-        style="@android:style/Widget.Material.Button.Borderless"
-        android:layout_width="290dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/login_btn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-0dp"
-        android:padding="0dp"
-        android:text="@string/sign_up_prompt"
-        android:textColor="?attr/colorPrimaryDark" />
-
 </RelativeLayout>

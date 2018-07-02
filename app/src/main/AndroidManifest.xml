@@ -17,7 +17,7 @@
             android:value="@string/google_maps_key" />
         <activity android:name=".app.ServerTestActivity" />
         <activity android:name=".app.ApiKeyActivity" />
-        <activity android:name=".app.MapsActivity"></activity>
+        <activity android:name=".app.MapsActivity" />
         <activity android:name=".app.LoginActivity">
 
             <!--

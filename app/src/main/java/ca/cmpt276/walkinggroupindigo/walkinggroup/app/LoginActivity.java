@@ -1,11 +1,12 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,7 +35,29 @@ public class LoginActivity extends AppCompatActivity {
 //        user = User.getInstance();
 
         setUpLoginButton();
-        setUpSignUpButton();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.signUpButton:
+                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void setUpLoginButton() {
@@ -53,17 +76,6 @@ public class LoginActivity extends AppCompatActivity {
         ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> response(returnedUser));
     }
 
-    private void setUpSignUpButton() {
-        Button signUpButton = findViewById(R.id.signup_btn);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
-                startActivity(intent);
-
-            }
-        });
-    }
     private void notifyUserViaLogAndToast(String message) {
         Log.w(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
