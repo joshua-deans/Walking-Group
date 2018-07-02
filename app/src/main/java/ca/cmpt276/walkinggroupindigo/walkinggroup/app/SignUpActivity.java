@@ -9,11 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.SendDeviceDetails;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
@@ -25,7 +23,8 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
  */
 
 public class SignUpActivity extends AppCompatActivity {
-    private WGServerProxy builder;
+
+    private WGServerProxy proxy;
     private User user;
 
     public static Intent makeIntent(Context context) {
@@ -37,7 +36,13 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        getApiKey();
         setupSignUpButton();
+    }
+
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        proxy = ProxyBuilder.getProxy(apiKey,null);
     }
 
     // When clicked, a new user will create
@@ -80,19 +85,29 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Insert the successfully created user into the server
     private void insertIntoServer() {
-        builder = ProxyBuilder.getProxy(getString(R.string.apikey), null);
         JSONObject postData = new JSONObject();
+
+
+        /*
+        try {
+            Response<User> response = call.execute();
+
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        //postData.
         try {
             postData.put("name", user.getName());
             postData.put("email", user.getEmail());
             postData.put("password", user.getPassword());
-            /*
-             * for future extension (maybe for second or third iteration)
+
+              for future extension (maybe for second or third iteration)
             postData.put("address", user.getAddress());
             postData.put("grade", user.getGrade);
             postData.put(""teacherName", user.getTeacherName());
             postData.put(""emergencyContactInfo", user.getEmergencyContanctInfo());
-            */
+
 
             //SendDeviceDetails.execute execute = new SendDeviceDetails.execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
         } catch (JSONException e) {
@@ -100,6 +115,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
         if(postData.length() > 0){
             new SendDeviceDetails().execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
-        }
+        }*/
     }
 }
