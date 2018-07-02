@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
 
 /*
  * Create a user based on the provided information.
@@ -56,7 +58,6 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = getTextInformation(R.id.create_password);
                 String confirm_password = getTextInformation(R.id.confirm_password);
                 CreateUser(name, email, password, confirm_password);
-                insertIntoServer();
             }
         });
     }
@@ -116,5 +117,11 @@ public class SignUpActivity extends AppCompatActivity {
         if(postData.length() > 0){
             new SendDeviceDetails().execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
         }*/
+
+        Call<User> caller = proxy.createUser(user);
+        ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> {
+            Log.i("User Create", "User created " + returnedUser.getName());
+        });
+
     }
 }
