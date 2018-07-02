@@ -45,6 +45,7 @@ public class SignUpActivity extends AppCompatActivity {
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
         proxy = ProxyBuilder.getProxy(apiKey,null);
+
     }
 
     // When clicked, a new user will create
@@ -118,10 +119,20 @@ public class SignUpActivity extends AppCompatActivity {
             new SendDeviceDetails().execute("https://cmpt276-1177-bf.cmpt.sfu.ca:8184/users/signup", postData.toString());
         }*/
 
-        Call<User> caller = proxy.createUser(user);
-        ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> {
-            Log.i("User Create", "User created " + returnedUser.getName());
+        ProxyBuilder.setOnTokenReceiveCallback(token -> {
+            Log.i("MY TOKEN", token);
         });
+
+        //Call<User> caller = proxy.createUser(user);
+        //ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> {
+        //    Log.i("User Create", "User created " + returnedUser.getName());
+        //});
+
+        User u = new User();
+        u.setEmail("a@gmail.com");
+        u.setPassword("a");
+        Call<Void> caller = proxy.login(u);
+        ProxyBuilder.callProxy(SignUpActivity.this, caller, response -> {});
 
     }
 }
