@@ -3,7 +3,6 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
         getApiKey();
         setUpLoginButton();
-        setUpSignUpButton();
+//        setUpSignUpButton();
     }
 
     @Override
@@ -84,16 +83,16 @@ public class LoginActivity extends AppCompatActivity {
         EditText text = findViewById(id);
         return text.getText().toString();
     }
-    
-    private void setUpSignUpButton() {
-        Button signUpButton = findViewById(R.id.signup_btn);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
-                startActivity(intent);
 
-            }
-        });
-    }
+//    private void setUpSignUpButton() {
+//        Button signUpButton = findViewById(R.id.signup_btn);
+//        signUpButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
+//                startActivity(intent);
+//
+//            }
+//        });
+//    }
 }
