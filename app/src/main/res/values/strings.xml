@@ -12,9 +12,13 @@
     <string name="input_pass_txtview">Choose a password:</string>
     <string name="confirm_pass_txtview">Confirm your password:</string>
     <string name="signup_btn">Sign Up</string>
+    <string name="duplicated_email"> Email is already registed.</string>
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
     <string name="view_map">View Map</string>
     <string name="manage_monitoring">Manage Monitoring</string>
     <string name="manage_group">Manage Group</string>
-    <string name="log_out">Log Out</string>
+    <string name="please_enter_name"> Please enter your name </string>
+    <string name="please_enter_email"> Please enter your email address </string>
+    <string name="password_empty"> Please enter valid password.</string>
+    <string name="passwords_dont_match"> Password does NOT match. </string>
 </resources>

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -59,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpLoginButton() {
-       Button button = findViewById(R.id.login_btn);
+        Button button = findViewById(R.id.login_btn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

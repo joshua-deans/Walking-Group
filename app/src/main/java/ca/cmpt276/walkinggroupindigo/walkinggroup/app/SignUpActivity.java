@@ -7,6 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -21,9 +28,6 @@ import retrofit2.Call;
  */
 
 public class SignUpActivity extends AppCompatActivity {
-    private WGServerProxy proxy;
-    private User user;
-
     private WGServerProxy proxy;
     private User user;
 
