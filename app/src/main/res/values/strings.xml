@@ -12,7 +12,7 @@
     <string name="input_pass_txtview">Choose a password:</string>
     <string name="confirm_pass_txtview">Confirm your password:</string>
     <string name="signup_btn">Sign Up</string>
-    <string name="duplicated_email"> Email is already registed.</string>
+    <string name="duplicated_email"> Email is already registered.</string>
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
     <string name="view_map">View Map</string>
     <string name="manage_monitoring">Manage Monitoring</string>

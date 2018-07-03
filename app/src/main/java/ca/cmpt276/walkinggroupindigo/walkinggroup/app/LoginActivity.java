@@ -27,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
 
         getApiKey();
         setUpLoginButton();
-//        setUpSignUpButton();
     }
 
     @Override
@@ -46,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -84,15 +81,4 @@ public class LoginActivity extends AppCompatActivity {
         return text.getText().toString();
     }
 
-//    private void setUpSignUpButton() {
-//        Button signUpButton = findViewById(R.id.signup_btn);
-//        signUpButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
-//                startActivity(intent);
-//
-//            }
-//        });
-//    }
 }
