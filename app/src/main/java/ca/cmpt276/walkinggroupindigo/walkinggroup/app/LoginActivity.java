@@ -8,9 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -21,8 +18,6 @@ import retrofit2.Call;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginScreen";
     private WGServerProxy proxy;
-
-//    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

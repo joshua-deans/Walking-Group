@@ -9,8 +9,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
+
+/*
+ * Create a user based on the provided information.
+ * Name, Email, password, birth date, address, cellphone
+ * home phone, grade, teacher name, and emergency contact information
+ */
 
 public class SignUpActivity extends AppCompatActivity {
+    private WGServerProxy proxy;
+    private User user;
+
     private WGServerProxy proxy;
     private User user;
 
