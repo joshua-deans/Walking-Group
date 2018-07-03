@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -26,7 +27,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         getApiKey();
+        checkIfUserIsLoggedIn();
         setUpLoginButton();
+    }
+
+    private void checkIfUserIsLoggedIn() {
     }
 
     @Override
@@ -72,13 +77,25 @@ public class LoginActivity extends AppCompatActivity {
         String userPass = getInputText(R.id.passEdit);
         user.setEmail(userEmail);
         user.setPassword(userPass);
+        ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
         Call<Void> caller = proxy.login(user);
-        // Need to go to Manage account activity
+        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing));
     }
-    
+
+    private void logIn(Void returnedNothing) {
+        Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private String getInputText(int id){
         EditText text = findViewById(id);
         return text.getText().toString();
+    }
+
+    private void onReceiveToken(String token) {
+        proxy = ProxyBuilder.getProxy(getString(R.string.apikey), token);
     }
 
 }
