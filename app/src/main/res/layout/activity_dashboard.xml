@@ -3,47 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.LoginActivity">
+    tools:context=".app.DashboardActivity">
 
     <TextView
-        android:id="@+id/loginTitle"
+        android:id="@+id/welcome_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:text="@string/loginTitle"
+        android:text="@string/welcome_user_name"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/emailEdit"
+    <Button
+        android:id="@+id/viewMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/loginTitle"
+        android:layout_below="@+id/welcome_user"
         android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:hint="@string/emailEdit"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/passEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/emailEdit"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
+        android:layout_marginBottom="10dp"
+        android:text="@string/view_map" />
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/manage_monitoring"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/passEdit"
+        android:layout_below="@+id/viewMapButton"
         android:layout_centerHorizontal="true"
-        android:layout_margin="0dp"
-        android:text="Log In" />
+        android:layout_marginBottom="10dp"
+        android:text="@string/manage_monitoring" />
+
+    <Button
+        android:id="@+id/manage_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/manage_monitoring"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="@string/manage_group" />
 
 </RelativeLayout>
