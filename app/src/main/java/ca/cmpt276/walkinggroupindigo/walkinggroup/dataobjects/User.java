@@ -39,16 +39,6 @@ public class User extends IdItemBase{
     private List<Group> memberOfGroups = new ArrayList<>(); // <-- TO BE IMPLEMENTED
     private List<Group> leadsGroups = new ArrayList<>();    // <-- TO BE IMPLEMENTED
 
-    // Default constructor
-    public User(){}
-
-    // Constructor with providing name, email and password
-    public User(String name, String email, String password){
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
     // Basic User Data
     // -------------------------------------------------------------------------------------------
     public String getName() {
