@@ -24,4 +24,8 @@
     <string name="full_name_sign">Full Name</string>
     <string name="e_mail_hint">E-mail</string>
     <string name="confirm_password_hint">Confirm Password</string>
+    <string name="password_empty_login">Password is empty</string>
+    <string name="email_empty_login">E-mail is empty</string>
+    <string name="success_sign_up">Successfully signed up</string>
+    <string name="no_success_sign_up">Request unsuccessful</string>
 </resources>

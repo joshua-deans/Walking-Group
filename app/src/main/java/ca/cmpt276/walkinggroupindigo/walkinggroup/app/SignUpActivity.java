@@ -123,12 +123,12 @@ public class SignUpActivity extends AppCompatActivity {
     private void successfulSignUp(User returnedUser) {
         if (returnedUser != null) {
             Toast.makeText(SignUpActivity.this,
-                    "Successfully signed up",
+                    R.string.success_sign_up,
                     Toast.LENGTH_SHORT).show();
             finish();
         } else {
             Toast.makeText(SignUpActivity.this,
-                    "Request unsuccessful",
+                    R.string.no_success_sign_up,
                     Toast.LENGTH_SHORT).show();
         }
     }

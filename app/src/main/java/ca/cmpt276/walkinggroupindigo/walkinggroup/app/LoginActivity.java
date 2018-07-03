@@ -75,11 +75,17 @@ public class LoginActivity extends AppCompatActivity {
         User user = new User();
         String userEmail = getInputText(R.id.emailEdit);
         String userPass = getInputText(R.id.passEdit);
-        user.setEmail(userEmail);
-        user.setPassword(userPass);
-        ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
-        Call<Void> caller = proxy.login(user);
-        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing));
+        if (userEmail.matches("")) {
+            Toast.makeText(LoginActivity.this, R.string.email_empty_login, Toast.LENGTH_SHORT).show();
+        } else if (userPass.matches("")) {
+            Toast.makeText(LoginActivity.this, R.string.password_empty_login, Toast.LENGTH_SHORT).show();
+        } else {
+            user.setEmail(userEmail);
+            user.setPassword(userPass);
+            ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
+            Call<Void> caller = proxy.login(user);
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing));
+        }
     }
 
     private void logIn(Void returnedNothing) {
