@@ -21,4 +21,7 @@
     <string name="please_enter_email"> Please enter your email address </string>
     <string name="password_empty"> Please enter valid password.</string>
     <string name="passwords_dont_match"> Password does NOT match. </string>
+    <string name="full_name_sign">Full Name</string>
+    <string name="e_mail_hint">E-mail</string>
+    <string name="confirm_password_hint">Confirm Password</string>
 </resources>
