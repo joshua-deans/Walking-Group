@@ -28,4 +28,5 @@
     <string name="email_empty_login">E-mail is empty</string>
     <string name="success_sign_up">Successfully signed up</string>
     <string name="no_success_sign_up">Request unsuccessful</string>
+    <string name="logged_out">Logged Out</string>
 </resources>
