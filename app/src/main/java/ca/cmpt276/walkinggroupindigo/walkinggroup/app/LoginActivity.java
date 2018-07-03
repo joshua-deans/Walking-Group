@@ -29,12 +29,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-        String apikey = null;
-        proxy = ProxyBuilder.getProxy(getString(R.string.apikey),null);
-//        user = User.getInstance();
-
+        getApiKey();
         setUpLoginButton();
+        setUpSignUpButton();
     }
 
     @Override
@@ -59,41 +56,47 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     }
+    
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        proxy = ProxyBuilder.getProxy(apiKey,null);
+
+    }
 
     private void setUpLoginButton() {
+       Button button = findViewById(R.id.login_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginUser();
+            }
+        });
+    }
+    
+    private void LoginUser() {
         User user = new User();
-        EditText emailEditTxt = findViewById(R.id.emailEdit);
-        String userEamil;
-        userEamil = emailEditTxt.getText().toString();
-        EditText passEditTxt = findViewById(R.id.passEdit);
-        String userPass;
-        userPass = passEditTxt.getText().toString();
-        user.setEmail(userEamil);
+        String userEmail = getInputText(R.id.emailEdit);
+        String userPass = getInputText(R.id.passEdit);
+        user.setEmail(userEmail);
         user.setPassword(userPass);
-
-        ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
         Call<Void> caller = proxy.login(user);
-        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> response(returnedUser));
+        // Need to go to Manage account activity
     }
+    
+    private String getInputText(int id){
+        EditText text = findViewById(id);
+        return text.getText().toString();
+    }
+    
+    private void setUpSignUpButton() {
+        Button signUpButton = findViewById(R.id.signup_btn);
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
+                startActivity(intent);
 
-    private void notifyUserViaLogAndToast(String message) {
-        Log.w(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-    private void response(Void returnedNothing) {
-        notifyUserViaLogAndToast("Server replied to login request (no content was expected).");
-    }
-
-    private void response(List<User> returnedUsers) {
-        notifyUserViaLogAndToast("Got list of " + returnedUsers.size() + " users! See logcat.");
-        Log.w(TAG, "All Users:");
-        for (User user : returnedUsers) {
-            Log.w(TAG, "    User: " + user.toString());
-        }
-    }
-    private void onReceiveToken(String token) {
-        // Replace the current proxy with one that uses the token!
-        Log.w(TAG, "   --> NOW HAVE TOKEN: " + token);
-        proxy = ProxyBuilder.getProxy(getString(R.string.apikey), token);
+            }
+        });
     }
 }
