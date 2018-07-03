@@ -1,15 +1,12 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -20,19 +17,13 @@ import retrofit2.Call;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginScreen";
     private WGServerProxy proxy;
-    private String apiKey = null;
-
-//    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         getApiKey();
-//        user = User.getInstance();
-
         setUpLoginButton();
         setUpSignUpButton();
     }
@@ -43,19 +34,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpLoginButton() {
+        Button button = findViewById(R.id.login_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginUser();
+            }
+        });
+    }
+
+    private void LoginUser() {
         User user = new User();
-        EditText emailEditTxt = findViewById(R.id.emailEdit);
-        String userEamil;
-        userEamil = emailEditTxt.getText().toString();
-        EditText passEditTxt = findViewById(R.id.passEdit);
-        String userPass;
-        userPass = passEditTxt.getText().toString();
-        user.setEmail(userEamil);
+        Log.i("I am on LoginButton", "HI");
+        String userEmail = getInputText(R.id.emailEdit);
+        String userPass = getInputText(R.id.passEdit);
+        user.setEmail(userEmail);
         user.setPassword(userPass);
 
-        ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
+        ProxyBuilder.setOnTokenReceiveCallback(token -> {
+            Log.i("MY TOKEN", token);
+        });
+
         Call<Void> caller = proxy.login(user);
-        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> response(returnedUser));
+        ProxyBuilder.callProxy(LoginActivity.this, caller, response -> {});
+    }
+
+    private String getInputText(int id){
+        EditText text = findViewById(id);
+        return text.getText().toString();
     }
 
     private void setUpSignUpButton() {
@@ -68,6 +74,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    /*
     private void notifyUserViaLogAndToast(String message) {
         Log.w(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -87,5 +95,5 @@ public class LoginActivity extends AppCompatActivity {
         // Replace the current proxy with one that uses the token!
         Log.w(TAG, "   --> NOW HAVE TOKEN: " + token);
         proxy = ProxyBuilder.getProxy(getString(R.string.apikey), token);
-    }
+    }*/
 }
