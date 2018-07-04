@@ -24,4 +24,6 @@
     <string name="full_name_sign">Full Name</string>
     <string name="e_mail_hint">E-mail</string>
     <string name="confirm_password_hint">Confirm Password</string>
+    <string name="monitoring">You are monitoring: </string>
+    <string name="monitored">You are being monitored by: </string>
 </resources>

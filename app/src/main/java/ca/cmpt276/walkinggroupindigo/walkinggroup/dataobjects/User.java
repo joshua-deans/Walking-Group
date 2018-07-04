@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+
 /**
  * User class to store the data the server expects and returns.
  * (Incomplete: Needs support for monitoring and groups).
