@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -107,40 +106,30 @@ public class SignUpActivity extends AppCompatActivity {
             user.setName(name);
             user.setEmail(email);
             user.setPassword(password);
-            insertIntoServer();
+            insertIntoServer(user);
         }
     }
 
     // Insert the successfully created user into the server
-    private void insertIntoServer() {
+    private void insertIntoServer(User user) {
         Call<List<User>> users = proxy.getUsers();
-        ArrayList<User> allUser = (ArrayList<User>) users; // Still have some bugs here
-        if(isDuplicated(allUser, user)){
-            Toast.makeText(SignUpActivity.this,
-                    R.string.duplicated_email,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        //Call<User> caller = proxy.createUser(user);
-        //ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> {
-        //    Log.i("User Create", "User created " + returnedUser.getName());
-        //});
-        else {
-            Call<User> caller = proxy.createUser(user);
-            Call<Void> newLogin = proxy.login(user);
+        Call<User> caller = proxy.createUser(user);
+        ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> successfulSignUp(returnedUser));
             // Need to go to Account monitor activity
-        }
+//        }
 
     }
 
-    private boolean isDuplicated(ArrayList<User> allUser, User user) {
-        if(allUser.size() == 0)
-            return false;
-        for(User u: allUser){
-            if(u.getEmail().equalsIgnoreCase(user.getEmail())){
-                return true;
-            }
+    private void successfulSignUp(User returnedUser) {
+        if (returnedUser != null) {
+            Toast.makeText(SignUpActivity.this,
+                    R.string.success_sign_up,
+                    Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Toast.makeText(SignUpActivity.this,
+                    R.string.no_success_sign_up,
+                    Toast.LENGTH_SHORT).show();
         }
-        return false;
     }
 }
