@@ -19,10 +19,11 @@
         <activity android:name=".app.ServerTestActivity" />
         <activity android:name=".app.ApiKeyActivity" />
         <activity android:name=".app.MapsActivity" />
-        <activity android:name=".app.LoginActivity">
+        <activity android:name=".app.LoginActivity" />
         <activity android:name=".app.SignUpActivity" />
-        <activity android:name=".app.ManageMonitoring"></activity>
+        <activity android:name=".app.ManageMonitoring" />
         <activity android:name=".app.DashboardActivity" />
+        <activity android:name=".app.AddMonitoringActivity"></activity>
     </application>
 
 </manifest>

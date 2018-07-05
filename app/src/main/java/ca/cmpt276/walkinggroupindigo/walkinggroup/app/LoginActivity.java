@@ -122,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
     private void logIn(Void returnedNothing, String userString) {
         Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
         saveLogIn(userString);
+        User mUser = user.getInstance();
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
         startActivity(intent);
         finish();
