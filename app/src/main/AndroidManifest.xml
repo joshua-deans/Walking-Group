@@ -15,18 +15,15 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
         <activity android:name=".app.ServerTestActivity" />
         <activity android:name=".app.ApiKeyActivity" />
         <activity android:name=".app.MapsActivity" />
-        <activity android:name=".app.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".app.LoginActivity" />
         <activity android:name=".app.SignUpActivity" />
+        <activity android:name=".app.ManageMonitoring" />
         <activity android:name=".app.DashboardActivity" />
+        <activity android:name=".app.AddMonitoringActivity"></activity>
     </application>
 
 </manifest>
