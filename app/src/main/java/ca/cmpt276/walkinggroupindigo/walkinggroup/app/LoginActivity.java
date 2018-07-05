@@ -47,9 +47,11 @@ public class LoginActivity extends AppCompatActivity {
             String email = extractFromStrings(userString, ", email='", "'");
             String password = extractFromStrings(userString, ", password='", "'");
             String name = extractFromStrings(userString, ", name='", "'");
+            user.setEmail(email);
+            user.setPassword(password);
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
             Call<Void> caller = proxy.login(user);
-            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logInAlreadySaved(returnedNothing));
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, email, false));
         }
     }
 
@@ -74,7 +76,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
                 startActivity(intent);
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -110,14 +111,14 @@ public class LoginActivity extends AppCompatActivity {
             String userString = user.toString();
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
             Call<Void> caller = proxy.login(user);
-            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userEmail));
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userEmail, true));
         }
     }
 
-    private void logIn(Void returnedNothing, String userEmail) {
+    private void logIn(Void returnedNothing, String userEmail, boolean saveInfo) {
         Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
         Call<User> caller = proxy.getUserByEmail(userEmail);
-        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser));
+        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser, saveInfo));
     }
 
     private void logInAlreadySaved(Void returnedNothing) {
@@ -145,14 +146,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    public void getUserInfo(User returnedUser) {
+    public void getUserInfo(User returnedUser, boolean saveInfo) {
         user.setId(returnedUser.getId());
         user.setName(returnedUser.getName());
         user.setLeadsGroups(returnedUser.getLeadsGroups());
         user.setMemberOfGroups(returnedUser.getMemberOfGroups());
         user.setMonitorsUsers(returnedUser.getMonitorsUsers());
         user.setMonitoredByUsers(returnedUser.getMonitoredByUsers());
-        saveLogIn(user.toString());
+        if (saveInfo) {
+            saveLogIn(user.toString());
+        }
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
         startActivity(intent);
         finish();
