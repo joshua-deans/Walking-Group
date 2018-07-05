@@ -10,23 +10,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
 
 public class DashboardActivity extends AppCompatActivity {
 
+    private User mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        mUser = User.getInstance();
+
+        Toast.makeText(DashboardActivity.this, mUser.toString(), Toast.LENGTH_LONG).show();
+
+        createGreeting();
         setupMapButton();
         setupMonitorButton();
         setupGroupButton();
+    }
+
+    private void createGreeting() {
+        TextView greeting = (TextView) findViewById(R.id.welcome_user);
+        greeting.setText(String.format("Welcome %s!", mUser.getName()));
     }
 
     @Override

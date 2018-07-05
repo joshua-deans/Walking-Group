@@ -25,6 +25,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
     private WGServerProxy proxy;
 
+    private User user = User.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,26 +43,20 @@ public class LoginActivity extends AppCompatActivity {
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         String userString = sharedPref.getString(LOG_IN_SAVE_KEY, "");
         if (!userString.equals("")) {
-            User loggedUser = new User();
-            String email = extractUserEmail(userString);
-            String password = extractUserPass(userString);
-            loggedUser.setEmail(email);
-            loggedUser.setPassword(password);
+            String id = extractFromStrings(userString, "id=", ",");
+            String email = extractFromStrings(userString, ", email='", "'");
+            String password = extractFromStrings(userString, ", password='", "'");
+            String name = extractFromStrings(userString, ", name='", "'");
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
-            Call<Void> caller = proxy.login(loggedUser);
+            Call<Void> caller = proxy.login(user);
             ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logInAlreadySaved(returnedNothing));
         }
     }
 
-    private String extractUserEmail(String userString) {
-        int indexStart = userString.indexOf(", email='") + ", email='".length();
-        int indexEnd = userString.indexOf("'", indexStart + 1);
-        return userString.substring(indexStart, indexEnd);
-    }
-
-    private String extractUserPass(String userString) {
-        int indexStart = userString.indexOf(", password='") + ", password='".length();
-        int indexEnd = userString.indexOf("'", indexStart + 1);
+    private String extractFromStrings(String userString, String startString, String endString) {
+        // Gets values from String from indexStart to indexEnd
+        int indexStart = userString.indexOf(startString) + startString.length();
+        int indexEnd = userString.indexOf(endString, indexStart + 1);
         return userString.substring(indexStart, indexEnd);
     }
 
@@ -102,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
     }
     
     private void LoginUser() {
-        User user = new User();
         String userEmail = getInputText(R.id.emailEdit);
         String userPass = getInputText(R.id.passEdit);
         if (userEmail.matches("")) {
@@ -115,17 +110,14 @@ public class LoginActivity extends AppCompatActivity {
             String userString = user.toString();
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
             Call<Void> caller = proxy.login(user);
-            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userString));
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userEmail));
         }
     }
 
-    private void logIn(Void returnedNothing, String userString) {
+    private void logIn(Void returnedNothing, String userEmail) {
         Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
-        saveLogIn(userString);
-        User mUser = user.getInstance();
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        startActivity(intent);
-        finish();
+        Call<User> caller = proxy.getUserByEmail(userEmail);
+        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser));
     }
 
     private void logInAlreadySaved(Void returnedNothing) {
@@ -153,4 +145,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    public void getUserInfo(User returnedUser) {
+        user.setId(returnedUser.getId());
+        user.setName(returnedUser.getName());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setMonitorsUsers(returnedUser.getMonitorsUsers());
+        user.setMonitoredByUsers(returnedUser.getMonitoredByUsers());
+        saveLogIn(user.toString());
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
