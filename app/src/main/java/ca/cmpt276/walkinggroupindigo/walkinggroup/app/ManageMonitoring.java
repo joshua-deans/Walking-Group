@@ -48,14 +48,16 @@ public class ManageMonitoring extends AppCompatActivity {
 
 
     private void getMonitoringUsers() {
-        Call<List<User>> caller = proxy.getMonitorsUsers(userId);
-        // How to convert our call list to arrayList
-        ArrayList<User> allUser = (ArrayList<User>) caller;
-        ProxyBuilder.callProxy(ManageMonitoring.this, caller,
-                returnedCaller -> generateMonitoringUsers(allUser));
+        Call<List<User>> userCaller = proxy.getMonitorsUsers(userId);
+        List<User> allUser = new ArrayList<>();
+        ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
+                returnedUsers -> { // Returns in the Call <parameter>
+                    allUser.addAll(returnedUsers);
+                });
+        generateMonitoringUsers(allUser);
     }
 
-    private void generateMonitoringUsers(ArrayList<User> allUser) {
+    private void generateMonitoringUsers(List<User> allUser) {
         if(allUser.size() == 0) {
             // handle the issue
             TextView emptyText1 = findViewById(R.id.empty_text1);
