@@ -43,9 +43,11 @@ public class LoginActivity extends AppCompatActivity {
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         String userString = sharedPref.getString(LOG_IN_SAVE_KEY, "");
         if (!userString.equals("")) {
-            String email = extractUserEmail(userString);
-            String password = extractUserPass(userString);
-            String name = extractUserName(userString);
+            String id = extractFromStrings(userString, "id=", ",");
+            String email = extractFromStrings(userString, ", email='", "'");
+            String password = extractFromStrings(userString, ", password='", "'");
+            String name = extractFromStrings(userString, ", name='", "'");
+            user.setId(Long.valueOf(id));
             user.setEmail(email);
             user.setPassword(password);
             user.setName(name);
@@ -55,21 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private String extractUserName(String userString) {
-        int indexStart = userString.indexOf(", name='") + ", email='".length();
-        int indexEnd = userString.indexOf("'", indexStart + 1);
-        return userString.substring(indexStart, indexEnd);
-    }
-
-    private String extractUserEmail(String userString) {
-        int indexStart = userString.indexOf(", email='") + ", email='".length();
-        int indexEnd = userString.indexOf("'", indexStart + 1);
-        return userString.substring(indexStart, indexEnd);
-    }
-
-    private String extractUserPass(String userString) {
-        int indexStart = userString.indexOf(", password='") + ", password='".length();
-        int indexEnd = userString.indexOf("'", indexStart + 1);
+    private String extractFromStrings(String userString, String startString, String endString) {
+        // Gets values from String from indexStart to indexEnd
+        int indexStart = userString.indexOf(startString) + startString.length();
+        int indexEnd = userString.indexOf(endString, indexStart + 1);
         return userString.substring(indexStart, indexEnd);
     }
 
@@ -129,8 +120,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void logIn(Void returnedNothing, String userEmail) {
         Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
-//        Call<User> caller = proxy.getUserByEmail(userEmail);
-//        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser));
+        Call<User> caller = proxy.getUserByEmail(userEmail);
+        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser));
     }
 
     private void logInAlreadySaved(Void returnedNothing) {
@@ -158,11 +149,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-//    public void getUserInfo(User returnedUser) {
-////        user.setName(returnedUser.getName());
-//        saveLogIn(user.toString());
-//        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
+    public void getUserInfo(User returnedUser) {
+        user.setId(returnedUser.getId());
+        user.setName(returnedUser.getName());
+        saveLogIn(user.toString());
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
