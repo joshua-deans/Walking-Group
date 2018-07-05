@@ -44,10 +44,8 @@ public class LoginActivity extends AppCompatActivity {
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         String userString = sharedPref.getString(LOG_IN_SAVE_KEY, "");
         if (!userString.equals("")) {
-            String id = extractFromStrings(userString, "id=", ",");
             String email = extractFromStrings(userString, ", email='", "'");
             String password = extractFromStrings(userString, ", password='", "'");
-            String name = extractFromStrings(userString, ", name='", "'");
             user.setEmail(email);
             user.setPassword(password);
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
@@ -159,6 +157,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void getUserInfo(User returnedUser, boolean saveInfo) {
         user.setId(returnedUser.getId());
+        user.setHref("/users/" + returnedUser.getId());
         user.setName(returnedUser.getName());
         user.setLeadsGroups(returnedUser.getLeadsGroups());
         user.setMemberOfGroups(returnedUser.getMemberOfGroups());

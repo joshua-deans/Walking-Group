@@ -21,6 +21,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -74,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void placeGroupMarkers(List<Group> groupList) {
         for (Group group : groupList) {
             // TODO: add markers for the location of every group
+            mMap.addMarker(new MarkerOptions().position(new LatLng(group.getLatitude(), group.getLongitude()))
+                    .title(group.getGroupDescription()));
             return;
         }
     }
@@ -89,8 +93,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             mLocationPermissionGranted = true;
             updateMapLocation();
+            setUpMarkerClickListener();
         }
 
+    }
+
+    private void setUpMarkerClickListener() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // TODO: Set up click listener that displays an AlertDialog to join group.
+                return false;
+            }
+        });
     }
 
     private void updateMapLocation() {
