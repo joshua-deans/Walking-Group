@@ -35,10 +35,13 @@ public class AddMonitoringActivity extends AppCompatActivity {
         EditText findUserEditText = findViewById(R.id.find_user_edit_txt);
         String address;
         address = findUserEditText.getText().toString();
-        if (E-mail) {
-            Call<List<User>> user = proxy.getUserByEmail(address);
-        } else if (userId) {
-            call<list<User>> user = proxy.getUserById(userId);
+        if (address != null) {}
+        else {
+//            Call<List<User>> user = proxy.getUserByEmail(address);
+        }
+        if (userId != null) {}
+        else {
+//            Call<List<User>> user = proxy.getUserById(userId);
         }
 
 

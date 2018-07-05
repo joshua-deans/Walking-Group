@@ -1,26 +1,16 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.fasterxml.jackson.databind.type.ArrayType;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.net.ssl.ManagerFactoryParameters;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -61,11 +51,8 @@ public class ManageMonitoring extends AppCompatActivity {
         Call<List<User>> caller = proxy.getMonitorsUsers(userId);
         // How to convert our call list to arrayList
         ArrayList<User> allUser = (ArrayList<User>) caller;
-        ProxyBuilder.callProxy(ManageMonitoring.this, caller, returnedCaller -> generateMonitoringUsers(allUser));
-
-        ListView monitoringView = findViewById(R.id.monitoring_listview);
-        monitoringView.setAdapter();
-
+        ProxyBuilder.callProxy(ManageMonitoring.this, caller,
+                returnedCaller -> generateMonitoringUsers(allUser));
     }
 
     private void generateMonitoringUsers(ArrayList<User> allUser) {
@@ -82,16 +69,35 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void populateMonitoringListView() {
-        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this, R.layout.monitoring_layout);
+        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this,
+                R.layout.monitoring_layout);
         ListView monitoringList = findViewById(R.id.monitoring_listview);
-        monitoringList.setAdapter(adapter);
+
+        monitoringList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //set intent for adding monitored user to other groups
+            }
+        });
+
+        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                MessageFragment dialog = new MessageFragment();
+//                dialog.show(manager, "MessageDialog");        //needs to implement removing users
+
+                return true;
+            }
+        });
     }
 
 
     private void getMonitoredUsers() {
         Call<List<User>> caller = proxy.getMonitoredByUsers(userId);
         ArrayList<User>allUser = (ArrayList<User>) caller;
-        ProxyBuilder.callProxy(ManageMonitoring.this, caller, returnedCaller -> generateMonitoredUsers(allUser));
+        ProxyBuilder.callProxy(ManageMonitoring.this, caller,
+                returnedCaller -> generateMonitoredUsers(allUser));
     }
 
     private void generateMonitoredUsers(ArrayList<User> allUser) {
@@ -106,9 +112,27 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void PopulateMonitoredListView() {
-        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this, R.layout.monitored_layout);
+        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this,
+                R.layout.monitored_layout);
         ListView monitoredList = findViewById(R.id.monitored_listview);
         monitoredList.setAdapter(adapter);
+
+        monitoredList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //set intent for adding monitored user to other groups
+            }
+        });
+        monitoredList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                MessageFragment dialog = new MessageFragment();
+//                dialog.show(manager, "MessageDialog");        //needs to implement removing users
+
+                return true;
+            }
+        });
     }
 
 
