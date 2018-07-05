@@ -2,13 +2,44 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Store information about the walking groups.
- *
- * WARNING: INCOMPLETE! Server returns more information than this.
- * This is just to be a placeholder and inspire you how to do it.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group extends IdItemBase{
+    private String groupDescription;
+    // The latitude of the final location
+    private double latitude;
+    // The latitude of the final location
+    private double longitude;
+    private User leader;
 
+    public String getGroupDescription() {
+        return groupDescription;
+    }
+
+    public void setGroupDescription(String groupDescription) {
+        this.groupDescription = groupDescription;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public User getLeader() {
+        return leader;
+    }
+
+    public void setLeader(User leader) {
+        this.leader = leader;
+    }
 }

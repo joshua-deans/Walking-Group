@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginScreen";
     public static final String LOG_IN_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity";
     public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
+    public static final String LOG_IN_SAVE_TOKEN = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Token";
     private WGServerProxy proxy;
 
     private User user = User.getInstance();
@@ -143,6 +144,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void onReceiveToken(String token) {
         proxy = ProxyBuilder.getProxy(getString(R.string.apikey), token);
+        saveToken(token);
+    }
+
+    private void saveToken(String token) {
+        Context context = LoginActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_TOKEN, token);
+        editor.apply();
     }
 
 
