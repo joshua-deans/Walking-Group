@@ -1,5 +1,6 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+
 /**
  * User class to store the data the server expects and returns.
  * (Incomplete: Needs support for monitoring and groups).
@@ -38,6 +40,16 @@ public class User extends IdItemBase{
 
     private List<Group> memberOfGroups = new ArrayList<>(); // <-- TO BE IMPLEMENTED
     private List<Group> leadsGroups = new ArrayList<>();    // <-- TO BE IMPLEMENTED
+
+    private static User ourInstance;
+
+    public static User getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new User();
+        }
+
+        return ourInstance;
+    }
 
     // Basic User Data
     // -------------------------------------------------------------------------------------------

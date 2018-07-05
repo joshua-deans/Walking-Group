@@ -1,15 +1,17 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -19,69 +21,143 @@ import retrofit2.Call;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginScreen";
+    public static final String LOG_IN_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity";
+    public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
     private WGServerProxy proxy;
 
-//    User user;
+    private User user = User.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-        String apikey = null;
-        proxy = ProxyBuilder.getProxy(getString(R.string.apikey),null);
-//        user = User.getInstance();
-
+        getApiKey();
+        checkIfUserIsLoggedIn();
         setUpLoginButton();
-        setUpSignUpButton();
+    }
+
+    private void checkIfUserIsLoggedIn() {
+        Context context = LoginActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        String userString = sharedPref.getString(LOG_IN_SAVE_KEY, "");
+        if (!userString.equals("")) {
+            String id = extractFromStrings(userString, "id=", ",");
+            String email = extractFromStrings(userString, ", email='", "'");
+            String password = extractFromStrings(userString, ", password='", "'");
+            String name = extractFromStrings(userString, ", name='", "'");
+            user.setEmail(email);
+            user.setPassword(password);
+            ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
+            Call<Void> caller = proxy.login(user);
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, email, false));
+        }
+    }
+
+    private String extractFromStrings(String userString, String startString, String endString) {
+        // Gets values from String from indexStart to indexEnd
+        int indexStart = userString.indexOf(startString) + startString.length();
+        int indexEnd = userString.indexOf(endString, indexStart + 1);
+        return userString.substring(indexStart, indexEnd);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.signUpButton:
+                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+    
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        proxy = ProxyBuilder.getProxy(apiKey,null);
+
     }
 
     private void setUpLoginButton() {
-        User user = new User();
-        EditText emailEditTxt = findViewById(R.id.emailEdit);
-        String userEamil;
-        userEamil = emailEditTxt.getText().toString();
-        EditText passEditTxt = findViewById(R.id.passEdit);
-        String userPass;
-        userPass = passEditTxt.getText().toString();
-        user.setEmail(userEamil);
-        user.setPassword(userPass);
-
-        ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
-        Call<Void> caller = proxy.login(user);
-        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> response(returnedUser));
-    }
-
-    private void setUpSignUpButton() {
-        Button signUpButton = findViewById(R.id.signup_btn);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        Button button = findViewById(R.id.login_btn);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = SignUpActivity.makeIntent(LoginActivity.this);
-                startActivity(intent);
-
+                LoginUser();
             }
         });
     }
-    private void notifyUserViaLogAndToast(String message) {
-        Log.w(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-    private void response(Void returnedNothing) {
-        notifyUserViaLogAndToast("Server replied to login request (no content was expected).");
-    }
-
-    private void response(List<User> returnedUsers) {
-        notifyUserViaLogAndToast("Got list of " + returnedUsers.size() + " users! See logcat.");
-        Log.w(TAG, "All Users:");
-        for (User user : returnedUsers) {
-            Log.w(TAG, "    User: " + user.toString());
+    
+    private void LoginUser() {
+        String userEmail = getInputText(R.id.emailEdit);
+        String userPass = getInputText(R.id.passEdit);
+        if (userEmail.matches("")) {
+            Toast.makeText(LoginActivity.this, R.string.email_empty_login, Toast.LENGTH_SHORT).show();
+        } else if (userPass.matches("")) {
+            Toast.makeText(LoginActivity.this, R.string.password_empty_login, Toast.LENGTH_SHORT).show();
+        } else {
+            user.setEmail(userEmail);
+            user.setPassword(userPass);
+            String userString = user.toString();
+            ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
+            Call<Void> caller = proxy.login(user);
+            ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userEmail, true));
         }
     }
+
+    private void logIn(Void returnedNothing, String userEmail, boolean saveInfo) {
+        Toast.makeText(LoginActivity.this, "Successfully logged in", Toast.LENGTH_SHORT).show();
+        Call<User> caller = proxy.getUserByEmail(userEmail);
+        ProxyBuilder.callProxy(LoginActivity.this, caller, returnedUser -> getUserInfo(returnedUser, saveInfo));
+    }
+
+    private void logInAlreadySaved(Void returnedNothing) {
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void saveLogIn(String userString) {
+        Context context = LoginActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, userString);
+        editor.apply();
+    }
+
+    private String getInputText(int id){
+        EditText text = findViewById(id);
+        return text.getText().toString();
+    }
+
     private void onReceiveToken(String token) {
-        // Replace the current proxy with one that uses the token!
-        Log.w(TAG, "   --> NOW HAVE TOKEN: " + token);
         proxy = ProxyBuilder.getProxy(getString(R.string.apikey), token);
+    }
+
+
+    public void getUserInfo(User returnedUser, boolean saveInfo) {
+        user.setId(returnedUser.getId());
+        user.setName(returnedUser.getName());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setMonitorsUsers(returnedUser.getMonitorsUsers());
+        user.setMonitoredByUsers(returnedUser.getMonitoredByUsers());
+        if (saveInfo) {
+            saveLogIn(user.toString());
+        }
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
