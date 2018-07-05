@@ -47,10 +47,6 @@ public class LoginActivity extends AppCompatActivity {
             String email = extractFromStrings(userString, ", email='", "'");
             String password = extractFromStrings(userString, ", password='", "'");
             String name = extractFromStrings(userString, ", name='", "'");
-            user.setId(Long.valueOf(id));
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setName(name);
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
             Call<Void> caller = proxy.login(user);
             ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logInAlreadySaved(returnedNothing));
@@ -152,6 +148,10 @@ public class LoginActivity extends AppCompatActivity {
     public void getUserInfo(User returnedUser) {
         user.setId(returnedUser.getId());
         user.setName(returnedUser.getName());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setMonitorsUsers(returnedUser.getMonitorsUsers());
+        user.setMonitoredByUsers(returnedUser.getMonitoredByUsers());
         saveLogIn(user.toString());
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
         startActivity(intent);
