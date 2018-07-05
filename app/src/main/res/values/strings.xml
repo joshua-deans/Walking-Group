@@ -37,4 +37,5 @@
     <string name="add">+</string>
     <string name="add_user_button">MONITOR</string>
     <string name="remove_user_alert">Are you sure?</string>
+    <string name="remove_group">REMOVE GROUP</string>
 </resources>
