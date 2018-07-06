@@ -25,7 +25,7 @@
         <activity android:name=".app.ManageMonitoring" />
         <activity android:name=".app.DashboardActivity" />
         <activity android:name=".app.AddMonitoringActivity" />
-        <activity android:name=".app.CreateGroup">
+        <activity android:name=".app.RemoveGroup">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

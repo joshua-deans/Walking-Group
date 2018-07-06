@@ -10,9 +10,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 
 public class CreateGroup extends AppCompatActivity {
-    private WGServerProxy proxy;
-    User user = new User();
-    long userId = user.getId();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
