@@ -1,16 +1,17 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public class ManageMonitoring extends AppCompatActivity {
     public static final int MASSAGE_CODE = 100;
     private WGServerProxy proxy;
     private User user;
+    private List<User> monitorsUser = new ArrayList<>();
+    private List<User> monitoredByUser = new ArrayList<>();
 
     public static Intent makeIntent (Context context){
         return new Intent (context, ManageMonitoring.class);
@@ -36,13 +39,12 @@ public class ManageMonitoring extends AppCompatActivity {
         setContentView(R.layout.activity_manage_monitoring);
         user = User.getInstance();
         setUpAddMonitoringButton();
-     //   getMonitoringUsers();
-     //   getMonitoredUsers();
-        Toast.makeText(ManageMonitoring.this, "" + user.getName()
-        ,Toast.LENGTH_SHORT).show();
-
+        getApiKey();
+        populateMonitorsUser();
+        populateMonitorsListView();
+        populateMonitoredByUsers();
+        populateMonitoredByListView();
     }
-
 
     private void setUpAddMonitoringButton() {
         Button addMonitoring = findViewById(R.id.add_monitoring_btn);
@@ -56,96 +58,116 @@ public class ManageMonitoring extends AppCompatActivity {
         });
     }
 
-    /*
-    private void getMonitoringUsers() {
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        // Token is not getting properly
+        proxy = ProxyBuilder.getProxy(apiKey,  LoginActivity.getLogInToken(ManageMonitoring.this));
+    }
+
+    private void populateMonitorsUser() {
         Call<List<User>> userCaller = proxy.getMonitorsUsers(user.getId());
-        List<User> allUser = new ArrayList<>();
         ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
                 returnedUsers -> { // Returns in the Call <parameter>
-                    allUser.addAll(returnedUsers);
+                    monitorsUser.addAll(returnedUsers);
                 });
-        generateMonitoringUsers(allUser);
     }
 
-    private void generateMonitoringUsers(List<User> allUser) {
-        if(allUser.size() == 0) {
-            // handle the issue
-            TextView emptyText1 = findViewById(R.id.empty_text1);
-            emptyText1.setText("You are not monitoring anyone");
-        }
-
-        for(User u:allUser) {
-            // u have to insert into ur list
-            populateMonitoringListView();
-        }
+    private void populateMonitoredByUsers() {
+        Call<List<User>> userCaller = proxy.getMonitoredByUsers(user.getId());
+        ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
+                returnedUsers -> { // Returns in the Call <parameter>
+                    monitoredByUser.addAll(returnedUsers);
+                });
     }
 
-    private void populateMonitoringListView() {
-        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this,
-                R.layout.monitoring_layout);
+    private void populateMonitorsListView() {
+        ArrayAdapter<User> adapter = new MyListMonitors();
         ListView monitoringList = findViewById(R.id.monitoring_listview);
-
-        monitoringList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //set intent for adding monitored user to other groups
-            }
-        });
-
-        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                MessageFragment dialog = new MessageFragment();
-//                dialog.show(manager, "MessageDialog");        //needs to implement removing users
-
-                return true;
-            }
-        });
+        monitoringList.setAdapter(adapter);
+                new ArrayAdapter<>(this,
+                R.layout.monitoring_layout);
     }
 
-
-    private void getMonitoredUsers() {
-        Call<List<User>> caller = proxy.getMonitoredByUsers(user.getId());
-        ArrayList<User>allUser = (ArrayList<User>) caller;
-        ProxyBuilder.callProxy(ManageMonitoring.this, caller,
-                returnedCaller -> generateMonitoredUsers(allUser));
-    }
-
-    private void generateMonitoredUsers(ArrayList<User> allUser) {
-        if(allUser.size() == 0) {
-            TextView emptyText2 = findViewById(R.id.empty_text2);
-            emptyText2.setText("No one is monitoring you");
-        }
-
-        for(User u:allUser) {
-            PopulateMonitoredListView();
-        }
-    }
-
-    private void PopulateMonitoredListView() {
-        ArrayAdapter<ArrayList<User>> adapter = new ArrayAdapter<>(this,
+    private void populateMonitoredByListView() {
+        ArrayAdapter<User> adapter = new MyListMonitoredBy();
+        ListView monitoringList = findViewById(R.id.monitored_listview);
+        monitoringList.setAdapter(adapter);
+        new ArrayAdapter<>(this,
                 R.layout.monitored_layout);
-        ListView monitoredList = findViewById(R.id.monitored_listview);
-        monitoredList.setAdapter(adapter);
-
-        monitoredList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //set intent for adding monitored user to other groups
-            }
-        });
-        monitoredList.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                MessageFragment dialog = new MessageFragment();
-//                dialog.show(manager, "MessageDialog");        //needs to implement removing users
-
-                return true;
-            }
-        });
     }
-    */
+
+    private class MyListMonitors extends ArrayAdapter<User>{
+        public MyListMonitors(){
+            super(ManageMonitoring.this, R.layout.monitoring_layout
+            , monitorsUser);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if(convertView == null){
+                itemView = getLayoutInflater().inflate(R.layout.monitoring_layout,
+                        parent,
+                        false);
+            }
+
+            User currentUser;
+
+            // Find the current User
+            if(monitorsUser.isEmpty()){
+                currentUser = new User();
+                currentUser.setName("No one is being monitored.");
+                currentUser.setEmail(" ");
+            }
+            else {
+                currentUser = monitorsUser.get(position);
+            }
+            TextView nameText = (TextView) itemView.findViewById(R.id.monitoring_name_txtview);
+            nameText.setText(currentUser.getName());
+
+            TextView emailText = (TextView) itemView.findViewById(R.id.monitoring_email_txtview);
+            emailText.setText(currentUser.getEmail());
+
+            return itemView;
+        }
+    }
+
+    private class MyListMonitoredBy extends ArrayAdapter<User> {
+        public MyListMonitoredBy(){
+            super(ManageMonitoring.this, R.layout.monitored_layout
+                    , monitoredByUser);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if(convertView == null){
+                itemView = getLayoutInflater().inflate(R.layout.monitoring_layout,
+                        parent,
+                        false);
+            }
+
+            User currentUser;
+
+            // Find the current User
+            if(monitoredByUser.isEmpty()){
+                currentUser = new User();
+                currentUser.setName("No one is monitoring you.");
+                currentUser.setEmail(" ");
+            }
+            else {
+                currentUser = monitorsUser.get(position);
+            }
+            TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitedByName);
+            nameText.setText(currentUser.getName());
+
+            TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitedByEmail);
+            emailText.setText(currentUser.getEmail());
+
+            return itemView;
+        }
+    }
 
 }
