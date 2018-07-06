@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
     public static final String LOG_IN_SAVE_TOKEN = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Token";
     private WGServerProxy proxy;
-
     private User user = User.getInstance();
 
     @Override
@@ -153,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString(LOG_IN_SAVE_TOKEN, token);
         editor.apply();
     }
-
 
     public void getUserInfo(User returnedUser, boolean saveInfo) {
         user.setId(returnedUser.getId());

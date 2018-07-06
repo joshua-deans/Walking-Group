@@ -2,6 +2,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -65,11 +66,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         }
     }
-    
+
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
-        proxy = ProxyBuilder.getProxy(apiKey,null);
-
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     // When clicked, a new user will create
@@ -155,5 +156,13 @@ public class SignUpActivity extends AppCompatActivity {
                     R.string.no_success_sign_up,
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String getToken() {
+        Context context = SignUpActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
     }
 }
