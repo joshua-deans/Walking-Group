@@ -45,6 +45,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Creates action bar buttons
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_dashboard, menu);
         return true;
@@ -52,9 +53,9 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Click listener for action bar
         switch (item.getItemId()) {
             case R.id.logOutButton:
-                // TODO: Implement log out
                 Toast.makeText(DashboardActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 logUserOut();
                 return true;
@@ -96,8 +97,9 @@ public class DashboardActivity extends AppCompatActivity {
         monitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add monitoring
-                Toast.makeText(DashboardActivity.this, "Monitoring is not ready yet", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(DashboardActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
