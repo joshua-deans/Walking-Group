@@ -50,7 +50,8 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = AddMonitoringActivity.makeIntent(ManageMonitoring.this);
-                startActivityForResult(intent, MASSAGE_CODE);
+                //startActivityForResult(intent, MASSAGE_CODE);
+                startActivity(intent);
             }
         });
     }

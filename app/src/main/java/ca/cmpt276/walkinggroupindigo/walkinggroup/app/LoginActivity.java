@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
     public static final String LOG_IN_SAVE_TOKEN = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Token";
     private WGServerProxy proxy;
-
+    private static String myToken;
     private User user = User.getInstance();
 
     @Override
@@ -146,12 +146,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveToken(String token) {
+        LoginActivity.myToken = token;
         Context context = LoginActivity.this;
         SharedPreferences sharedPref = context.getSharedPreferences(
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(LOG_IN_SAVE_TOKEN, token);
         editor.apply();
+    }
+
+    // Still does not Work well
+    static public String getLogInToken(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(LOG_IN_KEY, Context.MODE_PRIVATE);
+        return prefs.getString(LOG_IN_SAVE_TOKEN, LoginActivity.myToken);
     }
 
 

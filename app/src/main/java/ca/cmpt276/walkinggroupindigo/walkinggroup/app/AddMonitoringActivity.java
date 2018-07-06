@@ -31,7 +31,14 @@ public class AddMonitoringActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_monitoring);
         user = User.getInstance();
+        getApiKey();
         setUpMonitorButton();
+    }
+
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        // Token is not getting properly
+        proxy = ProxyBuilder.getProxy(apiKey,  LoginActivity.getLogInToken(AddMonitoringActivity.this));
     }
 
     private void setUpMonitorButton() {
@@ -95,10 +102,6 @@ public class AddMonitoringActivity extends AppCompatActivity {
         User monitor = monitors.get(0);
         Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(user.getId(), monitor);
         ProxyBuilder.callProxy(AddMonitoringActivity.this,
-               monitorsCaller, returnMonitors->{
-            // In here we need to do view or add or join (child) into
-            // a walking group -> missing map part
-           // basically we got the user who we want to monitor already just need to monitor on the map view
-                } );
+               monitorsCaller, returnMonitors->{} );
     }
 }

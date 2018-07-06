@@ -69,7 +69,6 @@ public class SignUpActivity extends AppCompatActivity {
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
         proxy = ProxyBuilder.getProxy(apiKey,null);
-
     }
 
     // When clicked, a new user will create
