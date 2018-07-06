@@ -6,10 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Group extends IdItemBase{
     private String groupDescription;
     private String locationName;
+    // The latitude of the starting location
+    private double startLatitude;
+    // The latitude of the starting location
+    private double startLongitude;
     // The latitude of the final location
-    private double latitude;
+    private double destLatitude;
     // The latitude of the final location
-    private double longitude;
+    private double destLongitude;
     private User leader;
 
     public String getGroupDescription() {
@@ -20,20 +24,20 @@ public class Group extends IdItemBase{
         this.groupDescription = groupDescription;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public double getDestLatitude() {
+        return destLatitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setDestLatitude(double latitude) {
+        this.destLatitude = latitude;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getDestLongitude() {
+        return destLongitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setDestLongitude(double longitude) {
+        this.destLongitude = longitude;
     }
 
     public User getLeader() {
@@ -50,5 +54,21 @@ public class Group extends IdItemBase{
 
     public void setLocationName(String locationName) {
         this.locationName = locationName;
+    }
+
+    public double getStartLatitude() {
+        return startLatitude;
+    }
+
+    public void setStartLatitude(double startLatitude) {
+        this.startLatitude = startLatitude;
+    }
+
+    public double getStartLongitude() {
+        return startLongitude;
+    }
+
+    public void setStartLongitude(double startLongitude) {
+        this.startLongitude = startLongitude;
     }
 }
