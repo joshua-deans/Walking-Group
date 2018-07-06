@@ -101,7 +101,7 @@ public class CreateGroup extends AppCompatActivity {
                     Toast.makeText(CreateGroup.this, "No destination selected", Toast.LENGTH_SHORT).show();
                 } else {
                     currentGroup.setGroupDescription(groupDescription);
-                    currentGroup.setLeaderUser(mUser);
+                    currentGroup.setLeader(mUser);
                     currentGroup.setStartLatitude(startLatLng.latitude);
                     currentGroup.setStartLongitude(startLatLng.longitude);
                     currentGroup.setDestLatitude(destLatLng.latitude);

@@ -10,7 +10,7 @@ public class Group extends IdItemBase{
     private double[] routeLatArray;
     // The latitude of the starting location
     private double[] routeLngArray;
-    private User leaderUser;
+    private User leader;
 
     public Group() {
         routeLatArray = new double[2];
@@ -82,11 +82,11 @@ public class Group extends IdItemBase{
         this.routeLngArray = routeLngArray;
     }
 
-    public User getLeaderUser() {
-        return leaderUser;
+    public User getLeader() {
+        return leader;
     }
 
-    public void setLeaderUser(User leaderUser) {
-        this.leaderUser = leaderUser;
+    public void setLeader(User leader) {
+        this.leader = leader;
     }
 }

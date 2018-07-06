@@ -101,8 +101,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void placeGroupMarkers(List<Group> groupList) {
         for (Group group : groupList) {
             // TODO: add markers for the location of every group
-            mMap.addMarker(new MarkerOptions().position(new LatLng(group.getDestLatitude(), group.getDestLongitude()))
-                    .title(group.getGroupDescription()));
+            if (group.getRouteLatArray().length > 0 && group.getRouteLngArray().length > 0) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(group.getDestLatitude(), group.getDestLongitude()))
+                        .title(group.getGroupDescription()));
+            }
             return;
         }
     }
