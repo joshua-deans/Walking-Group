@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -52,6 +53,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
+
+    public static Intent makeIntent (Context context){
+        return new Intent (context, MapsActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

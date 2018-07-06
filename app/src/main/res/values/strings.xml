@@ -37,4 +37,5 @@
     <string name="add">+</string>
     <string name="add_user_button">MONITOR</string>
     <string name="remove_user_alert">Are you sure?</string>
+    <string name="email_not_found"> Email is not found.</string>
 </resources>

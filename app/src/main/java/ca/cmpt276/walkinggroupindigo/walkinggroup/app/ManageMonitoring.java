@@ -1,6 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -20,20 +23,26 @@ import retrofit2.Call;
 public class ManageMonitoring extends AppCompatActivity {
 
     public static final int MASSAGE_CODE = 100;
-
     private WGServerProxy proxy;
-    User user = new User();
-    long userId = user.getId();
+    private User user;
+
+    public static Intent makeIntent (Context context){
+        return new Intent (context, ManageMonitoring.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
+        user = User.getInstance();
         setUpAddMonitoringButton();
-        getMonitoringUsers();
-        getMonitoredUsers();
+     //   getMonitoringUsers();
+     //   getMonitoredUsers();
+        Toast.makeText(ManageMonitoring.this, "" + user.getName()
+        ,Toast.LENGTH_SHORT).show();
 
     }
+
 
     private void setUpAddMonitoringButton() {
         Button addMonitoring = findViewById(R.id.add_monitoring_btn);
@@ -46,9 +55,9 @@ public class ManageMonitoring extends AppCompatActivity {
         });
     }
 
-
+    /*
     private void getMonitoringUsers() {
-        Call<List<User>> userCaller = proxy.getMonitorsUsers(userId);
+        Call<List<User>> userCaller = proxy.getMonitorsUsers(user.getId());
         List<User> allUser = new ArrayList<>();
         ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
                 returnedUsers -> { // Returns in the Call <parameter>
@@ -96,7 +105,7 @@ public class ManageMonitoring extends AppCompatActivity {
 
 
     private void getMonitoredUsers() {
-        Call<List<User>> caller = proxy.getMonitoredByUsers(userId);
+        Call<List<User>> caller = proxy.getMonitoredByUsers(user.getId());
         ArrayList<User>allUser = (ArrayList<User>) caller;
         ProxyBuilder.callProxy(ManageMonitoring.this, caller,
                 returnedCaller -> generateMonitoredUsers(allUser));
@@ -136,6 +145,6 @@ public class ManageMonitoring extends AppCompatActivity {
             }
         });
     }
-
+    */
 
 }
