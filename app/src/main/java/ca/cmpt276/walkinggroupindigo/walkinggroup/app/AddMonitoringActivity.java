@@ -57,6 +57,7 @@ public class AddMonitoringActivity extends AppCompatActivity {
                 else {
                     if(userExists(address)){
                         addMonitorUser(address);
+                        finish();
                     }
                     else{
                         Toast.makeText(AddMonitoringActivity.this,

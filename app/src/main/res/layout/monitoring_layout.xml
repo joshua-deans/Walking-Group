@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/monitoring_name_txtview"
+        android:id="@+id/txtMonitoringName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView"
-        android:textSize="18sp" />
+        android:layout_height="252dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Name"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <TextView
-        android:id="@+id/monitoring_email_txtview"
+        android:id="@+id/txtMonitoringEmail"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_weight="1"
-        android:text="TextView"
-        android:textSize="18sp" />
-</LinearLayout>
+        android:layout_height="259dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:text="E-mail"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textSize="14sp" />
+</RelativeLayout>

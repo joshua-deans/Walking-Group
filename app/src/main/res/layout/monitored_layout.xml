@@ -5,15 +5,22 @@
 
     <TextView
         android:id="@+id/txtMonitedByName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="252dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:text="Name"
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <TextView
         android:id="@+id/txtMonitedByEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+        android:layout_width="match_parent"
+        android:layout_height="259dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:text="E-mail"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textSize="14sp" />
 </RelativeLayout>

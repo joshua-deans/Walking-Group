@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -84,8 +83,16 @@ public class ManageMonitoring extends AppCompatActivity {
         ArrayAdapter<User> adapter = new MyListMonitors();
         ListView monitoringList = findViewById(R.id.monitoring_listview);
         monitoringList.setAdapter(adapter);
-                new ArrayAdapter<>(this,
+        new ArrayAdapter<>(this,
                 R.layout.monitoring_layout);
+        monitoringList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = MonitoringUsersActivity.makeIntent(ManageMonitoring.this);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void populateMonitoredByListView() {
