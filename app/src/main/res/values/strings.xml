@@ -37,5 +37,14 @@
     <string name="add">+</string>
     <string name="add_user_button">MONITOR</string>
     <string name="remove_user_alert">Are you sure?</string>
-    <string name="email_not_found"> Email is not found.</string>
+    <string name="remove_group">REMOVE GROUP</string>
+    <string name="ok">CONFIRM</string>
+    <string name="select_destination">Select Destination</string>
+    <string name="destination">Destination:</string>
+    <string name="select_starting_location">Select Starting Location</string>
+    <string name="starting_location">Starting Location:</string>
+    <string name="enter_group_name">Enter Group Name</string>
+    <string name="group_name">Group Name:</string>
+    <string name="add_group">Add Group</string>
+    <string name="create_group">Create Group</string>
 </resources>

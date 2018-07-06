@@ -86,9 +86,8 @@ public class DashboardActivity extends AppCompatActivity {
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add group
-                Toast.makeText(DashboardActivity.this, "Groups is not ready yet",
-                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(DashboardActivity.this, ManageGroups.class);
+                startActivity(intent);
             }
         });
     }
@@ -98,7 +97,7 @@ public class DashboardActivity extends AppCompatActivity {
         monitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ManageMonitoring.makeIntent(DashboardActivity.this);
+                Intent intent = new Intent(DashboardActivity.this, ManageMonitoring.class);
                 startActivity(intent);
                 finish();
             }
@@ -110,7 +109,7 @@ public class DashboardActivity extends AppCompatActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MapsActivity.makeIntent(DashboardActivity.this);
+                Intent intent = new Intent(DashboardActivity.this, MapsActivity.class);
                 startActivity(intent);
             }
         });
