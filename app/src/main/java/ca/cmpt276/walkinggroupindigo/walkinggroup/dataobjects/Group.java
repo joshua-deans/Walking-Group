@@ -7,14 +7,15 @@ public class Group extends IdItemBase{
     private String groupDescription;
     private String locationName;
     // The latitude of the starting location
-    private double startLatitude;
+    private double[] routeLatArray;
     // The latitude of the starting location
-    private double startLongitude;
-    // The latitude of the final location
-    private double destLatitude;
-    // The latitude of the final location
-    private double destLongitude;
-    private User leader;
+    private double[] routeLngArray;
+    private User leaderUser;
+
+    public Group() {
+        routeLatArray = new double[2];
+        routeLngArray = new double[2];
+    }
 
     public String getGroupDescription() {
         return groupDescription;
@@ -22,30 +23,6 @@ public class Group extends IdItemBase{
 
     public void setGroupDescription(String groupDescription) {
         this.groupDescription = groupDescription;
-    }
-
-    public double getDestLatitude() {
-        return destLatitude;
-    }
-
-    public void setDestLatitude(double latitude) {
-        this.destLatitude = latitude;
-    }
-
-    public double getDestLongitude() {
-        return destLongitude;
-    }
-
-    public void setDestLongitude(double longitude) {
-        this.destLongitude = longitude;
-    }
-
-    public User getLeader() {
-        return leader;
-    }
-
-    public void setLeader(User leader) {
-        this.leader = leader;
     }
 
     public String getLocationName() {
@@ -57,18 +34,59 @@ public class Group extends IdItemBase{
     }
 
     public double getStartLatitude() {
-        return startLatitude;
+        return routeLatArray[0];
     }
 
-    public void setStartLatitude(double startLatitude) {
-        this.startLatitude = startLatitude;
+    public void setStartLatitude(double startLat) {
+        routeLatArray[0] = startLat;
+    }
+
+    public double getDestLatitude() {
+        return routeLatArray[1];
+    }
+
+    public void setDestLatitude(double destLat) {
+        routeLatArray[1] = destLat;
     }
 
     public double getStartLongitude() {
-        return startLongitude;
+        return routeLngArray[0];
     }
 
-    public void setStartLongitude(double startLongitude) {
-        this.startLongitude = startLongitude;
+    public void setStartLongitude(double startLong) {
+        routeLngArray[0] = startLong;
+    }
+
+    public double getDestLongitude() {
+        return routeLngArray[1];
+    }
+
+    public void setDestLongitude(double destLong) {
+        routeLngArray[1] = destLong;
+    }
+
+
+    public double[] getRouteLatArray() {
+        return routeLatArray;
+    }
+
+    public void setRouteLatArray(double[] routeLatArray) {
+        this.routeLatArray = routeLatArray;
+    }
+
+    public double[] getRouteLngArray() {
+        return routeLngArray;
+    }
+
+    public void setRouteLngArray(double[] routeLngArray) {
+        this.routeLngArray = routeLngArray;
+    }
+
+    public User getLeaderUser() {
+        return leaderUser;
+    }
+
+    public void setLeaderUser(User leaderUser) {
+        this.leaderUser = leaderUser;
     }
 }

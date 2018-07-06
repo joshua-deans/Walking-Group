@@ -1,6 +1,8 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,22 +18,40 @@ import com.google.android.gms.maps.model.LatLng;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
+
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
 public class CreateGroup extends AppCompatActivity {
 
-    int START_REQUEST = 1;
-    int DEST_REQUEST = 2;
-    Group currentGroup;
-    LatLng startLatLng;
-    LatLng destLatLng;
+    private int START_REQUEST = 1;
+    private int DEST_REQUEST = 2;
+    private Group currentGroup;
+    private LatLng startLatLng;
+    private LatLng destLatLng;
+    private WGServerProxy proxy;
+    private User mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
+        getAPIKey();
         currentGroup = new Group();
+        mUser = User.getInstance();
         setUpDestination();
         setUpStartingLocation();
         setUpOK();
+    }
+
+    private void getAPIKey() {
+        String apiKey = getString(R.string.apikey);
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void setUpStartingLocation(){
@@ -80,11 +100,22 @@ public class CreateGroup extends AppCompatActivity {
                 } else if (destLatLng == null) {
                     Toast.makeText(CreateGroup.this, "No destination selected", Toast.LENGTH_SHORT).show();
                 } else {
-                    // TODO: add information to server
-                    finish();
+                    currentGroup.setGroupDescription(groupDescription);
+                    currentGroup.setLeaderUser(mUser);
+                    currentGroup.setStartLatitude(startLatLng.latitude);
+                    currentGroup.setStartLongitude(startLatLng.longitude);
+                    currentGroup.setDestLatitude(destLatLng.latitude);
+                    currentGroup.setDestLongitude(destLatLng.longitude);
+                    Call<Group> caller = proxy.createGroup(currentGroup);
+                    ProxyBuilder.callProxy(CreateGroup.this, caller, group -> onSuccess(group));
                 }
             }
         });
+    }
+
+    private void onSuccess(Group groupList) {
+        Toast.makeText(CreateGroup.this, "Group successfully added", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,6 +134,14 @@ public class CreateGroup extends AppCompatActivity {
                 destLatLng = place.getLatLng();
             }
         }
+    }
+
+    private String getToken() {
+        Context context = CreateGroup.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LOG_IN_SAVE_TOKEN, null);
+        return token;
     }
 }
 

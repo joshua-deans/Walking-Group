@@ -196,7 +196,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public String getToken() {
+    private String getToken() {
         Context context = MapsActivity.this;
         SharedPreferences sharedPref = context.getSharedPreferences(
                 LOG_IN_KEY, Context.MODE_PRIVATE);
