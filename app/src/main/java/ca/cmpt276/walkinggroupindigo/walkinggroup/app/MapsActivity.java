@@ -4,6 +4,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
@@ -41,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public static final int DEFAULT_ZOOM = 15;
     private GoogleMap mMap;
+    private User mUser;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     // Default location if permission is not granted
     private final LatLng mDefaultLocation = new LatLng(49.2827, -123.1207);
@@ -53,6 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        mUser = User.getInstance();
         getAPIKey();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -60,6 +65,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findGroupMarkers();
+    }
+
+    private void createAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+        builder.setMessage("Choose who you would like to be in this group: ")
+                .setTitle("Join this Group?");
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void getAPIKey() {
@@ -102,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                // TODO: Set up click listener that displays an AlertDialog to join group.
+                createAlertDialog();
                 return false;
             }
         });
