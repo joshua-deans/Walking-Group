@@ -18,7 +18,7 @@
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
     <string name="view_map">View Map</string>
     <string name="manage_monitoring">Manage Monitoring</string>
-    <string name="manage_group">Manage Group</string>
+    <string name="manage_group">Manage Groups</string>
     <string name="please_enter_name"> Please enter your name </string>
     <string name="please_enter_email"> Please enter your email address </string>
     <string name="password_empty"> Please enter valid password.</string>
