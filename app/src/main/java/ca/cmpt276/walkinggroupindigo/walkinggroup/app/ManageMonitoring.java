@@ -2,6 +2,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -60,8 +61,8 @@ public class ManageMonitoring extends AppCompatActivity {
 
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
-        // Token is not getting properly
-        proxy = ProxyBuilder.getProxy(apiKey,  LoginActivity.getLogInToken(ManageMonitoring.this));
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void populateMonitorsUser() {
@@ -168,6 +169,14 @@ public class ManageMonitoring extends AppCompatActivity {
 
             return itemView;
         }
+    }
+
+    public String getToken() {
+        Context context = ManageMonitoring.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
     }
 
 }

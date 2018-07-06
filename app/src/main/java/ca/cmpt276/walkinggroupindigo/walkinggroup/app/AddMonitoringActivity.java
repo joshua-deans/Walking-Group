@@ -2,6 +2,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -37,8 +38,8 @@ public class AddMonitoringActivity extends AppCompatActivity {
 
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
-        // Token is not getting properly
-        proxy = ProxyBuilder.getProxy(apiKey,  LoginActivity.getLogInToken(AddMonitoringActivity.this));
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void setUpMonitorButton() {
@@ -70,7 +71,7 @@ public class AddMonitoringActivity extends AppCompatActivity {
 
     }
 
-    // Check whether corresponding email address exists
+    // Check whether corresponding email address exists in the system
     private boolean userExists(String address) {
         Call<List<User>> usersCaller = proxy.getUsers();
         List<User> existingUsers = new ArrayList<>();
@@ -103,5 +104,14 @@ public class AddMonitoringActivity extends AppCompatActivity {
         Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(user.getId(), monitor);
         ProxyBuilder.callProxy(AddMonitoringActivity.this,
                monitorsCaller, returnMonitors->{} );
+        finish();
+    }
+
+    public String getToken() {
+        Context context = AddMonitoringActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
     }
 }
