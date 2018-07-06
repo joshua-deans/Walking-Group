@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group extends IdItemBase{
     private String groupDescription;
+    private String locationName;
     // The latitude of the final location
     private double latitude;
     // The latitude of the final location
@@ -41,5 +42,13 @@ public class Group extends IdItemBase{
 
     public void setLeader(User leader) {
         this.leader = leader;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 }
