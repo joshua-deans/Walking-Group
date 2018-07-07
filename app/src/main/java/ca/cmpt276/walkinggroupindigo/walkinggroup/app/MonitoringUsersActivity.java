@@ -41,8 +41,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-        populateMonitorsUserGroups();
-        populateMonitorsUserGroupsListView();
+//        populateMonitorsUserGroups();                                                              //WILL IMPLEMENT SOON
+//        populateMonitorsUserGroupsListView();
     }
 
     private void getApiKey() {
@@ -65,8 +65,9 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    if(groupExists(address)){
-                        addMonitorsUserGroup(address);
+                    Long numAddress = Long.parseLong(address);
+                    if(groupExists(numAddress)){
+                        addMonitorsUserGroup(numAddress);
                         return;
                     }
                     else {
@@ -80,7 +81,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         });
     }
 
-    private boolean groupExists(String address) {
+    private boolean groupExists(Long address) {
         Call<List<Group>> groupCaller = proxy.getGroups();
         List<Group> existingGroups = new ArrayList<>();
 
@@ -90,9 +91,9 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         return isFound(existingGroups, address);
     }
 
-    private boolean isFound(List<Group> groups, String address) {
+    private boolean isFound(List<Group> groups, Long address) {
         for (Group aGroup : groups) {
-            if (aGroup.getId().equals(address)) {                                                               //LONG AND STRING CONFLICT
+            if (aGroup.getId().equals(address)) {
                 return true;
             }
         }
@@ -107,44 +108,33 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     monitorsUserGroup.add(returnedGroup);
                 });
         Group monitorUserGroup = monitorsUserGroup.get(0);
-        Call<List<Group>> monitorsUserGroupCaller = proxy.addGroupMember(group.getId(), monitorUserGroup);                     //GROUP CLASS
+        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(groupsId, user);             //GROUP CLASS
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
                 monitorsUserGroupCaller, returnMonitorsUserGroup -> {});
     }
 
-//    private void addMonitorUser(String emailAddress) {
-//        Call<User> userCall = proxy.getUserByEmail(emailAddress);
-//        List<User> monitors = new ArrayList<>();
-//        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-//                userCall, returnedUser->{
-//                    monitors.add(returnedUser);
-//                });
-//        User monitor = monitors.get(0);
-//        Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(user.getId(), monitor);
-//        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-//                monitorsCaller, returnMonitors->{} );
+//    private void populateMonitorsUserGroups() {
+//        Call<List<Group>> groupCaller = proxy.getGroups();
+//        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller,
+//                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));                   //RETURN GROUPS ISSUE
 //    }
+//
+//    private void populateMonitorsUserGroupsListView() {
+//        ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
+//        ListView groupsList = findViewById(R.id.monitor_user_groups_list);
+//        groupsList.setAdapter(adapter);
+//        new ArrayAdapter<>(this,
+//                R.layout.group_layout);
+//    }
+//
+//    private class MonitoringUsersGroupList extends ArrayAdapter<User>{
+//        public MonitoringUsersGroupList() {
+//            super (MonitoringUsersActivity.this, R.layout.group_layout
+//            ,monitorsUserGroupList );
+//        }
+//    }
+//
 
-    private void populateMonitorsUserGroups() {
-        Call<List<Group>> groupCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller,
-                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));                                           //RETURN GROUPS ISSUE
-    }
-
-    private void populateMonitorsUserGroupsListView() {
-        ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
-        ListView groupsList = findViewById(R.id.monitor_user_groups_list);
-        groupsList.setAdapter(adapter);
-        new ArrayAdapter<>(this,
-                R.layout.group_layout);
-    }
-
-    private class MonitoringUsersGroupList extends ArrayAdapter<User>{
-        public MonitoringUsersGroupList() {
-            super (MonitoringUsersActivity.this, R.layout.group_layout
-            ,monitorsUserGroupList );
-        }
-    }
 
     public String getToken() {
         Context context = MonitoringUsersActivity.this;
