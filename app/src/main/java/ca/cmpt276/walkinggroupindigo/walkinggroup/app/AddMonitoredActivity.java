@@ -3,14 +3,15 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.util.ArrayList;
+
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -34,7 +35,6 @@ public class AddMonitoredActivity extends AppCompatActivity {
         getApiKey();
         setUpGetMonitoredButton();
     }
-//
 
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
@@ -49,55 +49,52 @@ public class AddMonitoredActivity extends AppCompatActivity {
             public void onClick(View view) {
                 EditText findUserEditText = findViewById(R.id.find_user_edit_txt2);
                 String address = findUserEditText.getText().toString();
-                if (address == null) {
+                if (address.matches("")) {
                     Toast.makeText(AddMonitoredActivity.this,
                             "" + R.string.email_empty_login,
                             Toast.LENGTH_SHORT).show();
-                    return;
                 }
                 else {
-                    if (userExists(address)) {
-                        addMonitoredUser(address);
-                        finish();
-                    }
-                    else {
-                        Toast.makeText(AddMonitoredActivity.this,
-                                "" + R.string.email_not_found,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    findUser(address);
                 }
             }
         });
     }
 
-    private boolean userExists(String address) {
+    private void findUser(String address) {
         Call<List<User>> usersCaller = proxy.getUsers();
-        List<User> existingUsers = new ArrayList<>();
 
         ProxyBuilder.callProxy(AddMonitoredActivity.this, usersCaller,
-                returnedUsers -> existingUsers.addAll(returnedUsers));
-        return isFound(existingUsers, address);
+                returnedUsers -> checkIfFound(returnedUsers, address));
     }
 
-    private boolean isFound(List<User> users, String address) {
-        for (User aUser : users) {
+    private void checkIfFound(List<User> returnedUsers, String address) {
+        boolean userFound = false;
+        for (User aUser : returnedUsers) {
             if (aUser.getEmail().equalsIgnoreCase(address)) {
-                return true;
+                userFound = true;
+                addMonitoredUser(address);
             }
         }
-        return false;
+        if (!userFound) {
+            Toast.makeText(AddMonitoredActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addMonitoredUser(String address) {
         Call<User> userCall = proxy.getUserByEmail(address);
-        List<User> getMonitored = new ArrayList<>();
         ProxyBuilder.callProxy(AddMonitoredActivity.this,
-                userCall, returnedUser -> getMonitored.add(returnedUser));
-        User monitored = getMonitored.get(0);
-        Call<List<User>> monitoredByUsers = proxy.addToMonitoredByUsers(user.getId(), monitored);
+                userCall, returnedUser -> findUserByEmail(returnedUser));
+    }
+
+    private void findUserByEmail(User returnedUser) {
+        Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(returnedUser.getId(), user);
         ProxyBuilder.callProxy(AddMonitoredActivity.this,
-                monitoredByUsers, returnMonitored -> {});
+                monitorsCaller, returnMonitors -> successMonitored(returnMonitors));
+    }
+
+    private void successMonitored(List<User> returnMonitors) {
+        Toast.makeText(AddMonitoredActivity.this, "Monitoring successful", Toast.LENGTH_SHORT).show();
         finish();
     }
 
