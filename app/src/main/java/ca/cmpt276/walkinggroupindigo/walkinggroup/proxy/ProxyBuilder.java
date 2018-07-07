@@ -10,6 +10,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,6 +79,26 @@ public class ProxyBuilder {
         void callback(T ans);
     };
 
+    static class SimpleErrorCallback implements SimpleCallback<retrofit2.Response> {
+        Context context;
+        SimpleErrorCallback(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void callback(retrofit2.Response ans) {
+
+            String message;
+            try {
+                message = "CALL TO SERVER FAILED:\n" + ans.errorBody().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                message = "Unable to decode response (body or error's body).";
+            }
+            showFailure(context, message);
+        }
+    }
+
     /**
      * Simplify the calling of the "Call"
      * - Handle error checking in one place and log on failure.
@@ -89,6 +110,13 @@ public class ProxyBuilder {
     public static <T extends Object> void callProxy(Call<T> caller, final SimpleCallback<T> callback) {
         callProxy(null, caller, callback);
     }
+
+
+    public static <T extends Object> void callProxy(final Context context,
+                                                    Call<T> caller,
+                                                    final SimpleCallback<T> callback) {
+        callProxy(context, caller, callback, new SimpleErrorCallback(context));
+    }
     /**
      * Simplify the calling of the "Call"
      * - Handle error checking in one place and put up toast & log on failure.
@@ -99,7 +127,9 @@ public class ProxyBuilder {
      * @param <T>       The type of data that Call object is expected to fetch
      */
     public static <T extends Object> void callProxy(
-            final Context context, Call<T> caller, final SimpleCallback<T> callback) {
+            final Context context, Call<T> caller,
+            final SimpleCallback<T> callback,
+            final SimpleCallback<retrofit2.Response> errorCallback) {
         caller.enqueue(new Callback<T>() {
             @Override
             public void onResponse(Call<T> call, retrofit2.Response<T> response) {
@@ -122,29 +152,25 @@ public class ProxyBuilder {
                         callback.callback(body);
                     }
                 } else {
-                    String message;
-                    try {
-                        message = "CALL TO SERVER FAILED:\n" + response.errorBody().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        message = "Unable to decode response (body or error's body).";
+                    if (errorCallback != null) {
+                        errorCallback.callback(response);
                     }
-                    showFailure(message);
                 }
             }
 
             @Override
             public void onFailure(Call<T> call, Throwable t) {
                 String message = "Error communicating with server: " + t.getMessage();
-                showFailure(message);
-            }
-            private void showFailure(String message) {
-                Log.e("ProxyBuilder", message);
-                if (context != null) {
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-                }
+                showFailure(context, message);
             }
         });
+    }
+
+    private static void showFailure(Context context, String message) {
+        Log.e("ProxyBuilder", message);
+        if (context != null) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }
     }
 
     // --------------------------------

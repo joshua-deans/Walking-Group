@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +25,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /*
@@ -115,47 +120,27 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Insert the successfully created user into the server
     private void insertIntoServer(User user) {
-
-        Call<List<User>> usersCaller = proxy.getUsers();
-        List<User> existingUsers = new ArrayList<>();
-
-        ProxyBuilder.callProxy(SignUpActivity.this, usersCaller, returnedUsers -> {
-            existingUsers.addAll(returnedUsers);
-        });
-
-        if(isDuplicated(existingUsers, user)) {
-            Toast.makeText(SignUpActivity.this,
-                    R.string.duplicated_email,
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
         Call<User> caller = proxy.createUser(user);
-        ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> successfulSignUp(returnedUser));
-            // Need to go to Account monitor activity
-//        }
-
+        ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> successfulSignUp(returnedUser),
+                responseBody -> handleUserCreateError(responseBody));
     }
 
-    private boolean isDuplicated(List<User> users, User user) {
-        for (User aUser : users) {
-            if (aUser.getEmail().equalsIgnoreCase(user.getEmail())) {
-                return true;
-            }
+    private void handleUserCreateError(retrofit2.Response response) {
+        try {
+            String responseBody = response.errorBody().string();
+            JSONObject json = new JSONObject(responseBody);
+            Toast.makeText(SignUpActivity.this,
+                    json.get("message").toString(),
+                    Toast.LENGTH_SHORT).show();
+        } catch (IOException | JSONException e) {
+            Toast.makeText(SignUpActivity.this,
+                    "Unable to create a user",
+                    Toast.LENGTH_SHORT).show();
         }
-        return false;
     }
 
     private void successfulSignUp(User returnedUser) {
-        if (returnedUser != null) {
-            Toast.makeText(SignUpActivity.this,
-                    R.string.success_sign_up,
-                    Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Toast.makeText(SignUpActivity.this,
-                    R.string.no_success_sign_up,
-                    Toast.LENGTH_SHORT).show();
-        }
+        finish();
     }
 
     public String getToken() {

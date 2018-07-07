@@ -10,6 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -17,11 +22,13 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class AddMonitoringActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
+    private String address;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, AddMonitoringActivity.class);
