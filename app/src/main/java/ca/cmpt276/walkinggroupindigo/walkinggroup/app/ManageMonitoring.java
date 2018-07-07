@@ -94,6 +94,13 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                return true;
+            }
+        });
 
     }
 

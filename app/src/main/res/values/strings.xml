@@ -36,6 +36,7 @@
     <string name="logged_out">Logged Out</string>
     <string name="add_monitoring_btn">ADD</string>
     <string name="add">+</string>
+    <string name="remove_user_txtview">You are about to remove this user from your monitor list!</string>
     <string name="add_user_button">MONITOR</string>
     <string name="remove_user_alert">Are you sure?</string>
     <string name="email_not_found"> Email is not found.</string>
