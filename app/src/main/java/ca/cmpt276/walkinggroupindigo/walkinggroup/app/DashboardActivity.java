@@ -30,8 +30,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         mUser = User.getInstance();
 
-        Toast.makeText(DashboardActivity.this, mUser.toString(), Toast.LENGTH_LONG).show();
-
         createGreeting();
         setupMapButton();
         setupMonitorButton();
