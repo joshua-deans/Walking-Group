@@ -110,6 +110,14 @@ public class ManageGroups extends AppCompatActivity {
                         exitGroup(groupId);
                     }
                 });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             }
         });
