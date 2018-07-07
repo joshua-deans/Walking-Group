@@ -34,6 +34,7 @@ public class AddMonitoredActivity extends AppCompatActivity {
         getApiKey();
         setUpGetMonitoredButton();
     }
+//
 
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
