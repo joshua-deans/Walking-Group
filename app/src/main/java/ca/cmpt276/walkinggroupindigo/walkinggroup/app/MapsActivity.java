@@ -110,7 +110,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(new LatLng(group.getDestLatitude(), group.getDestLongitude()))
                         .title(group.getGroupDescription()));
             }
-            return;
         }
     }
 
