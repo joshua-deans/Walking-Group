@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +22,13 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class AddMonitoringActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
+    private String address;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, AddMonitoringActivity.class);
@@ -48,7 +54,7 @@ public class AddMonitoringActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText findUserEditText = findViewById(R.id.find_user_edit_txt);
-                String address = findUserEditText.getText().toString();
+                address = findUserEditText.getText().toString();
                 if (address == null) {
                     Toast.makeText(AddMonitoringActivity.this,
                             "" + R.string.email_empty_login,
@@ -56,15 +62,7 @@ public class AddMonitoringActivity extends AppCompatActivity {
                     return;
                 }
                 else {
-                    if(userExists(address)){
-                        addMonitorUser(address);
-                    }
-                    else{
-                        Toast.makeText(AddMonitoringActivity.this,
-                                "" + R.string.email_not_found,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    addMonitorUser();
                 }
             }
         });
@@ -72,39 +70,40 @@ public class AddMonitoringActivity extends AppCompatActivity {
     }
 
     // Check whether corresponding email address exists in the system
-    private boolean userExists(String address) {
+    private void addMonitorUser() {
         Call<List<User>> usersCaller = proxy.getUsers();
-        List<User> existingUsers = new ArrayList<>();
-
-        ProxyBuilder.callProxy(AddMonitoringActivity.this, usersCaller, returnedUsers -> {
-            existingUsers.addAll(returnedUsers);
-        });
-        return isFound(existingUsers, address);
+        ProxyBuilder.callProxy(AddMonitoringActivity.this, usersCaller, returnedUser -> successfulAdded(returnedUser),
+                responseBody -> handleUserCreateError(responseBody));
     }
 
-    // Return true if email address is found, otherwise false
-    private boolean isFound(List<User> users, String address) {
-        for (User aUser : users) {
-            if (aUser.getEmail().equalsIgnoreCase(address)) {
-                return true;
+    private void handleUserCreateError(retrofit2.Response response) {
+        try {
+            String responseBody = response.errorBody().string();
+            JSONObject json = new JSONObject(responseBody);
+            Toast.makeText(AddMonitoringActivity.this,
+                    json.get("message").toString(),
+                    Toast.LENGTH_SHORT).show();
+        } catch (IOException | JSONException e) {
+            Toast.makeText(AddMonitoringActivity.this,
+                    "Unable to add a user",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void successfulAdded(List<User> returnedUser) {
+        for(User aUser: returnedUser){
+            if(aUser.getEmail().equalsIgnoreCase(address)){
+                List<User> monitored = new ArrayList<>();
+                monitored.addAll(user.getMonitorsUsers());
+                monitored.add(aUser);
+                user.setMonitorsUsers(monitored);
+                finish();
             }
         }
-        return false;
-    }
-
-    // Adding the user into monitor sets
-    private void addMonitorUser(String emailAddress) {
-        Call<User> userCall = proxy.getUserByEmail(emailAddress);
-        List<User> monitors = new ArrayList<>();
-        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-                userCall, returnedUser->{
-            monitors.add(returnedUser);
-                });
-        User monitor = monitors.get(0);
-        Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(user.getId(), monitor);
-        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-               monitorsCaller, returnMonitors->{} );
-        finish();
+        Toast.makeText(AddMonitoringActivity.this,
+                "Unable to add a user: " + address
+                + " does NOT exists in the system",
+                Toast.LENGTH_SHORT).show();
     }
 
     public String getToken() {

@@ -123,9 +123,6 @@ public class SignUpActivity extends AppCompatActivity {
         Call<User> caller = proxy.createUser(user);
         ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> successfulSignUp(returnedUser),
                 responseBody -> handleUserCreateError(responseBody));
-            // Need to go to Account monitor activity
-//        }
-
     }
 
     private void handleUserCreateError(retrofit2.Response response) {
