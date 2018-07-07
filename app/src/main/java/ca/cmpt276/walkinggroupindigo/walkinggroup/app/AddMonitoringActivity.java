@@ -98,12 +98,13 @@ public class AddMonitoringActivity extends AppCompatActivity {
                 monitored.add(aUser);
                 user.setMonitorsUsers(monitored);
                 finish();
+                return;
             }
         }
         Toast.makeText(AddMonitoringActivity.this,
                 "Unable to add a user: " + address
                 + " does NOT exists in the system",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_LONG).show();
     }
 
     public String getToken() {
