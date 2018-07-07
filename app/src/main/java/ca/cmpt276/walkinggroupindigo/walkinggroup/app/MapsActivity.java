@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
+import java.util.Objects;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
@@ -72,14 +73,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         findGroupMarkers();
     }
 
-    private void createAlertDialog() {
+    private void createAlertDialog(Marker marker) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-        builder.setMessage("Choose who you would like to be in this group: ")
-                .setTitle("Join this Group?");
+        builder.setMessage("Would you like to join this group?")
+                .setTitle(marker.getTitle());
         // Add the buttons
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
+                long groupId = Long.valueOf(Objects.requireNonNull(marker.getTag()).toString());
+                Call<List<User>> caller = proxy.addGroupMember(groupId, mUser);
+                ProxyBuilder.callProxy(MapsActivity.this, caller, user -> addUser(user));
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -90,6 +93,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void addUser(List<User> user) {
+        Toast.makeText(MapsActivity.this, "Successfully added to group", Toast.LENGTH_SHORT).show();
     }
 
     private void getAPIKey() {
@@ -106,9 +113,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void placeGroupMarkers(List<Group> groupList) {
         for (Group group : groupList) {
             // TODO: add markers for the location of every group
-            mMap.addMarker(new MarkerOptions().position(new LatLng(group.getDestLatitude(), group.getDestLongitude()))
-                    .title(group.getGroupDescription()));
-            return;
+            if (group.getRouteLatArray().length > 0 && group.getRouteLngArray().length > 0) {
+                Marker currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng
+                        (group.getDestLatitude(), group.getDestLongitude()))
+                        .title(group.getGroupDescription()));
+                currentMarker.setTag(group.getId());
+            }
         }
     }
 
@@ -132,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                createAlertDialog();
+                createAlertDialog(marker);
                 return false;
             }
         });
