@@ -16,6 +16,8 @@ import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.RemoveMonitoringUserGroupMessageFragment;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopMonitoringUserMessageFragment;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
@@ -40,7 +42,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-//        populateMonitorsUserGroups();                                                                //WILL IMPLEMENT SOON
+//        populateMonitorsUserGroups();
         populateMonitorsUserGroupsListView();
     }
 
@@ -52,29 +54,26 @@ public class MonitoringUsersActivity extends AppCompatActivity {
 
     private void setUpAddGroupButton() {
         Button addToGroupButton = findViewById(R.id.add_to_group_btn);
-        addToGroupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText findGroupEditText = findViewById(R.id.group_id_edittxt);
-                String address = findGroupEditText.getText().toString();
-                if (address == null) {
-                    Toast.makeText(MonitoringUsersActivity.this,
-                            "" + R.string.group_id_empty,
-                            Toast.LENGTH_SHORT).show();
+        addToGroupButton.setOnClickListener(view -> {
+            EditText findGroupEditText = findViewById(R.id.group_id_edittxt);
+            String address = findGroupEditText.getText().toString();
+            if (address == null) {
+                Toast.makeText(MonitoringUsersActivity.this,
+                        "" + R.string.group_id_empty,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else {
+                Long numAddress = Long.parseLong(address);
+                if(groupExists(numAddress)){
+                    addMonitorsUserGroup(numAddress);
                     return;
                 }
                 else {
-                    Long numAddress = Long.parseLong(address);
-                    if(groupExists(numAddress)){
-                        addMonitorsUserGroup(numAddress);
-                        return;
-                    }
-                    else {
-                        Toast.makeText(MonitoringUsersActivity.this,
-                                "" + R.string.group_not_found,
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    Toast.makeText(MonitoringUsersActivity.this,
+                            "" + R.string.group_not_found,
+                            Toast.LENGTH_SHORT).show();
+                    return;
                 }
             }
         });
@@ -84,9 +83,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         Call<List<Group>> groupCaller = proxy.getGroups();
         List<Group> existingGroups = new ArrayList<>();
 
-        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller, returnedGroups -> {
-            existingGroups.addAll(returnedGroups);
-        });
+        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller, existingGroups::addAll);
         return isFound(existingGroups, address);
     }
 
@@ -103,9 +100,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         Call<Group> groupCall = proxy.getGroupById(groupsId);
         List<Group> monitorsUserGroup = new ArrayList<>();
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
-                groupCall, returnedGroup -> {
-                    monitorsUserGroup.add(returnedGroup);
-                });
+                groupCall, monitorsUserGroup::add);
         Group monitorUserGroup = monitorsUserGroup.get(0);
         Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(groupsId, user);
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
@@ -132,6 +127,12 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_layout);
+        groupsList.setOnLongClickListener(view -> {
+            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+            RemoveMonitoringUserGroupMessageFragment removeDialog = new RemoveMonitoringUserGroupMessageFragment();
+            removeDialog.show(manager, "RemoveMonitoredUserFromGroup");
+            return true;
+        });
     }
 
     private class MonitoringUsersGroupList extends ArrayAdapter<User>{

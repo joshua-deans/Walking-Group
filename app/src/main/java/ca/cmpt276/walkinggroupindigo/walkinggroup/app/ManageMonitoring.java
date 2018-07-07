@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopBeingMonitoredMessageFragment;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopMonitoringUserMessageFragment;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
@@ -40,6 +42,7 @@ public class ManageMonitoring extends AppCompatActivity {
         setContentView(R.layout.activity_manage_monitoring);
         user = User.getInstance();
         setUpAddMonitoringButton();
+        setUpAddMonitoredButton();
         getApiKey();
         populateMonitorsUser();
         populateMonitorsListView();
@@ -58,6 +61,19 @@ public class ManageMonitoring extends AppCompatActivity {
             }
         });
     }
+
+
+    private void setUpAddMonitoredButton() {
+        Button addMonitored = findViewById(R.id.add_monitored_btn);
+        addMonitored.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = AddMonitoredActivity.makeIntent(ManageMonitoring.this);
+                startActivity(intent);
+            }
+        });
+    }
+
 
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
@@ -95,6 +111,19 @@ public class ManageMonitoring extends AppCompatActivity {
             }
         });
 
+        //TODO:Set up removing users from monitor list
+
+
+        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                StopMonitoringUserMessageFragment removeDialog = new StopMonitoringUserMessageFragment();
+                removeDialog.show(manager, "StopMonitoringUser");
+                return true;
+            }
+        });
+
     }
 
     private void populateMonitoredByListView() {
@@ -103,6 +132,19 @@ public class ManageMonitoring extends AppCompatActivity {
         monitoredByList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.monitored_layout);
+
+        //TODO:Set up removing users from monitor list
+
+
+        monitoredByList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                StopBeingMonitoredMessageFragment removeDialog = new StopBeingMonitoredMessageFragment();
+                removeDialog.show(manager, "StopBeingMonitored");
+                return true;
+            }
+        });
     }
 
     private class MyListMonitors extends ArrayAdapter<User>{

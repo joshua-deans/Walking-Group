@@ -18,7 +18,7 @@
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
     <string name="view_map">View Map</string>
     <string name="manage_monitoring">Manage Monitoring</string>
-    <string name="manage_group">Manage Group</string>
+    <string name="manage_group">Manage Groups</string>
     <string name="please_enter_name"> Please enter your name </string>
     <string name="please_enter_email"> Please enter your email address </string>
     <string name="password_empty"> Please enter valid password.</string>
@@ -36,12 +36,17 @@
     <string name="logged_out">Logged Out</string>
     <string name="add_monitoring_btn">ADD</string>
     <string name="add">+</string>
-    <string name="add_user_button">MONITOR</string>
+    <string name="remove_user_txtview">You are about to remove this-user from your monitor list!</string>
+    <string name="remove_monitored">You are about to stop this-user from monitoring you!</string>
+    <string name="removal_from_group">You are about to remove this-user from this-group!</string>
+    <string name="monitor">MONITOR</string>
+    <string name="get_monitored">GET MONITORED</string>
     <string name="remove_user_alert">Are you sure?</string>
+    <string name="email_not_found"> Email is not found.</string>
     <string name="group_not_found">Group is not found.</string>
     <string name="group_id">Enter a group I.D.</string>
-    <string name="remove_from_group">REMOVE "USER" FROM A GROUP</string>
-    <string name="add_to_group">ADD "USER" TO A GROUP</string>
+    <string name="remove_from_group">REMOVE THIS-USER FROM A GROUP</string>
+    <string name="add_to_group">ADD THIS-USER TO A GROUP</string>
     <string name="remove_group">REMOVE GROUP</string>
     <string name="ok">CONFIRM</string>
     <string name="select_destination">Select Destination</string>
@@ -52,5 +57,4 @@
     <string name="group_name">Group Name:</string>
     <string name="add_group">Add Group</string>
     <string name="create_group">Create Group</string>
-    <string name="email_not_found">E-mail not found</string>
 </resources>
