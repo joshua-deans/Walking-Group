@@ -3,10 +3,11 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,8 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopBeingMonitoredMessageFragment;
@@ -45,9 +48,7 @@ public class ManageMonitoring extends AppCompatActivity {
         setUpAddMonitoredButton();
         getApiKey();
         populateMonitorsUser();
-        populateMonitorsListView();
         populateMonitoredByUsers();
-        populateMonitoredByListView();
     }
 
     private void setUpAddMonitoringButton() {
@@ -56,7 +57,6 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = AddMonitoringActivity.makeIntent(ManageMonitoring.this);
-                //startActivityForResult(intent, MASSAGE_CODE);
                 startActivity(intent);
             }
         });
@@ -84,21 +84,21 @@ public class ManageMonitoring extends AppCompatActivity {
     private void populateMonitorsUser() {
         Call<List<User>> userCaller = proxy.getMonitorsUsers(user.getId());
         ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
-                returnedUsers -> { // Returns in the Call <parameter>
-                    monitorsUser.addAll(returnedUsers);
+                returnedUsers -> {
+                    populateMonitorsListView(returnedUsers);
                 });
     }
 
     private void populateMonitoredByUsers() {
         Call<List<User>> userCaller = proxy.getMonitoredByUsers(user.getId());
         ProxyBuilder.callProxy(ManageMonitoring.this, userCaller,
-                returnedUsers -> { // Returns in the Call <parameter>
-                    monitoredByUser.addAll(returnedUsers);
+                returnedUsers -> {
+                    populateMonitoredByListView(returnedUsers);
                 });
     }
 
-    private void populateMonitorsListView() {
-        ArrayAdapter<User> adapter = new MyListMonitors();
+    private void populateMonitorsListView(List<User> monitorsUser) {
+        ArrayAdapter<User> adapter = new MyListMonitors(monitorsUser);
         ListView monitoringList = findViewById(R.id.monitoring_listview);
         monitoringList.setAdapter(adapter);
         new ArrayAdapter<>(this,
@@ -113,7 +113,6 @@ public class ManageMonitoring extends AppCompatActivity {
 
         //TODO:Set up removing users from monitor list
 
-
         monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -126,15 +125,14 @@ public class ManageMonitoring extends AppCompatActivity {
 
     }
 
-    private void populateMonitoredByListView() {
-        ArrayAdapter<User> adapter = new MyListMonitoredBy();
+    private void populateMonitoredByListView(List<User> monitoredUser) {
+        ArrayAdapter<User> adapter = new MyListMonitoredBy(monitoredUser);
         ListView monitoredByList = findViewById(R.id.monitored_listview);
         monitoredByList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.monitored_layout);
 
         //TODO:Set up removing users from monitor list
-
 
         monitoredByList.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -148,9 +146,13 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private class MyListMonitors extends ArrayAdapter<User>{
-        public MyListMonitors(){
+        List<User> mUserList;
+
+        public MyListMonitors(List<User> userList) {
             super(ManageMonitoring.this, R.layout.monitoring_layout
-            , monitorsUser);
+                    , userList);
+            mUserList = userList;
+            Log.i("Test", mUserList.toString());
         }
 
         @NonNull
@@ -166,28 +168,34 @@ public class ManageMonitoring extends AppCompatActivity {
             User currentUser;
 
             // Find the current User
-            if(monitorsUser.isEmpty()){
+            if (mUserList.isEmpty()) {
                 currentUser = new User();
                 currentUser.setName("No one is being monitored.");
                 currentUser.setEmail(" ");
             }
             else {
-                currentUser = monitorsUser.get(position);
+                currentUser = mUserList.get(position);
             }
-            TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
-            nameText.setText(currentUser.getName());
+            if (currentUser.getName() != null && currentUser.getEmail() != null) {
+                TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
+                nameText.setText(currentUser.getName());
 
-            TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
-            emailText.setText(currentUser.getEmail());
+                TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
+                emailText.setText(currentUser.getEmail());
+            }
 
             return itemView;
         }
     }
 
     private class MyListMonitoredBy extends ArrayAdapter<User> {
-        public MyListMonitoredBy(){
+        List<User> mUserList;
+
+        public MyListMonitoredBy(List<User> userList) {
             super(ManageMonitoring.this, R.layout.monitored_layout
-                    , monitoredByUser);
+                    , userList);
+            mUserList = userList;
+            Log.i("Test", mUserList.toString());
         }
 
         @NonNull
@@ -203,19 +211,21 @@ public class ManageMonitoring extends AppCompatActivity {
             User currentUser;
 
             // Find the current User
-            if(monitoredByUser.isEmpty()){
+            if (mUserList.isEmpty()) {
                 currentUser = new User();
                 currentUser.setName("No one is monitoring you.");
                 currentUser.setEmail(" ");
             }
             else {
-                currentUser = monitorsUser.get(position);
+                currentUser = mUserList.get(position);
             }
-            TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitedByName);
-            nameText.setText(currentUser.getName());
+            if (currentUser.getName() != null && currentUser.getEmail() != null) {
+                TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitedByName);
+                nameText.setText(currentUser.getName());
 
-            TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitedByEmail);
-            emailText.setText(currentUser.getEmail());
+                TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitedByEmail);
+                emailText.setText(currentUser.getEmail());
+            }
 
             return itemView;
         }
