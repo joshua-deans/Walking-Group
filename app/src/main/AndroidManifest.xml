@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -31,8 +30,11 @@
         <activity android:name=".app.ManageMonitoring" />
         <activity android:name=".app.DashboardActivity" />
         <activity android:name=".app.AddMonitoringActivity" />
+        <activity android:name=".app.MonitoringUsersActivity" />
+        <activity android:name=".app.AddMonitoringActivity" />
         <activity android:name=".app.ManageGroups" />
         <activity android:name=".app.CreateGroup" />
+        <activity android:name=".app.AddMonitoredActivity"></activity>
     </application>
 
 </manifest>

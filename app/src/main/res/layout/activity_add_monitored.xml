@@ -4,10 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.AddMonitoringActivity">
+    tools:context=".app.AddMonitoredActivity">
+
+    <Button
+        android:id="@+id/get_monitored_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/find_user_edit_txt2"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="170dp"
+        android:text="@string/get_monitored" />
 
     <EditText
-        android:id="@+id/find_user_edit_txt"
+        android:id="@+id/find_user_edit_txt2"
         android:layout_width="306dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,22 +29,12 @@
         tools:layout_editor_absoluteY="135dp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/find_user_edit_txt"
+        android:layout_alignStart="@+id/find_user_edit_txt2"
         android:layout_marginTop="68dp"
         android:text="@string/input_user_email"
         android:textSize="18sp" />
-
-    <Button
-        android:id="@+id/add_monitoring_user_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/find_user_edit_txt"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="170dp"
-        android:text="@string/monitor" />
-
 </RelativeLayout>
