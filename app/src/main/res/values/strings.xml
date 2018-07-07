@@ -9,8 +9,8 @@
     <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
     <string name="signup_txtview">Sign Up</string>
     <string name="input_email_txtview">Please enter an E-mail address: </string>
-    <string name="input_user_email">Enter a username or e-mail: </string>
-    <string name="user_email_hint">Username or E-mail</string>
+    <string name="input_user_email">Enter an e-mail address: </string>
+    <string name="user_email_hint">E-mail</string>
     <string name="input_pass_txtview">Choose a password:</string>
     <string name="confirm_pass_txtview">Confirm your password:</string>
     <string name="signup_btn">Sign Up</string>

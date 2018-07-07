@@ -1,11 +1,13 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,14 +17,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopBeingMonitoredMessageFragment;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopMonitoringUserMessageFragment;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
@@ -47,6 +48,12 @@ public class ManageMonitoring extends AppCompatActivity {
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
         getApiKey();
+        populateMonitorsUser();
+        populateMonitoredByUsers();
+    }
+
+    protected void onResume() {
+        super.onResume();
         populateMonitorsUser();
         populateMonitoredByUsers();
     }
@@ -111,18 +118,40 @@ public class ManageMonitoring extends AppCompatActivity {
             }
         });
 
-        //TODO:Set up removing users from monitor list
-
-        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
+        monitoringList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-                StopMonitoringUserMessageFragment removeDialog = new StopMonitoringUserMessageFragment();
-                removeDialog.show(manager, "StopMonitoringUser");
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
+                builder.setMessage("Would you like to not monitor this user?");
+                // Add the buttons
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Long monitoredUserID = (Long) view.getTag();
+                        deleteMonitoringUser(monitoredUserID);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             }
         });
 
+    }
+
+    private void deleteMonitoringUser(Long monitoringUserID) {
+        Long currentUserId = user.getId();
+        Call<Void> deleteCaller = proxy.removeFromMonitoredByUsers(monitoringUserID, currentUserId);
+        ProxyBuilder.callProxy(deleteCaller, returnNothing -> deleteMonitoringUserSuccess(returnNothing));
+    }
+
+    private void deleteMonitoringUserSuccess(Void returnNothing) {
+        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        populateMonitorsUser();
     }
 
     private void populateMonitoredByListView(List<User> monitoredUser) {
@@ -132,17 +161,39 @@ public class ManageMonitoring extends AppCompatActivity {
         new ArrayAdapter<>(this,
                 R.layout.monitored_layout);
 
-        //TODO:Set up removing users from monitor list
-
-        monitoredByList.setOnLongClickListener(new View.OnLongClickListener() {
+        monitoredByList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-                StopBeingMonitoredMessageFragment removeDialog = new StopBeingMonitoredMessageFragment();
-                removeDialog.show(manager, "StopBeingMonitored");
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
+                builder.setMessage("Would you like to not be monitored by this user?");
+                // Add the buttons
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Long monitoringUserID = (Long) view.getTag();
+                        deleteMonitoredByUser(monitoringUserID);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             }
         });
+    }
+
+    private void deleteMonitoredByUser(Long monitoringUserID) {
+        Long currentUserId = user.getId();
+        Call<Void> deleteCaller = proxy.removeFromMonitoredByUsers(currentUserId, monitoringUserID);
+        ProxyBuilder.callProxy(deleteCaller, returnNothing -> deleteMonitoredByUserSuccess(returnNothing));
+    }
+
+    private void deleteMonitoredByUserSuccess(Void returnNothing) {
+        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        populateMonitoredByUsers();
     }
 
     private class MyListMonitors extends ArrayAdapter<User>{
@@ -175,13 +226,18 @@ public class ManageMonitoring extends AppCompatActivity {
             }
             else {
                 currentUser = mUserList.get(position);
+                itemView.setTag(currentUser.getId());
             }
             if (currentUser.getName() != null && currentUser.getEmail() != null) {
-                TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
-                nameText.setText(currentUser.getName());
+                try {
+                    TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
+                    nameText.setText(currentUser.getName());
 
-                TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
-                emailText.setText(currentUser.getEmail());
+                    TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
+                    emailText.setText(currentUser.getEmail());
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + mUserList.toString());
+                }
             }
 
             return itemView;
@@ -218,13 +274,18 @@ public class ManageMonitoring extends AppCompatActivity {
             }
             else {
                 currentUser = mUserList.get(position);
+                itemView.setTag(currentUser.getId());
             }
             if (currentUser.getName() != null && currentUser.getEmail() != null) {
-                TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitedByName);
-                nameText.setText(currentUser.getName());
+                try {
+                    TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitedByName);
+                    nameText.setText(currentUser.getName());
 
-                TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitedByEmail);
-                emailText.setText(currentUser.getEmail());
+                    TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitedByEmail);
+                    emailText.setText(currentUser.getEmail());
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + mUserList.toString());
+                }
             }
 
             return itemView;
