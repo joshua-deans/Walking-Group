@@ -127,7 +127,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
 //        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller,
 //                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));
 //    }
-
+//
     private void populateMonitorsUserGroupsListView() {
         ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
         ListView groupsList = findViewById(R.id.monitor_user_groups_list);
