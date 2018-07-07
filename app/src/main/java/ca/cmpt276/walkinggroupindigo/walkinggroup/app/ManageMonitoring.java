@@ -30,11 +30,11 @@ import retrofit2.Call;
 
 public class ManageMonitoring extends AppCompatActivity {
 
-    public static final int MASSAGE_CODE = 100;
+//    public static final int MASSAGE_CODE = 100;
     private WGServerProxy proxy;
     private User user;
-    private List<User> monitorsUser = new ArrayList<>();
-    private List<User> monitoredByUser = new ArrayList<>();
+//    private List<User> monitorsUser = new ArrayList<>();
+//    private List<User> monitoredByUser = new ArrayList<>();
 
     public static Intent makeIntent (Context context){
         return new Intent (context, ManageMonitoring.class);
