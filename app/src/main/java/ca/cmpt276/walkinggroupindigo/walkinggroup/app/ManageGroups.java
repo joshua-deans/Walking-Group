@@ -1,7 +1,9 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,8 +41,21 @@ public class ManageGroups extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
         user = User.getInstance();
+        getApiKey();
         populateGroups();
     }
+
+    protected void onResume() {
+        super.onResume();
+        populateGroups();
+    }
+
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,13 +159,21 @@ public class ManageGroups extends AppCompatActivity {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
 
-                    //TODO: DISPLAY GROUP LEADER AS WELL
+                    //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
             }
             return itemView;
         }
+    }
+
+    public String getToken() {
+        Context context = ManageGroups.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
     }
 }
 
