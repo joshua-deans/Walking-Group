@@ -259,10 +259,20 @@ public class ManageMonitoring extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View itemView = convertView;
             if(convertView == null){
-                itemView = getLayoutInflater().inflate(R.layout.monitoring_layout,
+                itemView = getLayoutInflater().inflate(R.layout.monitored_layout,
                         parent,
                         false);
             }
+
+//            @NonNull
+//            @Override
+//            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//                View itemView = convertView;
+//                if(convertView == null){
+//                    itemView = getLayoutInflater().inflate(R.layout.monitoring_layout,
+//                            parent,
+//                            false);
+//                }
 
             User currentUser;
 
