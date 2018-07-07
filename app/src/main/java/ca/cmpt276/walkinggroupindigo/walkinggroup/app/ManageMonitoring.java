@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.RemoveMessageFragment;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
@@ -94,11 +95,12 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
+        monitoringList.setOnLongClickListener(new View.OnLongClickListener() {                       //Set up removing users from monitor list
             @Override
             public boolean onLongClick(View view) {
-
-                return true;
+                android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                RemoveMessageFragment removeDialog = new RemoveMessageFragment();
+                removeDialog.show(manager, "RemoveMessageFragment");
             }
         });
 

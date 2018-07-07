@@ -40,7 +40,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-//        populateMonitorsUserGroups();                                                                //WILL IMPLEMENT SOON
+//        populateMonitorsUserGroups();                                                              //WILL IMPLEMENT SOON
         populateMonitorsUserGroupsListView();
     }
 
@@ -132,6 +132,13 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_layout);
+        groupsList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                return true;
+            }
+        });
     }
 
     private class MonitoringUsersGroupList extends ArrayAdapter<User>{
