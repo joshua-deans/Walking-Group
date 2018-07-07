@@ -7,13 +7,29 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.app.AddMonitoringActivity;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
 
 public class StopMonitoringUserMessageFragment extends AppCompatDialogFragment {
 
+    private WGServerProxy proxy;
+    private User user;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        user.getInstance();
+        Long userId = user.getId();
+
 
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.monitoring_user_removal_message, null);
@@ -21,7 +37,22 @@ public class StopMonitoringUserMessageFragment extends AppCompatDialogFragment {
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                removeMonitoredUser();
+            }
 
+            private void removeMonitoredUser() {
+                TextView emailText  = getActivity().findViewById(R.id.txtMonitoringEmail)
+                String someId = emailText.getText().toString();
+                Long childId = Long.parseLong(someId);
+
+                Call<User> childUserCall = proxy.getUserById(childId);
+                List<User> monitors = new ArrayList<>();
+                ProxyBuilder.callProxy(getActivity(),
+                        childUserCall, returnedUser -> monitors.remove(returnedUser));
+                User monitor = monitors.get(0);
+                Call<Void> removeMonitoredCaller = proxy.removeFromMonitorsUsers(userId, childId);
+                ProxyBuilder.callProxy(getActivity(),
+                        removeMonitoredCaller, returnRemovedMonitored -> {});
             }
         };
 
@@ -32,4 +63,6 @@ public class StopMonitoringUserMessageFragment extends AppCompatDialogFragment {
                 .setNegativeButton(android.R.string.cancel, listener)
                 .create();
     }
+
+
 }

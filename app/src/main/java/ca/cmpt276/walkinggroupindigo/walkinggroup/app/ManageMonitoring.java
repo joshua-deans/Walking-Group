@@ -113,6 +113,7 @@ public class ManageMonitoring extends AppCompatActivity {
 
         //TODO:Set up removing users from monitor list
 
+
         monitoringList.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -133,6 +134,7 @@ public class ManageMonitoring extends AppCompatActivity {
                 R.layout.monitored_layout);
 
         //TODO:Set up removing users from monitor list
+
 
         monitoredByList.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
