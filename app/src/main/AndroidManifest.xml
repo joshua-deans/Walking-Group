@@ -19,7 +19,7 @@
         <activity android:name=".app.ServerTestActivity" />
         <activity android:name=".app.ApiKeyActivity" />
         <activity android:name=".app.MapsActivity" />
-        <activity android:name=".app.LoginActivity">
+        <activity android:name=".app.ManageMonitoring">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,12 +27,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".app.SignUpActivity" />
-        <activity android:name=".app.ManageMonitoring" />
+        <activity android:name=".app.ManageGroups" />
         <activity android:name=".app.DashboardActivity" />
         <activity android:name=".app.AddMonitoringActivity" />
         <activity android:name=".app.MonitoringUsersActivity" />
-        <activity android:name=".app.AddMonitoringActivity" />
-        <activity android:name=".app.ManageGroups" />
+
+        <activity android:name=".app.LoginActivity" />
         <activity android:name=".app.CreateGroup" />
         <activity android:name=".app.AddMonitoredActivity"></activity>
     </application>
