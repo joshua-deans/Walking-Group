@@ -86,9 +86,8 @@ public class DashboardActivity extends AppCompatActivity {
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add group
-                Toast.makeText(DashboardActivity.this, "Groups is not ready yet",
-                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(DashboardActivity.this, ManageGroups.class);
+                startActivity(intent);
             }
         });
     }

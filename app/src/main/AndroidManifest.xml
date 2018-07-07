@@ -31,6 +31,9 @@
         <activity android:name=".app.DashboardActivity" />
         <activity android:name=".app.AddMonitoringActivity" />
         <activity android:name=".app.MonitoringUsersActivity"></activity>
+        <activity android:name=".app.AddMonitoringActivity" />
+        <activity android:name=".app.ManageGroups" />
+        <activity android:name=".app.CreateGroup" />
     </application>
 
 </manifest>
