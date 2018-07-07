@@ -19,7 +19,6 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
-
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
@@ -27,8 +26,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
+    private Group group;
     private List<User> monitorsUserGroupList = new ArrayList<>();
-
 
     public static Intent makeIntent (Context context) {
         return new Intent (context, MonitoringUsersActivity.class);
@@ -41,8 +40,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-//        populateMonitorsUserGroups();                                                              //WILL IMPLEMENT SOON
-//        populateMonitorsUserGroupsListView();
+//        populateMonitorsUserGroups();                                                                //WILL IMPLEMENT SOON
+        populateMonitorsUserGroupsListView();
     }
 
     private void getApiKey() {
@@ -108,33 +107,39 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     monitorsUserGroup.add(returnedGroup);
                 });
         Group monitorUserGroup = monitorsUserGroup.get(0);
-        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(groupsId, user);             //GROUP CLASS
+        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(groupsId, user);
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
                 monitorsUserGroupCaller, returnMonitorsUserGroup -> {});
     }
 
+
+    //POPULATE GROUP LIST VIEW CODE STARTING HERE:
+    //TODO: uncomment the chunk of code bellow and solve the issue.
+    //error: no suitable method found for addAll(List<Group>)
+    //method Collection.addAll(Collection<? extends User>) is not applicable
+    //(argument mismatch; List<Group> cannot be converted to Collection<? extends User>)
+
+
 //    private void populateMonitorsUserGroups() {
 //        Call<List<Group>> groupCaller = proxy.getGroups();
 //        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller,
-//                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));                   //RETURN GROUPS ISSUE
+//                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));
 //    }
-//
-//    private void populateMonitorsUserGroupsListView() {
-//        ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
-//        ListView groupsList = findViewById(R.id.monitor_user_groups_list);
-//        groupsList.setAdapter(adapter);
-//        new ArrayAdapter<>(this,
-//                R.layout.group_layout);
-//    }
-//
-//    private class MonitoringUsersGroupList extends ArrayAdapter<User>{
-//        public MonitoringUsersGroupList() {
-//            super (MonitoringUsersActivity.this, R.layout.group_layout
-//            ,monitorsUserGroupList );
-//        }
-//    }
-//
 
+    private void populateMonitorsUserGroupsListView() {
+        ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
+        ListView groupsList = findViewById(R.id.monitor_user_groups_list);
+        groupsList.setAdapter(adapter);
+        new ArrayAdapter<>(this,
+                R.layout.group_layout);
+    }
+
+    private class MonitoringUsersGroupList extends ArrayAdapter<User>{
+        public MonitoringUsersGroupList() {
+            super (MonitoringUsersActivity.this, R.layout.group_layout
+            ,monitorsUserGroupList );
+        }
+    }
 
     public String getToken() {
         Context context = MonitoringUsersActivity.this;

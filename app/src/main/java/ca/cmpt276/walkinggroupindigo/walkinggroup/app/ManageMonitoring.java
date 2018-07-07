@@ -99,8 +99,8 @@ public class ManageMonitoring extends AppCompatActivity {
 
     private void populateMonitoredByListView() {
         ArrayAdapter<User> adapter = new MyListMonitoredBy();
-        ListView monitoringList = findViewById(R.id.monitored_listview);
-        monitoringList.setAdapter(adapter);
+        ListView monitoredByList = findViewById(R.id.monitored_listview);
+        monitoredByList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.monitored_layout);
     }
