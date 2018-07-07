@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -86,9 +87,9 @@ public class ManageMonitoring extends AppCompatActivity {
         monitoringList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.monitoring_layout);
-        monitoringList.setOnClickListener(new View.OnClickListener() {
+        monitoringList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = MonitoringUsersActivity.makeIntent(ManageMonitoring.this);
                 startActivity(intent);
             }
@@ -131,10 +132,10 @@ public class ManageMonitoring extends AppCompatActivity {
             else {
                 currentUser = monitorsUser.get(position);
             }
-            TextView nameText = (TextView) itemView.findViewById(R.id.monitoring_name_txtview);
+            TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
             nameText.setText(currentUser.getName());
 
-            TextView emailText = (TextView) itemView.findViewById(R.id.monitoring_email_txtview);
+            TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
             emailText.setText(currentUser.getEmail());
 
             return itemView;
