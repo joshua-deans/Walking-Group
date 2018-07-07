@@ -6,11 +6,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Group extends IdItemBase{
     private String groupDescription;
     private String locationName;
-    // The latitude of the final location
-    private double latitude;
-    // The latitude of the final location
-    private double longitude;
+    // The latitude of the starting location
+    private double[] routeLatArray;
+    // The latitude of the starting location
+    private double[] routeLngArray;
     private User leader;
+
+    public Group() {
+        routeLatArray = new double[2];
+        routeLngArray = new double[2];
+    }
 
     public String getGroupDescription() {
         return groupDescription;
@@ -20,20 +25,61 @@ public class Group extends IdItemBase{
         this.groupDescription = groupDescription;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getLocationName() {
+        return locationName;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getStartLatitude() {
+        return routeLatArray[0];
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setStartLatitude(double startLat) {
+        routeLatArray[0] = startLat;
+    }
+
+    public double getDestLatitude() {
+        return routeLatArray[1];
+    }
+
+    public void setDestLatitude(double destLat) {
+        routeLatArray[1] = destLat;
+    }
+
+    public double getStartLongitude() {
+        return routeLngArray[0];
+    }
+
+    public void setStartLongitude(double startLong) {
+        routeLngArray[0] = startLong;
+    }
+
+    public double getDestLongitude() {
+        return routeLngArray[1];
+    }
+
+    public void setDestLongitude(double destLong) {
+        routeLngArray[1] = destLong;
+    }
+
+
+    public double[] getRouteLatArray() {
+        return routeLatArray;
+    }
+
+    public void setRouteLatArray(double[] routeLatArray) {
+        this.routeLatArray = routeLatArray;
+    }
+
+    public double[] getRouteLngArray() {
+        return routeLngArray;
+    }
+
+    public void setRouteLngArray(double[] routeLngArray) {
+        this.routeLngArray = routeLngArray;
     }
 
     public User getLeader() {
@@ -42,13 +88,5 @@ public class Group extends IdItemBase{
 
     public void setLeader(User leader) {
         this.leader = leader;
-    }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
     }
 }
