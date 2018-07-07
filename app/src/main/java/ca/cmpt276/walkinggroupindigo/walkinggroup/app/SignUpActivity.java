@@ -120,7 +120,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     // Insert the successfully created user into the server
     private void insertIntoServer(User user) {
-
         Call<User> caller = proxy.createUser(user);
         ProxyBuilder.callProxy(SignUpActivity.this, caller, returnedUser -> successfulSignUp(returnedUser),
                 responseBody -> handleUserCreateError(responseBody));
@@ -144,16 +143,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void successfulSignUp(User returnedUser) {
-        if (returnedUser != null) {
-            Toast.makeText(SignUpActivity.this,
-                    R.string.success_sign_up,
-                    Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Toast.makeText(SignUpActivity.this,
-                    R.string.no_success_sign_up,
-                    Toast.LENGTH_SHORT).show();
-        }
+        finish();
     }
 
     public String getToken() {
