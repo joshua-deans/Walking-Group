@@ -18,6 +18,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -72,6 +73,7 @@ public class DashboardActivity extends AppCompatActivity {
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
         editor.apply();
 
         Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
