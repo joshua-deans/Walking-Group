@@ -9,31 +9,30 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
-public class AddMonitoringActivity extends AppCompatActivity {
+public class AddMonitoredActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
 
-    public static Intent makeIntent (Context context){
-        return new Intent (context, AddMonitoringActivity.class);
+    public static Intent makeIntent (Context context) {
+        return new Intent (context, AddMonitoredActivity.class);
     }
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_monitoring);
+        setContentView(R.layout.activity_add_monitored);
         user = User.getInstance();
         getApiKey();
-        setUpMonitorButton();
+        setUpGetMonitoredButton();
     }
 
     private void getApiKey() {
@@ -42,26 +41,26 @@ public class AddMonitoringActivity extends AppCompatActivity {
         proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
-    private void setUpMonitorButton() {
-        Button monitorButton = findViewById(R.id.add_monitoring_user_button);
-        monitorButton.setOnClickListener(new View.OnClickListener() {
+    private void setUpGetMonitoredButton() {
+        Button getMonitoredButton = findViewById(R.id.get_monitored_btn);
+        getMonitoredButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                EditText findUserEditText = findViewById(R.id.find_user_edit_txt);
+            public void onClick(View view) {
+                EditText findUserEditText = findViewById(R.id.find_user_edit_txt2);
                 String address = findUserEditText.getText().toString();
                 if (address == null) {
-                    Toast.makeText(AddMonitoringActivity.this,
+                    Toast.makeText(AddMonitoredActivity.this,
                             "" + R.string.email_empty_login,
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else {
-                    if(userExists(address)){
-                        addMonitorUser(address);
+                    if (userExists(address)) {
+                        addMonitoredUser(address);
                         finish();
                     }
-                    else{
-                        Toast.makeText(AddMonitoringActivity.this,
+                    else {
+                        Toast.makeText(AddMonitoredActivity.this,
                                 "" + R.string.email_not_found,
                                 Toast.LENGTH_SHORT).show();
                         return;
@@ -71,17 +70,15 @@ public class AddMonitoringActivity extends AppCompatActivity {
         });
     }
 
-    // Check whether corresponding email address exists in the system
     private boolean userExists(String address) {
         Call<List<User>> usersCaller = proxy.getUsers();
         List<User> existingUsers = new ArrayList<>();
 
-        ProxyBuilder.callProxy(AddMonitoringActivity.this, usersCaller,
+        ProxyBuilder.callProxy(AddMonitoredActivity.this, usersCaller,
                 returnedUsers -> existingUsers.addAll(returnedUsers));
         return isFound(existingUsers, address);
     }
 
-    // Return true if email address is found, otherwise false
     private boolean isFound(List<User> users, String address) {
         for (User aUser : users) {
             if (aUser.getEmail().equalsIgnoreCase(address)) {
@@ -91,23 +88,20 @@ public class AddMonitoringActivity extends AppCompatActivity {
         return false;
     }
 
-    // Adding the user into monitor sets
-    private void addMonitorUser(String emailAddress) {
-        Call<User> userCall = proxy.getUserByEmail(emailAddress);
-        List<User> monitors = new ArrayList<>();
-        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-                userCall, returnedUser->{
-            monitors.add(returnedUser);
-                });
-        User monitor = monitors.get(0);
-        Call<List<User>> monitorsCaller = proxy.addToMonitorsUsers(user.getId(), monitor);
-        ProxyBuilder.callProxy(AddMonitoringActivity.this,
-               monitorsCaller, returnMonitors->{} );
+    private void addMonitoredUser(String address) {
+        Call<User> userCall = proxy.getUserByEmail(address);
+        List<User> getMonitored = new ArrayList<>();
+        ProxyBuilder.callProxy(AddMonitoredActivity.this,
+                userCall, returnedUser -> getMonitored.add(returnedUser));
+        User monitored = getMonitored.get(0);
+        Call<List<User>> monitoredByUsers = proxy.addToMonitoredByUsers(user.getId(), monitored);
+        ProxyBuilder.callProxy(AddMonitoredActivity.this,
+                monitoredByUsers, returnMonitored -> {});
         finish();
     }
 
     public String getToken() {
-        Context context = AddMonitoringActivity.this;
+        Context context = AddMonitoredActivity.this;
         SharedPreferences sharedPref = context.getSharedPreferences(
                 LoginActivity.LOG_IN_KEY, context.MODE_PRIVATE);
         String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");

@@ -10,13 +10,13 @@ import android.view.View;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 
-public class RemoveMessageFragment extends AppCompatDialogFragment {
+public class StopBeingMonitoredMessageFragment extends AppCompatDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         View v = LayoutInflater.from(getActivity())
-                .inflate(R.layout.monitoring_user_removal_message, null);
+                .inflate(R.layout.stop_monitored_message_fragment, null);
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -26,10 +26,11 @@ public class RemoveMessageFragment extends AppCompatDialogFragment {
         };
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Removing a user")
+                .setTitle("Stop being monitored")
                 .setView(v)
                 .setPositiveButton(android.R.string.ok, listener)
                 .setNegativeButton(android.R.string.cancel, listener)
                 .create();
     }
+
 }
