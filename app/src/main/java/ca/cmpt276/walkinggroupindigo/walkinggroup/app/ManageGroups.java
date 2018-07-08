@@ -57,7 +57,6 @@ public class ManageGroups extends AppCompatActivity {
         proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -78,7 +77,6 @@ public class ManageGroups extends AppCompatActivity {
         }
     }
 
-
     private void populateGroups() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
         ProxyBuilder.callProxy(ManageGroups.this, groupsCaller,
@@ -86,7 +84,7 @@ public class ManageGroups extends AppCompatActivity {
                     populateGroupsListView(returnedGroups);
                 });
     }
-//
+
     private void populateGroupsListView(List<Group> returnedGroups) {
         List<Group> userInGroups = allGroupsUserIn(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
@@ -155,7 +153,7 @@ public class ManageGroups extends AppCompatActivity {
     private void exitGroup(Long groupId) {
         Long currentUserId = user.getId();
         Call<Void> exitCaller = proxy.removeGroupMember(groupId, currentUserId);
-        ProxyBuilder.callProxy(exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        ProxyBuilder.callProxy(ManageGroups.this,exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
     }
 
     private void exitFromGroupSuccess(Void returnNothing) {
@@ -213,4 +211,3 @@ public class ManageGroups extends AppCompatActivity {
         return token;
     }
 }
-
