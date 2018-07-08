@@ -86,7 +86,8 @@ public class ManageGroups extends AppCompatActivity {
     }
 
     private void populateGroupsListView(List<Group> returnedGroups) {
-        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        List<Group> userInGroups = getAllGroupsUserIn();
+                //allGroupsUserIn(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
         ListView groupsList = findViewById(R.id.group_listview);
         groupsList.setAdapter(adapter);
@@ -124,6 +125,15 @@ public class ManageGroups extends AppCompatActivity {
         });
     }
 
+    private List<Group> getAllGroupsUserIn() {
+        List<Group> userInGroups = user.getMemberOfGroups();
+//        List<Group> userLeadGroups = user.getLeadsGroups();   -> for future using
+//        List<Group> newList = new ArrayList<>(userInGroups);  -> for future using
+//        newList.addAll(userLeadGroups);                       -> for future using
+        return userInGroups;
+    }
+
+    /*
     private boolean checkForUserGroups(List<User> returnedUsers) {
         boolean isFound = false;
         for (User returnedUser : returnedUsers) {
@@ -144,12 +154,12 @@ public class ManageGroups extends AppCompatActivity {
                     allUsers,
                     returnedGroupUserIn -> {
                         if(checkForUserGroups(returnedGroupUserIn)){
-                            groups.add(aGroup);
+                     //       groups.add(aGroup);
                         }
                     });
         }
         return groups;
-    }
+    }*/
 
     private void exitGroup(Long groupId) {
         Long currentUserId = user.getId();
@@ -192,9 +202,18 @@ public class ManageGroups extends AppCompatActivity {
             }
             if (currentGroup.getGroupDescription() != null) {
                 try {
+                    List<String> information = new ArrayList<>();
+                    Long groupID = currentGroup.getId();
+                    Call<Group> userGroup = proxy.getGroupById(groupID);
+                    ProxyBuilder.callProxy(ManageGroups.this,
+                            userGroup,
+                            fillingInformation ->{
+                                information.add(fillingInformation.getGroupDescription());
+                            });
                     TextView nameText = itemView.findViewById(R.id.group_name);
-                    nameText.setText(currentGroup.getGroupDescription());
-
+                    nameText.setText(information.get(0));
+//                    TextView leaderText = itemView.findViewById(R.id.group_id);
+//                    leaderText.setText(information.get(0).getLeader().getName());
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
