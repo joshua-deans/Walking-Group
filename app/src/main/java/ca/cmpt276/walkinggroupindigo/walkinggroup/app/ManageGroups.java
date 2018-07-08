@@ -32,6 +32,7 @@ import retrofit2.Call;
 
 public class ManageGroups extends AppCompatActivity {
 
+    public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     private WGServerProxy proxy;
     private User user;
     private Group group;
@@ -95,7 +96,10 @@ public class ManageGroups extends AppCompatActivity {
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //go to view group members
+                Long groupId = (Long) view.getTag();
+                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+                intent.putExtra(GROUP_ID_EXTRA, groupId);
+                startActivity(intent);
             }
         });
 
