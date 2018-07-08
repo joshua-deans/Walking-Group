@@ -85,7 +85,7 @@ public class ManageGroups extends AppCompatActivity {
                     populateGroupsListView(returnedGroups);
                 });
     }
-
+//
 //    private boolean checkForUserGroups(List<User> returnedUsers) {
 //        for (User returnedUser : returnedUsers) {
 //            return  if(user.getId() != returnedUser.getId());
