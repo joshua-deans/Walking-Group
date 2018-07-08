@@ -69,15 +69,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     Long userID = (Long) view.getTag();
                     if (userID != leaderId) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
-                        builder.setMessage("Would you remove this user from the group?");
+                        builder.setMessage(R.string.remove_user_from_group_prompt);
                         // Add the buttons
-                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Call<Void> deleteCaller = proxy.removeGroupMember(mGroupId, userID);
                                 ProxyBuilder.callProxy(GroupDetailsActivity.this, deleteCaller, returnNothing -> successDelete(returnNothing));
                             }
                         });
-                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
@@ -126,7 +126,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void errorMessage() {
-        Toast.makeText(GroupDetailsActivity.this, "Error occurred", Toast.LENGTH_SHORT).show();
+        Toast.makeText(GroupDetailsActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
         finish();
     }
 
@@ -165,7 +165,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
             if (mUserList.isEmpty()) {
                 currentUser = new User();
-                currentUser.setName("No users are in this group");
+                currentUser.setName(getString(R.string.no_users_string));
             } else {
                 currentUser = mUserList.get(position);
                 itemView.setTag(currentUser.getId());

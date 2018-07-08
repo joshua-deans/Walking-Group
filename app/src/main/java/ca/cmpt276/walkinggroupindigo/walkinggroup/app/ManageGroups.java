@@ -107,14 +107,14 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageGroups.this);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Long groupId = (Long) view.getTag();
                         exitGroup(groupId);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -135,7 +135,7 @@ public class ManageGroups extends AppCompatActivity {
 
     private void exitFromGroupSuccess(Void returnNothing) {
         Toast.makeText(ManageGroups.this,
-                "You are removed from the group",
+                R.string.remove_group_toast,
                 Toast.LENGTH_SHORT).show();
     }
 
