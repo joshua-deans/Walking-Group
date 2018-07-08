@@ -67,4 +67,6 @@
     <string name="error_occurred">Error occurred</string>
     <string name="no_users_string">No users are in this group</string>
     <string name="remove_group_toast">You are removed from the group</string>
+    <string name="comment">/////</string>
+    <string name="add_group_name">Enter a group name:</string>
 </resources>

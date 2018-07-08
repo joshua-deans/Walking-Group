@@ -30,11 +30,8 @@ import retrofit2.Call;
 
 public class ManageMonitoring extends AppCompatActivity {
 
-//    public static final int MASSAGE_CODE = 100;
     private WGServerProxy proxy;
     private User user;
-//    private List<User> monitorsUser = new ArrayList<>();
-//    private List<User> monitoredByUser = new ArrayList<>();
 
     public static Intent makeIntent (Context context){
         return new Intent (context, ManageMonitoring.class);
@@ -113,7 +110,8 @@ public class ManageMonitoring extends AppCompatActivity {
         monitoringList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = MonitoringUsersActivity.makeIntent(ManageMonitoring.this);
+                Intent intent = MonitoringUsersActivity.makeIntent(ManageMonitoring.this,
+                        monitorsUser.get(i));
                 startActivity(intent);
             }
         });

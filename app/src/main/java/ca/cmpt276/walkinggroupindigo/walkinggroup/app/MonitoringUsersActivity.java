@@ -11,6 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -21,6 +26,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopMonitoringUserMe
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+import retrofit2.Response;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
@@ -28,10 +34,11 @@ public class MonitoringUsersActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
-    private Group group;
+    private static User addedOne;
     private List<User> monitorsUserGroupList = new ArrayList<>();
 
-    public static Intent makeIntent (Context context) {
+    public static Intent makeIntent (Context context, User user) {
+        addedOne = user;
         return new Intent (context, MonitoringUsersActivity.class);
     }
 
@@ -42,7 +49,6 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-//        populateMonitorsUserGroups();
         populateMonitorsUserGroupsListView();
     }
 
@@ -64,47 +70,43 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 return;
             }
             else {
-                Long numAddress = Long.parseLong(address);
-                if(groupExists(numAddress)){
-                    addMonitorsUserGroup(numAddress);
-                    return;
-                }
-                else {
-                    Toast.makeText(MonitoringUsersActivity.this,
-                            "" + R.string.group_not_found,
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                groupExists(address);
+                Toast.makeText(MonitoringUsersActivity.this,
+                        "" + R.string.group_not_found,
+                        Toast.LENGTH_SHORT).show();
+                return;
             }
         });
     }
 
-    private boolean groupExists(Long address) {
+    private void groupExists(String address) {
         Call<List<Group>> groupCaller = proxy.getGroups();
-        List<Group> existingGroups = new ArrayList<>();
 
-        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller, existingGroups::addAll);
-        return isFound(existingGroups, address);
+        ProxyBuilder.callProxy(MonitoringUsersActivity.this,
+                groupCaller,
+                returnedGroups->{
+                    checkIfFound(returnedGroups, address);
+                });
     }
 
-    private boolean isFound(List<Group> groups, Long address) {
-        for (Group aGroup : groups) {
-            if (aGroup.getId().equals(address)) {
-                return true;
+    private void checkIfFound(List<Group> returnedGroups, String address) {
+        for (Group aGroup : returnedGroups) {
+            if (aGroup.getGroupDescription().equalsIgnoreCase(address)) {
+                addMonitorsUserGroup(aGroup);
             }
         }
-        return false;
     }
 
-    private void addMonitorsUserGroup (Long groupsId) {
-        Call<Group> groupCall = proxy.getGroupById(groupsId);
-        List<Group> monitorsUserGroup = new ArrayList<>();
+    private void addMonitorsUserGroup (Group group) {
+        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(group.getId(), addedOne);
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
-                groupCall, monitorsUserGroup::add);
-        Group monitorUserGroup = monitorsUserGroup.get(0);
-        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(groupsId, user);
-        ProxyBuilder.callProxy(MonitoringUsersActivity.this,
-                monitorsUserGroupCaller, returnMonitorsUserGroup -> {});
+                monitorsUserGroupCaller,
+                returnMonitorsUserGroup -> {
+                    Toast.makeText(MonitoringUsersActivity.this,
+                            "I am working inside", Toast.LENGTH_SHORT).show();
+                });
+        finish();
+        return;
     }
 
 
@@ -138,7 +140,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     private class MonitoringUsersGroupList extends ArrayAdapter<User>{
         public MonitoringUsersGroupList() {
             super (MonitoringUsersActivity.this, R.layout.group_layout
-            ,monitorsUserGroupList );
+                    ,monitorsUserGroupList );
         }
     }
 
