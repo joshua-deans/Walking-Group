@@ -86,7 +86,17 @@ public class ManageGroups extends AppCompatActivity {
                 });
     }
 
+//    private void checkForUserGroups(List<User> returnedUsers) {
+//        for (User returnedUser : returnedUsers) {
+//            if(user.getId() != returnedUser.getId()) {
+//            }
+//        }
+//    }
+
     private void populateGroupsListView(List<Group> returnedGroups) {
+//        Call<List<User>> userCaller = proxy.getGroupMembers(user.getId());
+//        ProxyBuilder.callProxy(ManageGroups.this, userCaller,
+//                returnedUsers -> checkForUserGroups(returnedUsers));
         ArrayAdapter<Group> adapter = new MyGroupsList(returnedGroups);
         ListView groupsList = findViewById(R.id.group_listview);
         groupsList.setAdapter(adapter);
@@ -103,6 +113,7 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageGroups.this);
+                builder.setMessage("Would you like to exit this group?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
