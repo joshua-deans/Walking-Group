@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -86,17 +87,9 @@ public class ManageGroups extends AppCompatActivity {
                 });
     }
 //
-//    private boolean checkForUserGroups(List<User> returnedUsers) {
-//        for (User returnedUser : returnedUsers) {
-//            return  if(user.getId() != returnedUser.getId());
-//        }
-//    }
-
     private void populateGroupsListView(List<Group> returnedGroups) {
-//        Call<List<User>> userCaller = proxy.getGroupMembers(user.getId());
-//        ProxyBuilder.callProxy(ManageGroups.this, userCaller,
-//                returnedUsers -> checkForUserGroups(returnedUsers));
-        ArrayAdapter<Group> adapter = new MyGroupsList(returnedGroups);
+        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
         ListView groupsList = findViewById(R.id.group_listview);
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
@@ -131,6 +124,32 @@ public class ManageGroups extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private boolean checkForUserGroups(List<User> returnedUsers) {
+        boolean isFound = false;
+        for (User returnedUser : returnedUsers) {
+            if(returnedUser.getEmail().equalsIgnoreCase(user.getEmail())){
+                isFound = true;
+                return isFound;
+            }
+        }
+        return isFound;
+    }
+
+    private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
+        List<Group> groups = new ArrayList<>();
+        for(Group aGroup: returnedGroups){
+            long groupId = aGroup.getId();
+            Call<List<User>> allUsers = proxy.getGroupMembers(groupId);
+            ProxyBuilder.callProxy(ManageGroups.this, allUsers,
+                    returnedGroupUserIn -> {
+                        if(checkForUserGroups(returnedGroupUserIn)){
+                            groups.add(aGroup);
+                        }
+                    });
+        }
+        return groups;
     }
 
     private void exitGroup(Long groupId) {

@@ -34,6 +34,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="19dp"
         android:ems="10"
-        android:hint="@string/group_id"
+        android:hint="@string/add_group_name"
         android:inputType="textPersonName" />
 </RelativeLayout>
