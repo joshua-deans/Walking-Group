@@ -140,7 +140,8 @@ public class ManageGroups extends AppCompatActivity {
         for(Group aGroup: returnedGroups){
             long groupId = aGroup.getId();
             Call<List<User>> allUsers = proxy.getGroupMembers(groupId);
-            ProxyBuilder.callProxy(ManageGroups.this, allUsers,
+            ProxyBuilder.callProxy(ManageGroups.this,
+                    allUsers,
                     returnedGroupUserIn -> {
                         if(checkForUserGroups(returnedGroupUserIn)){
                             groups.add(aGroup);
