@@ -171,7 +171,6 @@ public class ManageGroups extends AppCompatActivity {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
 
-                    //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }

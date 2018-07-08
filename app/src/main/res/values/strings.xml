@@ -59,4 +59,6 @@
     <string name="create_group">Create Group</string>
     <string name="leader_tag">leader</string>
     <string name="you_are_leader">You are this group\'s leader</string>
+    <string name="cant_delete_leader">Cannot delete leader</string>
+    <string name="success_deletion">Successfully deleted user</string>
 </resources>

@@ -66,24 +66,35 @@ public class GroupDetailsActivity extends AppCompatActivity {
             userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
-                    builder.setMessage("Would you remove this user from the group?");
-                    // Add the buttons
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // TODO: implement delete user function
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    Long userID = (Long) view.getTag();
+                    if (userID != leaderId) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
+                        builder.setMessage("Would you remove this user from the group?");
+                        // Add the buttons
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Call<Void> deleteCaller = proxy.removeGroupMember(mGroupId, userID);
+                                ProxyBuilder.callProxy(GroupDetailsActivity.this, deleteCaller, returnNothing -> successDelete(returnNothing));
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        Toast.makeText(GroupDetailsActivity.this, R.string.cant_delete_leader, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
+    }
+
+    private void successDelete(Void returnNothing) {
+        Toast.makeText(GroupDetailsActivity.this, R.string.success_deletion, Toast.LENGTH_SHORT).show();
+        getGroupDetails(mGroupId);
     }
 
     private void getApiKey() {
@@ -145,7 +156,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View itemView = convertView;
             if (convertView == null) {
-                itemView = getLayoutInflater().inflate(R.layout.group_layout,
+                itemView = getLayoutInflater().inflate(R.layout.group_detail_list_view,
                         parent,
                         false);
             }
