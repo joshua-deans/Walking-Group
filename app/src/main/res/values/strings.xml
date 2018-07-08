@@ -57,4 +57,14 @@
     <string name="group_name">Group Name:</string>
     <string name="add_group">Add Group</string>
     <string name="create_group">Create Group</string>
+    <string name="leader_tag">leader</string>
+    <string name="you_are_leader">You are this group\'s leader</string>
+    <string name="cant_delete_leader">Cannot delete leader</string>
+    <string name="success_deletion">Successfully deleted user</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="remove_user_from_group_prompt">Would you remove this user from the group?</string>
+    <string name="error_occurred">Error occurred</string>
+    <string name="no_users_string">No users are in this group</string>
+    <string name="remove_group_toast">You are removed from the group</string>
 </resources>
