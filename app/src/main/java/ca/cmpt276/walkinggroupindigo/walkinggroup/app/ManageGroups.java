@@ -45,10 +45,15 @@ public class ManageGroups extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         populateGroups();
+        updateUI();
     }
 
     protected void onResume() {
         super.onResume();
+        populateGroups();
+    }
+
+    private void updateUI() {
         populateGroups();
     }
 
