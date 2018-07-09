@@ -131,31 +131,20 @@ public class ManageGroups extends AppCompatActivity {
 
     private List<Group> getAllGroupsUserIn() {
         List<Group> userInGroups = user.getLeadsGroups();
-//        List<Group> userLeadGroups = user.getLeadsGroups();   -> for future using
-//        List<Group> newList = new ArrayList<>(userInGroups);  -> for future using
-//        newList.addAll(userLeadGroups);                       -> for future using
+        List<Group> userLeadGroups = user.getLeadsGroups();
+        List<Group> newList = new ArrayList<>(userInGroups);
+        newList.addAll(userLeadGroups);
         return userInGroups;
     }
 
 
-    private boolean checkForUserGroups(List<User> returnedUsers) {
-        boolean isFound = false;
-        for (User returnedUser : returnedUsers) {
-            if(returnedUser.getEmail().equalsIgnoreCase(user.getEmail())){
-                isFound = true;
-                return isFound;
-            }
-        }
-        return isFound;
-    }
-
     private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groups = new ArrayList<>();
+        List<Group> groupInformaion = new ArrayList<>();
         List<Group> userGroups = getAllGroupsUserIn();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
                 if (u.getId() == aGroup.getId())
-                    groups.add(aGroup);
+                    groupInformaion.add(aGroup);
             }
         }
         return groupInformaion;
