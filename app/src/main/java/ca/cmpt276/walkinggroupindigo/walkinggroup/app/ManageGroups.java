@@ -142,19 +142,26 @@ public class ManageGroups extends AppCompatActivity {
     }
 
     private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groups = new ArrayList<>();
+        List<Group> groups = getUsersGroup();
+        List<Group> groupInformaion = new ArrayList<>();
         for(Group aGroup: returnedGroups){
-            long groupId = aGroup.getId();
+            for(Group uGroup: groups){
+                if(aGroup.getId() == uGroup.getId()){
+                    groupInformaion.add(aGroup);
+                }
+            }
+           /* long groupId = aGroup.getId();
             Call<List<User>> allUsers = proxy.getGroupMembers(groupId);
             ProxyBuilder.callProxy(ManageGroups.this, allUsers,
                     returnedGroupUserIn -> {
                         if(checkForUserGroups(returnedGroupUserIn)){
                             groups.add(aGroup);
                         }
-                    });
+                    });*/
         }
-        return groups;
+        return groupInformaion;
     }
+
 
     private void exitGroup(Long groupId) {
         Long currentUserId = user.getId();
@@ -166,6 +173,14 @@ public class ManageGroups extends AppCompatActivity {
         Toast.makeText(ManageGroups.this,
                 R.string.remove_group_toast,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    public List<Group> getUsersGroup() {
+        List<Group> leaderGroup = user.getLeadsGroups();
+        List<Group> userIn = user.getMemberOfGroups();
+        List<Group> allGroup = new ArrayList<>(leaderGroup);
+        allGroup.addAll(userIn);
+        return allGroup;
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
