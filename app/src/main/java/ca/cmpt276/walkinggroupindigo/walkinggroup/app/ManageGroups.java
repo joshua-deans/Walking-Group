@@ -152,8 +152,8 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private void exitGroup(Long groupId) {
-        Long currentUserId = user.getId();
-        Call<Void> exitCaller = proxy.removeGroupMember(groupId, currentUserId);
+//        Long currentUserId = user.getId();
+        Call<Void> exitCaller = proxy.deleteGroup(groupId);
         ProxyBuilder.callProxy(ManageGroups.this,exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
     }
 
