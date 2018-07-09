@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-
 /**
  * User class to store the data the server expects and returns.
  * (Incomplete: Needs support for monitoring and groups).
@@ -30,6 +28,15 @@ public class User extends IdItemBase{
     private String name;
     private String email;
     private String password;
+
+    private String birthYear;
+    private String birthMonth;
+    private String address;
+    private String cellPhone;
+    private String homePhone;
+    private String grade;
+    private String teacherName;
+    private String emergencyContactInfo;
 
     private Integer currentPoints;
     private Integer totalPointsEarned;
@@ -181,5 +188,69 @@ public class User extends IdItemBase{
                 ", hasFullData=" + hasFullData()+
                 ", href='" + getHref() + '\'' +
                 '}';
+    }
+
+    public String getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(String birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public String getBirthMonth() {
+        return birthMonth;
+    }
+
+    public void setBirthMonth(String birthMonth) {
+        this.birthMonth = birthMonth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCellPhone() {
+        return cellPhone;
+    }
+
+    public void setCellPhone(String cellPhone) {
+        this.cellPhone = cellPhone;
+    }
+
+    public String getHomePhone() {
+        return homePhone;
+    }
+
+    public void setHomePhone(String homePhone) {
+        this.homePhone = homePhone;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }
+
+    public String getEmergencyContactInfo() {
+        return emergencyContactInfo;
+    }
+
+    public void setEmergencyContactInfo(String emergencyContactInfo) {
+        this.emergencyContactInfo = emergencyContactInfo;
     }
 }
