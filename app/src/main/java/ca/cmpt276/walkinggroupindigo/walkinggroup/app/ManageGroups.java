@@ -170,16 +170,8 @@ public class ManageGroups extends AppCompatActivity {
 
     private void exitFromGroupSuccess(Void returnNothing) {
         Toast.makeText(ManageGroups.this,
-                R.string.remove_group_toast,
+                "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
-    }
-
-    public List<Group> getUsersGroup() {
-        List<Group> leaderGroup = user.getLeadsGroups();
-        List<Group> userIn = user.getMemberOfGroups();
-        List<Group> allGroup = new ArrayList<>(leaderGroup);
-        allGroup.addAll(userIn);
-        return allGroup;
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
@@ -209,12 +201,13 @@ public class ManageGroups extends AppCompatActivity {
                 currentGroup = mGroupsList.get(position);
                 itemView.setTag(currentGroup.getId());
             }
-           if (currentGroup.getGroupDescription() != null) {
+            if (currentGroup.getGroupDescription() != null) {
                 try {
-                    TextView nameText = findViewById(R.id.group_name);
+                    TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
+
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
-               } catch (NullPointerException e) {
+                } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
             }
@@ -230,3 +223,4 @@ public class ManageGroups extends AppCompatActivity {
         return token;
     }
 }
+
