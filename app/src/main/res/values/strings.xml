@@ -69,4 +69,11 @@
     <string name="remove_group_toast">You are removed from the group</string>
     <string name="comment">/////</string>
     <string name="add_group_name">Enter a group name:</string>
+    <string name="birthday_sign_up">Birthday (optional)</string>
+    <string name="address_sign_up">Address (optional)</string>
+    <string name="home_phone_sign_up">Home phone (optional)</string>
+    <string name="cell_phone_sign_up">Cell phone (optional)</string>
+    <string name="grade_students_sign_up">Grade (Students only)</string>
+    <string name="teacher_students_sign_up">Teacher (Students only)</string>
+    <string name="emergency_contact_info_sign_up">Emergency contact Info</string>
 </resources>

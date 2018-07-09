@@ -27,8 +27,6 @@
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/signup_txtview"
-                android:layout_centerHorizontal="true"
                 android:ems="10"
                 android:hint="@string/full_name_sign"
                 android:inputType="textPersonName" />
@@ -37,8 +35,6 @@
                 android:id="@+id/email_information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/user_name"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:hint="@string/e_mail_hint"
@@ -48,8 +44,6 @@
                 android:id="@+id/create_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/email_information"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:hint="@string/password"
@@ -59,21 +53,36 @@
                 android:id="@+id/confirm_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/create_password"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:hint="@string/confirm_password_hint"
                 android:inputType="textPassword" />
 
-            <EditText
-                android:id="@+id/sign_up_date"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:ems="10"
-                android:hint="Birthday (optional)"
-                android:inputType="date" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/birthday_month_sign_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Birth month"
+                    android:inputType="date" />
+
+                <EditText
+                    android:id="@+id/birthday_year_sign_up"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Birth year"
+                    android:inputType="date" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/address"
@@ -81,47 +90,53 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Address (optional)"
+                android:hint="@string/address_sign_up"
                 android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/homePhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Home phone (optional)"
+                android:hint="@string/home_phone_sign_up"
                 android:inputType="phone" />
 
             <EditText
                 android:id="@+id/cellPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Cell phone (optional)"
+                android:hint="@string/cell_phone_sign_up"
                 android:inputType="phone" />
 
             <EditText
                 android:id="@+id/currentGrade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Grade (Students only)"
+                android:hint="@string/grade_students_sign_up"
                 android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/teacher"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Teacher (Students only)"
+                android:hint="@string/teacher_students_sign_up"
                 android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/emergencyContactInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:hint="Emergency contact Info"
+                android:hint="@string/emergency_contact_info_sign_up"
                 android:inputType="textPersonName" />
         </LinearLayout>
     </ScrollView>
