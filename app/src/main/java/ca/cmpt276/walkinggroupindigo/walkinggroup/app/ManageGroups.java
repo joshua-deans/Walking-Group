@@ -36,7 +36,7 @@ public class ManageGroups extends AppCompatActivity {
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     private WGServerProxy proxy;
     private User user;
-    private Group group;
+    //private Group group;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,10 +152,26 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private void exitGroup(Long groupId) {
-//        Long currentUserId = user.getId();
-        Call<Void> exitCaller = proxy.deleteGroup(groupId);
-        ProxyBuilder.callProxy(ManageGroups.this,exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        Long currentUserId = user.getId();
+        Call<Group> getCurrentGroup = proxy.getGroupById(groupId);
+        ProxyBuilder.callProxy(ManageGroups.this,
+                getCurrentGroup,
+                returnInformation ->
+                       removeMember(returnInformation, currentUserId));
+        }
+
+    private void removeMember(Group group, Long currentUserId) {
+        if(group.getLeader().getId().equals(currentUserId)){
+            Call<Void> deleteCaller = proxy.deleteGroup(group.getId());
+            ProxyBuilder.callProxy(ManageGroups.this, deleteCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        }
+        else {
+            Call<Void> exitCaller = proxy.removeGroupMember(group.getId(), currentUserId);
+            ProxyBuilder.callProxy(ManageGroups.this, exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        }
     }
+
+
 
     private void exitFromGroupSuccess(Void returnNothing) {
         Toast.makeText(ManageGroups.this,
