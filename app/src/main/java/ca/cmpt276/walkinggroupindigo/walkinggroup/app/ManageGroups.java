@@ -58,7 +58,6 @@ public class ManageGroups extends AppCompatActivity {
         proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -79,7 +78,6 @@ public class ManageGroups extends AppCompatActivity {
         }
     }
 
-
     private void populateGroups() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
         ProxyBuilder.callProxy(ManageGroups.this, groupsCaller,
@@ -87,7 +85,7 @@ public class ManageGroups extends AppCompatActivity {
                     populateGroupsListView(returnedGroups);
                 });
     }
-//
+
     private void populateGroupsListView(List<Group> returnedGroups) {
         List<Group> userInGroups = allGroupsUserIn(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
@@ -130,6 +128,16 @@ public class ManageGroups extends AppCompatActivity {
         });
     }
 
+
+    private List<Group> getAllGroupsUserIn() {
+        List<Group> userInGroups = user.getLeadsGroups();
+//        List<Group> userLeadGroups = user.getLeadsGroups();   -> for future using
+//        List<Group> newList = new ArrayList<>(userInGroups);  -> for future using
+//        newList.addAll(userLeadGroups);                       -> for future using
+        return userInGroups;
+    }
+
+
     private boolean checkForUserGroups(List<User> returnedUsers) {
         boolean isFound = false;
         for (User returnedUser : returnedUsers) {
@@ -142,22 +150,13 @@ public class ManageGroups extends AppCompatActivity {
     }
 
     private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groups = getUsersGroup();
-        List<Group> groupInformaion = new ArrayList<>();
-        for(Group aGroup: returnedGroups){
-            for(Group uGroup: groups){
-                if(aGroup.getId() == uGroup.getId()){
-                    groupInformaion.add(aGroup);
-                }
+        List<Group> groups = new ArrayList<>();
+        List<Group> userGroups = getAllGroupsUserIn();
+        for(Group aGroup : returnedGroups) {
+            for (Group u: userGroups) {
+                if (u.getId() == aGroup.getId())
+                    groups.add(aGroup);
             }
-           /* long groupId = aGroup.getId();
-            Call<List<User>> allUsers = proxy.getGroupMembers(groupId);
-            ProxyBuilder.callProxy(ManageGroups.this, allUsers,
-                    returnedGroupUserIn -> {
-                        if(checkForUserGroups(returnedGroupUserIn)){
-                            groups.add(aGroup);
-                        }
-                    });*/
         }
         return groupInformaion;
     }
@@ -166,7 +165,7 @@ public class ManageGroups extends AppCompatActivity {
     private void exitGroup(Long groupId) {
         Long currentUserId = user.getId();
         Call<Void> exitCaller = proxy.removeGroupMember(groupId, currentUserId);
-        ProxyBuilder.callProxy(exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        ProxyBuilder.callProxy(ManageGroups.this,exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
     }
 
     private void exitFromGroupSuccess(Void returnNothing) {
@@ -210,12 +209,12 @@ public class ManageGroups extends AppCompatActivity {
                 currentGroup = mGroupsList.get(position);
                 itemView.setTag(currentGroup.getId());
             }
-            if (currentGroup.getGroupDescription() != null) {
+           if (currentGroup.getGroupDescription() != null) {
                 try {
-                    TextView nameText = itemView.findViewById(R.id.group_name);
+                    TextView nameText = findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
-
-                } catch (NullPointerException e) {
+                    //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
+               } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
             }
@@ -231,4 +230,3 @@ public class ManageGroups extends AppCompatActivity {
         return token;
     }
 }
-
