@@ -108,6 +108,7 @@ public class CreateGroup extends AppCompatActivity {
                     currentGroup.setDestLongitude(destLatLng.longitude);
                     Call<Group> caller = proxy.createGroup(currentGroup);
                     ProxyBuilder.callProxy(CreateGroup.this, caller, group -> onSuccess(group));
+                    // user has to be in the group
                 }
             }
         });

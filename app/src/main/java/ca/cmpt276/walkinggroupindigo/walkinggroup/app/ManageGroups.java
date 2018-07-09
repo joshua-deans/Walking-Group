@@ -130,24 +130,24 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private List<Group> getAllGroupsUserIn() {
-        List<Group> userInGroups = user.getLeadsGroups();
+        List<Group> userInGroups = user.getMemberOfGroups();
         List<Group> userLeadGroups = user.getLeadsGroups();
         List<Group> newList = new ArrayList<>(userInGroups);
         newList.addAll(userLeadGroups);
-        return userInGroups;
+        return newList;
     }
 
 
     private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groupInformaion = new ArrayList<>();
+        List<Group> groupInformation = new ArrayList<>();
         List<Group> userGroups = getAllGroupsUserIn();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
                 if (u.getId() == aGroup.getId())
-                    groupInformaion.add(aGroup);
+                    groupInformation.add(aGroup);
             }
         }
-        return groupInformaion;
+        return groupInformation;
     }
 
 
