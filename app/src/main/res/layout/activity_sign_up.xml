@@ -6,18 +6,22 @@
     tools:context=".app.SignUpActivity">
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="409dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/signup_btn"
         android:layout_alignParentStart="false"
         android:layout_below="@+id/signup_txtview"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <EditText
                 android:id="@+id/user_name"
@@ -25,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/signup_txtview"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
                 android:ems="10"
                 android:hint="@string/full_name_sign"
                 android:inputType="textPersonName" />
@@ -62,6 +65,64 @@
                 android:ems="10"
                 android:hint="@string/confirm_password_hint"
                 android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/sign_up_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="Birthday (optional)"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="Address (optional)"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/homePhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Home phone (optional)"
+                android:inputType="phone" />
+
+            <EditText
+                android:id="@+id/cellPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Cell phone (optional)"
+                android:inputType="phone" />
+
+            <EditText
+                android:id="@+id/currentGrade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Grade (Students only)"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/teacher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Teacher (Students only)"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/emergencyContactInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Emergency contact Info"
+                android:inputType="textPersonName" />
         </LinearLayout>
     </ScrollView>
 
@@ -72,6 +133,7 @@
 
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:text="@string/signup_txtview"
         android:textSize="24sp" />
@@ -83,6 +145,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:text="@string/signup_btn" />
 
 </RelativeLayout>

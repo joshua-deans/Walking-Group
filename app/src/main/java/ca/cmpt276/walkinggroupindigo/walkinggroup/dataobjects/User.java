@@ -19,16 +19,12 @@ import java.util.List;
 // This is needed for the server to be able to change without breaking your app!
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends IdItemBase{
-    // NOTE: id, hasFullData, and href in IdItemBase base class.
 
-    // Data fields for the user.
-    // -------------------------------------------------------------------------------------------
-    // NOTE: Make numbers Long/Integer, not long/int because only the former will
-    //       deserialize if the value is null from the server.
     private String name;
     private String email;
     private String password;
 
+    // all of the optional information that a user can enter
     private String birthYear;
     private String birthMonth;
     private String address;
@@ -37,6 +33,11 @@ public class User extends IdItemBase{
     private String grade;
     private String teacherName;
     private String emergencyContactInfo;
+
+    // The user's current latitude
+    private Double currentLat;
+    // The user's current longitude
+    private Double currentLong;
 
     private Integer currentPoints;
     private Integer totalPointsEarned;
@@ -252,5 +253,21 @@ public class User extends IdItemBase{
 
     public void setEmergencyContactInfo(String emergencyContactInfo) {
         this.emergencyContactInfo = emergencyContactInfo;
+    }
+
+    public Double getCurrentLat() {
+        return currentLat;
+    }
+
+    public void setCurrentLat(Double currentLat) {
+        this.currentLat = currentLat;
+    }
+
+    public Double getCurrentLong() {
+        return currentLong;
+    }
+
+    public void setCurrentLong(Double currentLong) {
+        this.currentLong = currentLong;
     }
 }
