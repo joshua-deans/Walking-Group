@@ -26,8 +26,7 @@ public class RemoveMonitoringUserGroupMessageFragment extends AppCompatDialogFra
     private User user;
 
         @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+        @Override        public Dialog onCreateDialog(Bundle savedInstanceState) {
 
             User.getInstance();
             Long userId = user.getId();

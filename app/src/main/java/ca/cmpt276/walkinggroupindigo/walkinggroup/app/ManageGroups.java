@@ -183,7 +183,6 @@ public class ManageGroups extends AppCompatActivity {
     }
 
 
-
     private void exitFromGroupSuccess(Void returnNothing) {
         Toast.makeText(ManageGroups.this,
                 "You are removed from the group",

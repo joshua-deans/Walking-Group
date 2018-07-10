@@ -14,7 +14,8 @@
             android:id="@+id/groupDetailUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp" />
+            android:layout_marginRight="5dp"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/groupLeaderTag"
@@ -28,5 +29,5 @@
         android:id="@+id/groupDetailUserEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 </LinearLayout>
