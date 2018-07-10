@@ -61,6 +61,13 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         populateMonitorsUserGroups();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateMonitorsUserGroups();
+        updateUI();
+    }
+
     private void updateUI() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
         ProxyBuilder.callProxy(
@@ -122,6 +129,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     Toast.makeText(MonitoringUsersActivity.this,
                             "I am working inside", Toast.LENGTH_SHORT).show();
                 });
+        updateUI();
         finish();
         return;
     }

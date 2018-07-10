@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:baselineAligned="false"
     tools:context=".app.SignUpActivity">
 
     <RelativeLayout
         android:id="@+id/monitored_relative_layout"
-        android:layout_width="295dp"
-        android:layout_height="239dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-
+        android:layout_weight=".5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <Button
@@ -32,9 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="238dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="54dp"/>
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="54dp" />
 
         <TextView
             android:id="@+id/monitored_txtview"
@@ -59,12 +57,9 @@
 
     <RelativeLayout
         android:id="@+id/monitoring_relative_layout"
-        android:layout_toLeftOf="@+id/monitored_relative_layout"
-        android:layout_width="295dp"
-        android:layout_height="239dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_weight=".5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <Button
@@ -83,8 +78,8 @@
             android:layout_width="match_parent"
             android:layout_height="238dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="54dp" />
 
         <TextView
@@ -107,4 +102,4 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
