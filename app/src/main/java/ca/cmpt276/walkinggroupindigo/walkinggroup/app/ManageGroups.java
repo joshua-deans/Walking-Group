@@ -34,6 +34,7 @@ import retrofit2.Call;
 public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
+    public static final int PICK_REQUEST = 9;
     private WGServerProxy proxy;
     private User user;
     //private Group group;
@@ -44,17 +45,22 @@ public class ManageGroups extends AppCompatActivity {
         setContentView(R.layout.activity_manage_group);
         user = User.getInstance();
         getApiKey();
-        populateGroups();
         updateUI();
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
-        populateGroups();
+        updateUI();
     }
 
     private void updateUI() {
-        populateGroups();
+        Call<List<Group>> groupsCaller = proxy.getGroups();
+        ProxyBuilder.callProxy(
+                ManageGroups.this, groupsCaller,
+                returnedGroups -> {
+                    populateGroupsListView(returnedGroups);
+                });
     }
 
     private void getApiKey() {
@@ -83,16 +89,8 @@ public class ManageGroups extends AppCompatActivity {
         }
     }
 
-    private void populateGroups() {
-        Call<List<Group>> groupsCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(ManageGroups.this, groupsCaller,
-                returnedGroups -> {
-                    populateGroupsListView(returnedGroups);
-                });
-    }
-
     private void populateGroupsListView(List<Group> returnedGroups) {
-        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        List<Group> userInGroups = getAllGroups(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
         ListView groupsList = findViewById(R.id.group_listview);
         groupsList.setAdapter(adapter);
@@ -133,19 +131,27 @@ public class ManageGroups extends AppCompatActivity {
         });
     }
 
-
-    private List<Group> getAllGroupsUserIn() {
-        List<Group> userInGroups = user.getMemberOfGroups();
-        List<Group> userLeadGroups = user.getLeadsGroups();
-        List<Group> newList = new ArrayList<>(userInGroups);
-        newList.addAll(userLeadGroups);
-        return newList;
+    private List<Group> getAllGroups(List<Group> returnedGroups) {
+        List<Group> userIn = getGroupsUserIn(returnedGroups);
+        userIn.addAll(getGroupsUserLead(returnedGroups));
+        return userIn;
     }
 
 
-    private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
+    private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
         List<Group> groupInformation = new ArrayList<>();
-        List<Group> userGroups = getAllGroupsUserIn();
+        for(Group aGroup : returnedGroups) {
+            if (aGroup.getLeader().getId().equals(user.getId())) {
+                groupInformation.add(aGroup);
+            }
+        }
+        return groupInformation;
+    }
+
+
+    private List<Group> getGroupsUserIn(List<Group> returnedGroups) {
+        List<Group> groupInformation = new ArrayList<>();
+        List<Group> userGroups = user.getMemberOfGroups();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
                 if (u.getId() == aGroup.getId())
@@ -215,7 +221,6 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
-
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
