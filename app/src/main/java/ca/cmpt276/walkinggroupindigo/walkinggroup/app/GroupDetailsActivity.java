@@ -2,6 +2,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,34 +63,48 @@ public class GroupDetailsActivity extends AppCompatActivity {
         userListView.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_detail_list_view);
+        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Long groupId = (Long) view.getTag();
+                Intent intent = new Intent(GroupDetailsActivity.this, UserInfoActivity.class);
+                intent.putExtra(GROUP_ID_EXTRA, groupId);
+                startActivity(intent);
+            }
+        });
         if (leader) {
-            userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Long userID = (Long) view.getTag();
-                    if (userID != leaderId) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
-                        builder.setMessage(R.string.remove_user_from_group_prompt);
-                        // Add the buttons
-                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Call<Void> deleteCaller = proxy.removeGroupMember(mGroupId, userID);
-                                ProxyBuilder.callProxy(GroupDetailsActivity.this, deleteCaller, returnNothing -> successDelete(returnNothing));
-                            }
-                        });
-                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    } else {
-                        Toast.makeText(GroupDetailsActivity.this, R.string.cant_delete_leader, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+            userListLongClickFunction(userListView);
         }
+    }
+
+    private void userListLongClickFunction(ListView userListView) {
+        userListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Long userID = (Long) view.getTag();
+                if (userID != leaderId) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
+                    builder.setMessage(R.string.remove_user_from_group_prompt);
+                    // Add the buttons
+                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Call<Void> deleteCaller = proxy.removeGroupMember(mGroupId, userID);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, deleteCaller, returnNothing -> successDelete(returnNothing));
+                        }
+                    });
+                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    Toast.makeText(GroupDetailsActivity.this, R.string.cant_delete_leader, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
     }
 
     private void successDelete(Void returnNothing) {
