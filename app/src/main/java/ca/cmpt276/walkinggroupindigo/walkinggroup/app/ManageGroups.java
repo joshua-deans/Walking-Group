@@ -85,7 +85,8 @@ public class ManageGroups extends AppCompatActivity {
 
     private void populateGroups() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(ManageGroups.this, groupsCaller,
+        ProxyBuilder.callProxy(
+                ManageGroups.this, groupsCaller,
                 returnedGroups -> {
                     populateGroupsListView(returnedGroups);
                 });
