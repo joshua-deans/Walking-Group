@@ -83,4 +83,13 @@
     <string name="user_info">User Info</string>
     <string name="birth_year">Birth year</string>
     <string name="birth_month">Birth month</string>
+    <string name="full_name">Full Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="birthday">Birthday</string>
+    <string name="address">Address</string>
+    <string name="home_phone">Home phone</string>
+    <string name="cell_phone">Cell phone</string>
+    <string name="grade">Grade</string>
+    <string name="teacher">Teacher</string>
+    <string name="emergency_contact_info">Emergency contact Info</string>
 </resources>
