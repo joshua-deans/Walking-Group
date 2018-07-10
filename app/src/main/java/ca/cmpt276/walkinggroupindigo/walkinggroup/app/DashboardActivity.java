@@ -59,6 +59,12 @@ public class DashboardActivity extends AppCompatActivity {
                 logUserOut();
                 return true;
 
+            case R.id.accountInfoButton:
+                // TODO: Create activity that shows account information, and lets user change it.
+                // Once this is done, delete this toast.
+                Toast.makeText(DashboardActivity.this, "Account Info to be implemented", Toast.LENGTH_SHORT).show();
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
