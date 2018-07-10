@@ -122,8 +122,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     Toast.makeText(MonitoringUsersActivity.this,
                             "I am working inside", Toast.LENGTH_SHORT).show();
                 });
-        populateMonitorsUserGroups();
-//        finish();
+        finish();
         return;
     }
 
@@ -188,6 +187,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
         populateMonitorsUserGroups();
         updateUI();
+        finish();
     }
 
     private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
