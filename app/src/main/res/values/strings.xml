@@ -5,7 +5,6 @@
     <string name="apikey">51B4A229-C683-477B-B37E-1ABF72610F869</string>
     <string name="loginTitle">Login</string>
     <string name="emailEdit">E-mail</string>
-    <string name="password">Password</string>
     <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
     <string name="signup_txtview">Sign Up</string>
     <string name="input_email_txtview">Please enter an E-mail address: </string>
@@ -83,4 +82,15 @@
     <string name="user_info">User Info</string>
     <string name="birth_year">Birth year</string>
     <string name="birth_month">Birth month</string>
+    <string name="full_name">Full Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="birthday">Birthday</string>
+    <string name="address">Address</string>
+    <string name="home_phone">Home phone</string>
+    <string name="cell_phone">Cell phone</string>
+    <string name="grade">Grade</string>
+    <string name="teacher">Teacher</string>
+    <string name="emergency_contact_info">Emergency contact Info</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
 </resources>
