@@ -114,7 +114,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     Toast.makeText(MonitoringUsersActivity.this,
                             "I am working inside", Toast.LENGTH_SHORT).show();
                 });
-        finish();
+        populateMonitorsUserGroups();
+//        finish();
         return;
     }
 
@@ -178,6 +179,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         Toast.makeText(MonitoringUsersActivity.this,
                 "You removed the user from this group",
                 Toast.LENGTH_SHORT).show();
+        populateMonitorsUserGroups();
     }
 
     private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
@@ -194,8 +196,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     }
 
     public List<Group> getAllGroupsUserIn() {
-        List<Group> userInGroups = user.getMemberOfGroups();
-        List<Group> userLeadGroups = user.getLeadsGroups();
+        List<Group> userInGroups = addedOne.getMemberOfGroups();
+        List<Group> userLeadGroups = addedOne.getLeadsGroups();
         List<Group> mAllGroupsUserIn = new ArrayList<>(userInGroups);
         mAllGroupsUserIn.addAll(userLeadGroups);
         return mAllGroupsUserIn;
