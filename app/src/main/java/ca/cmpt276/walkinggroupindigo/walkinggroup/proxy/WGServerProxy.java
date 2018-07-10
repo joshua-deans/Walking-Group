@@ -42,6 +42,10 @@ public interface WGServerProxy {
     @GET("/users/byEmail")
     Call<User> getUserByEmail(@Query("email") String email);
 
+    // Added by Joshua Deans, not from original script
+    @POST("/users/{id}")
+    Call<User> editUser(@Path("id") Long userId, @Body User user);
+
     // -----------------------------
     // GPS Location
     // -----------------------------

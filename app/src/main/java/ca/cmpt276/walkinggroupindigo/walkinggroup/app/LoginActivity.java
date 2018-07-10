@@ -154,6 +154,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void getUserInfo(User returnedUser, boolean saveInfo) {
+        setUserParams(returnedUser);
+        if (saveInfo) {
+            saveLogIn(user.toString());
+        }
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void setUserParams(User returnedUser) {
         user.setId(returnedUser.getId());
         user.setHref("/users/" + returnedUser.getId());
         user.setName(returnedUser.getName());
@@ -161,11 +171,13 @@ public class LoginActivity extends AppCompatActivity {
         user.setMemberOfGroups(returnedUser.getMemberOfGroups());
         user.setMonitorsUsers(returnedUser.getMonitorsUsers());
         user.setMonitoredByUsers(returnedUser.getMonitoredByUsers());
-        if (saveInfo) {
-            saveLogIn(user.toString());
-        }
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        startActivity(intent);
-        finish();
+        user.setBirthMonth(returnedUser.getBirthMonth());
+        user.setBirthYear(returnedUser.getBirthYear());
+        user.setEmergencyContactInfo(returnedUser.getEmergencyContactInfo());
+        user.setTeacherName(returnedUser.getTeacherName());
+        user.setCellPhone(returnedUser.getCellPhone());
+        user.setHomePhone(returnedUser.getHomePhone());
+        user.setAddress(returnedUser.getAddress());
+        user.setGrade(returnedUser.getGrade());
     }
 }
