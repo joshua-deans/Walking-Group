@@ -80,4 +80,7 @@
     <string name="log_out">Log Out</string>
     <string name="update_info">Update Info</string>
     <string name="account_information">Account Information</string>
+    <string name="user_info">User Info</string>
+    <string name="birth_year">Birth year</string>
+    <string name="birth_month">Birth month</string>
 </resources>

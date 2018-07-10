@@ -1,0 +1,91 @@
+package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
+
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
+
+public class UserInfoActivity extends AppCompatActivity {
+
+    private WGServerProxy proxy;
+    private Long mUserId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_info);
+        getApiKey();
+        getUserId();
+        if (mUserId == -1) {
+            errorMessage();
+        } else {
+            getUserDetails(mUserId);
+        }
+    }
+
+    private void getUserDetails(Long userId) {
+        Call<User> userCaller = proxy.getUserById(userId);
+        ProxyBuilder.callProxy(UserInfoActivity.this, userCaller, returnedUser -> extractUserData(returnedUser));
+    }
+
+    private void extractUserData(User returnedUser) {
+        EditText fullName = findViewById(R.id.userInfoUserName);
+        EditText email = findViewById(R.id.userInfoEmail);
+        EditText birthMonth = findViewById(R.id.userInfoBirthMonth);
+        EditText birthYear = findViewById(R.id.userInfoBirthYear);
+        EditText address = findViewById(R.id.userInfoAddress);
+        EditText homePhone = findViewById(R.id.userInfoHomePhone);
+        EditText cellPhone = findViewById(R.id.userInfoCellPhone);
+        EditText grade = findViewById(R.id.userInfoGrade);
+        EditText teacher = findViewById(R.id.userInfoTeacher);
+        EditText emergencyContact = findViewById(R.id.userInfoEmergencyContact);
+        setTextFields(returnedUser, fullName, email, birthMonth, birthYear, address, homePhone, cellPhone,
+                grade, teacher, emergencyContact);
+    }
+
+    private void setTextFields(User mUser, EditText fullName, EditText email, EditText birthMonth, EditText birthYear, EditText address, EditText homePhone, EditText cellPhone, EditText grade, EditText teacher, EditText emergencyContact) {
+        fullName.setText(mUser.getName());
+        email.setText(mUser.getEmail());
+        birthMonth.setText(mUser.getBirthMonth());
+        birthYear.setText(mUser.getBirthYear());
+        address.setText(mUser.getAddress());
+        homePhone.setText(mUser.getHomePhone());
+        cellPhone.setText(mUser.getCellPhone());
+        grade.setText(mUser.getGrade());
+        teacher.setText(mUser.getTeacherName());
+        emergencyContact.setText(mUser.getEmergencyContactInfo());
+    }
+
+    private void getUserId() {
+        mUserId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
+    }
+
+    private void getApiKey() {
+        String apiKey = getString(R.string.apikey);
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
+    }
+
+    private void errorMessage() {
+        Toast.makeText(UserInfoActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    public String getToken() {
+        Context context = UserInfoActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
+    }
+}

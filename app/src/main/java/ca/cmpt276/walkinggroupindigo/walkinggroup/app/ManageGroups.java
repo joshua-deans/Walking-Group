@@ -154,7 +154,7 @@ public class ManageGroups extends AppCompatActivity {
         List<Group> userGroups = user.getMemberOfGroups();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
-                if (u.getId() == aGroup.getId())
+                if (u.getId().equals(aGroup.getId()))
                     groupInformation.add(aGroup);
             }
         }
