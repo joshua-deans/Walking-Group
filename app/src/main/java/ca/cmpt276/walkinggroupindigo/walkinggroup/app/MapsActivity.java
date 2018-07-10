@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -36,11 +35,9 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
-
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -64,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mUser = User.getInstance();
-        getAPIKey();
+        proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -97,12 +94,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addUser(List<User> user) {
         Toast.makeText(MapsActivity.this, "Successfully added to group", Toast.LENGTH_SHORT).show();
-    }
-
-    private void getAPIKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void findGroupMarkers() {
@@ -208,14 +199,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         updateMapLocation();
-    }
-
-
-    private String getToken() {
-        Context context = MapsActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LOG_IN_SAVE_TOKEN, "");
-        return token;
     }
 }

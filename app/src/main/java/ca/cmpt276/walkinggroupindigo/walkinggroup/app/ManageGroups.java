@@ -1,9 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +26,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -44,7 +43,7 @@ public class ManageGroups extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
         user = User.getInstance();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
         updateUI();
     }
 
@@ -61,12 +60,6 @@ public class ManageGroups extends AppCompatActivity {
                 returnedGroups -> {
                     populateGroupsListView(returnedGroups);
                 });
-    }
-
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     @Override
@@ -228,14 +221,6 @@ public class ManageGroups extends AppCompatActivity {
             }
             return itemView;
         }
-    }
-
-    public String getToken() {
-        Context context = ManageGroups.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
     }
 }
 

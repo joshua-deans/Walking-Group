@@ -16,6 +16,7 @@ import android.widget.Toast;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -32,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(LoginActivity.this, getString(R.string.apikey));
         checkIfUserIsLoggedIn();
         setUpLoginButton();
     }
@@ -79,12 +80,6 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     }
-    
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        proxy = ProxyBuilder.getProxy(apiKey,null);
-
-    }
 
     private void setUpLoginButton() {
         Button button = findViewById(R.id.login_btn);
@@ -106,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             user.setEmail(userEmail);
             user.setPassword(userPass);
-            String userString = user.toString();
             ProxyBuilder.setOnTokenReceiveCallback(token -> onReceiveToken(token));
             Call<Void> caller = proxy.login(user);
             ProxyBuilder.callProxy(LoginActivity.this, caller, returnedNothing -> logIn(returnedNothing, userEmail, true));

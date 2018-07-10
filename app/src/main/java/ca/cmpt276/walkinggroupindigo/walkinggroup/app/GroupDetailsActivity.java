@@ -24,6 +24,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -43,7 +44,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_details);
         mUser = User.getInstance();
         leaderUser = new User();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
         if (mGroupId == -1) {
             errorMessage();
