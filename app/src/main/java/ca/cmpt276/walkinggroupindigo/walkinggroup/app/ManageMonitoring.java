@@ -3,7 +3,6 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,12 +18,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -44,7 +43,7 @@ public class ManageMonitoring extends AppCompatActivity {
         user = User.getInstance();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
         populateMonitorsUser();
         populateMonitoredByUsers();
     }
@@ -76,13 +75,6 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void populateMonitorsUser() {
@@ -228,10 +220,10 @@ public class ManageMonitoring extends AppCompatActivity {
             }
             if (currentUser.getName() != null && currentUser.getEmail() != null) {
                 try {
-                    TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
+                    TextView nameText = itemView.findViewById(R.id.txtMonitoringName);
                     nameText.setText(currentUser.getName());
 
-                    TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
+                    TextView emailText = itemView.findViewById(R.id.txtMonitoringEmail);
                     emailText.setText(currentUser.getEmail());
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mUserList.toString());
@@ -299,13 +291,4 @@ public class ManageMonitoring extends AppCompatActivity {
             return itemView;
         }
     }
-
-    public String getToken() {
-        Context context = ManageMonitoring.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
-    }
-
 }
