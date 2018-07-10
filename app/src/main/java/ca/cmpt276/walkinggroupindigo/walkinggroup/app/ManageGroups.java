@@ -188,6 +188,7 @@ public class ManageGroups extends AppCompatActivity {
         Toast.makeText(ManageGroups.this,
                 "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
+        updateUI();
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {

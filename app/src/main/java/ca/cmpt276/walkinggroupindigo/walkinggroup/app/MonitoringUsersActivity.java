@@ -61,6 +61,15 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         populateMonitorsUserGroups();
     }
 
+    private void updateUI() {
+        Call<List<Group>> groupsCaller = proxy.getGroups();
+        ProxyBuilder.callProxy(
+                MonitoringUsersActivity.this, groupsCaller,
+                returnedGroups -> {
+                    populateMonitorsUserGroupsListView(returnedGroups);
+                });
+    }
+
     private void getApiKey() {
         String apiKey = getString(R.string.apikey);
         String token = getToken();
@@ -90,7 +99,6 @@ public class MonitoringUsersActivity extends AppCompatActivity {
 
     private void groupExists(String address) {
         Call<List<Group>> groupCaller = proxy.getGroups();
-
         ProxyBuilder.callProxy(MonitoringUsersActivity.this,
                 groupCaller,
                 returnedGroups->{
@@ -122,13 +130,11 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     private void populateMonitorsUserGroups() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
         ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupsCaller,
-                returnedGroups -> {
-                    populateMonitorsUserGroupsListView(returnedGroups);
-                });
+                this::populateMonitorsUserGroupsListView);
     }
 
     private void populateMonitorsUserGroupsListView(List<Group> returnedGroups) {
-        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        List<Group> userInGroups = getAllGroups(returnedGroups);
         ArrayAdapter<Group> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList(userInGroups);
         ListView groupsList = findViewById(R.id.monitor_user_groups_list);
         groupsList.setAdapter(adapter);
@@ -164,6 +170,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                updateUI();
                 return true;
             }
         });
@@ -180,14 +187,25 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 "You removed the user from this group",
                 Toast.LENGTH_SHORT).show();
         populateMonitorsUserGroups();
+        updateUI();
     }
 
-    private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
+    private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
         List<Group> groupInformation = new ArrayList<>();
-        List<Group> userGroups = getAllGroupsUserIn();
+        for(Group aGroup : returnedGroups) {
+            if (aGroup.getLeader().getId().equals(addedOne.getId())) {
+                groupInformation.add(aGroup);
+            }
+        }
+        return groupInformation;
+    }
+
+    private List<Group> getGroupsUserIn(List<Group> returnedGroups) {
+        List<Group> groupInformation = new ArrayList<>();
+        List<Group> userGroups = addedOne.getMemberOfGroups();
         for (Group aGroup : returnedGroups) {
             for (Group u : userGroups) {
-                if (u.getId() == aGroup.getId()) {
+                if (u.getId().equals(aGroup.getId())) {
                     groupInformation.add(aGroup);
                 }
             }
@@ -195,15 +213,11 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         return groupInformation;
     }
 
-    public List<Group> getAllGroupsUserIn() {
-        List<Group> userInGroups = addedOne.getMemberOfGroups();
-        List<Group> userLeadGroups = addedOne.getLeadsGroups();
-        List<Group> mAllGroupsUserIn = new ArrayList<>(userInGroups);
-        mAllGroupsUserIn.addAll(userLeadGroups);
-        return mAllGroupsUserIn;
+    private List<Group> getAllGroups(List<Group> returnedGroups) {
+        List<Group> userIn = getGroupsUserIn(returnedGroups);
+        userIn.addAll(getGroupsUserLead(returnedGroups));
+        return userIn;
     }
-
-
 
     private class MonitoringUsersGroupList extends ArrayAdapter<Group> {
         List<Group> mGroupList;
