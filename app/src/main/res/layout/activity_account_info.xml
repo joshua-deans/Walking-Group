@@ -74,7 +74,8 @@
                     android:ems="10"
                     android:hint="@string/e_mail_hint"
                     android:inputType="none"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:ignore="TextFields" />
 
                 <TextView
                     android:layout_width="match_parent"

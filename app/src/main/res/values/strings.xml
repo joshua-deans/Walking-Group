@@ -5,7 +5,6 @@
     <string name="apikey">51B4A229-C683-477B-B37E-1ABF72610F869</string>
     <string name="loginTitle">Login</string>
     <string name="emailEdit">E-mail</string>
-    <string name="password">Password</string>
     <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
     <string name="signup_txtview">Sign Up</string>
     <string name="input_email_txtview">Please enter an E-mail address: </string>
@@ -92,4 +91,6 @@
     <string name="grade">Grade</string>
     <string name="teacher">Teacher</string>
     <string name="emergency_contact_info">Emergency contact Info</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
 </resources>
