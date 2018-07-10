@@ -17,15 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /*
@@ -88,7 +84,16 @@ public class SignUpActivity extends AppCompatActivity {
                 String email = getTextInformation(R.id.email_information);
                 String password = getTextInformation(R.id.create_password);
                 String confirm_password = getTextInformation(R.id.confirm_password);
-                CreateUser(name, email, password, confirm_password);
+                String birthMonth = getTextInformation(R.id.birthday_month_sign_up);
+                String birthYear = getTextInformation(R.id.birthday_year_sign_up);
+                String address = getTextInformation(R.id.address);
+                String homePhone = getTextInformation(R.id.homePhone);
+                String cellPhone = getTextInformation(R.id.cellPhone);
+                String grade = getTextInformation(R.id.currentGrade);
+                String teacher = getTextInformation(R.id.teacher);
+                String emergencyContactInfo = getTextInformation(R.id.emergencyContactInfo);
+                CreateUser(name, email, password, confirm_password, birthMonth, birthYear, address,
+                        homePhone, cellPhone, grade, teacher, emergencyContactInfo);
             }
         });
     }
@@ -100,7 +105,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // Create a user based on the information provided
-    private void CreateUser(String name, String email, String password, String confirm_password) {
+    private void CreateUser(String name, String email, String password, String confirm_password, String birthMonth, String birthYear,
+                            String address, String homePhone, String cellPhone, String grade, String teacher, String emergencyContactInfo) {
         if (name == null || name.matches("")) {
             Toast.makeText(SignUpActivity.this, R.string.please_enter_name, Toast.LENGTH_SHORT).show();
         } else if (email == null || email.matches("")) {
@@ -114,6 +120,14 @@ public class SignUpActivity extends AppCompatActivity {
             user.setName(name);
             user.setEmail(email);
             user.setPassword(password);
+            user.setBirthMonth(birthMonth);
+            user.setBirthYear(birthYear);
+            user.setAddress(address);
+            user.setHomePhone(homePhone);
+            user.setCellPhone(cellPhone);
+            user.setGrade(grade);
+            user.setTeacherName(teacher);
+            user.setEmergencyContactInfo(emergencyContactInfo);
             insertIntoServer(user);
         }
     }
@@ -140,6 +154,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void successfulSignUp(User returnedUser) {
+        Toast.makeText(SignUpActivity.this, R.string.success_sign_up, Toast.LENGTH_SHORT).show();
         finish();
     }
 

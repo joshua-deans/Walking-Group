@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-
 /**
  * User class to store the data the server expects and returns.
  * (Incomplete: Needs support for monitoring and groups).
@@ -21,15 +19,25 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 // This is needed for the server to be able to change without breaking your app!
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends IdItemBase{
-    // NOTE: id, hasFullData, and href in IdItemBase base class.
 
-    // Data fields for the user.
-    // -------------------------------------------------------------------------------------------
-    // NOTE: Make numbers Long/Integer, not long/int because only the former will
-    //       deserialize if the value is null from the server.
     private String name;
     private String email;
     private String password;
+
+    // all of the optional information that a user can enter
+    private String birthYear;
+    private String birthMonth;
+    private String address;
+    private String cellPhone;
+    private String homePhone;
+    private String grade;
+    private String teacherName;
+    private String emergencyContactInfo;
+
+    // The user's current latitude
+    private Double currentLat;
+    // The user's current longitude
+    private Double currentLong;
 
     private Integer currentPoints;
     private Integer totalPointsEarned;
@@ -181,5 +189,85 @@ public class User extends IdItemBase{
                 ", hasFullData=" + hasFullData()+
                 ", href='" + getHref() + '\'' +
                 '}';
+    }
+
+    public String getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(String birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public String getBirthMonth() {
+        return birthMonth;
+    }
+
+    public void setBirthMonth(String birthMonth) {
+        this.birthMonth = birthMonth;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCellPhone() {
+        return cellPhone;
+    }
+
+    public void setCellPhone(String cellPhone) {
+        this.cellPhone = cellPhone;
+    }
+
+    public String getHomePhone() {
+        return homePhone;
+    }
+
+    public void setHomePhone(String homePhone) {
+        this.homePhone = homePhone;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }
+
+    public String getEmergencyContactInfo() {
+        return emergencyContactInfo;
+    }
+
+    public void setEmergencyContactInfo(String emergencyContactInfo) {
+        this.emergencyContactInfo = emergencyContactInfo;
+    }
+
+    public Double getCurrentLat() {
+        return currentLat;
+    }
+
+    public void setCurrentLat(Double currentLat) {
+        this.currentLat = currentLat;
+    }
+
+    public Double getCurrentLong() {
+        return currentLong;
+    }
+
+    public void setCurrentLong(Double currentLong) {
+        this.currentLong = currentLong;
     }
 }
