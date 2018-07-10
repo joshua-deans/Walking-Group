@@ -1,15 +1,23 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -29,13 +37,14 @@ import retrofit2.Call;
 import retrofit2.Response;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class MonitoringUsersActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
     private static User addedOne;
-    private List<User> monitorsUserGroupList = new ArrayList<>();
+   // private List<User> monitorsUserGroupList = new ArrayList<>();
 
     public static Intent makeIntent (Context context, User user) {
         addedOne = user;
@@ -49,7 +58,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         user = User.getInstance();
         getApiKey();
         setUpAddGroupButton();
-        populateMonitorsUserGroupsListView();
+        populateMonitorsUserGroups();
     }
 
     private void getApiKey() {
@@ -109,38 +118,126 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         return;
     }
 
+    private void populateMonitorsUserGroups() {
+        Call<List<Group>> groupsCaller = proxy.getGroups();
+        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupsCaller,
+                returnedGroups -> {
+                    populateMonitorsUserGroupsListView(returnedGroups);
+                });
+    }
 
-    //POPULATE GROUP LIST VIEW CODE STARTING HERE:
-    //TODO: uncomment the chunk of code bellow and solve the issue.
-    //error: no suitable method found for addAll(List<Group>)
-    //method Collection.addAll(Collection<? extends User>) is not applicable
-    //(argument mismatch; List<Group> cannot be converted to Collection<? extends User>)
-
-
-//    private void populateMonitorsUserGroups() {
-//        Call<List<Group>> groupCaller = proxy.getGroups();
-//        ProxyBuilder.callProxy(MonitoringUsersActivity.this, groupCaller,
-//                returnedGroups -> monitorsUserGroupList.addAll(returnedGroups));
-//    }
-
-    private void populateMonitorsUserGroupsListView() {
-        ArrayAdapter<User> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList();
+    private void populateMonitorsUserGroupsListView(List<Group> returnedGroups) {
+        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        ArrayAdapter<Group> adapter = new MonitoringUsersActivity.MonitoringUsersGroupList(userInGroups);
         ListView groupsList = findViewById(R.id.monitor_user_groups_list);
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_layout);
-        groupsList.setOnLongClickListener(view -> {
-            android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-            RemoveMonitoringUserGroupMessageFragment removeDialog = new RemoveMonitoringUserGroupMessageFragment();
-            removeDialog.show(manager, "RemoveMonitoredUserFromGroup");
-            return true;
+        groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Long groupId = (Long) view.getTag();
+                Intent intent = new Intent(MonitoringUsersActivity.this, GroupDetailsActivity.class);
+                intent.putExtra(GROUP_ID_EXTRA, groupId);
+                startActivity(intent);
+            }
+        });
+
+        groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MonitoringUsersActivity.this);
+                builder.setMessage("Would you like to remove this user from the group?");
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Long groupId = (Long) view.getTag();
+                        removeFromGroup(groupId);
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            }
         });
     }
 
-    private class MonitoringUsersGroupList extends ArrayAdapter<User>{
-        public MonitoringUsersGroupList() {
-            super (MonitoringUsersActivity.this, R.layout.group_layout
-                    ,monitorsUserGroupList );
+    private void removeFromGroup(Long groupId) {
+        Call<Void> removeFromGroupCaller = proxy.removeGroupMember(groupId, addedOne.getId());
+        ProxyBuilder.callProxy(MonitoringUsersActivity.this, removeFromGroupCaller,
+                returnNothing -> removeFromGroupSuccess(returnNothing));
+    }
+
+    private void removeFromGroupSuccess(Void returnNothing) {
+        Toast.makeText(MonitoringUsersActivity.this,
+                "You removed the user from this group",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
+        List<Group> groupInformation = new ArrayList<>();
+        List<Group> userGroups = getAllGroupsUserIn();
+        for (Group aGroup : returnedGroups) {
+            for (Group u : userGroups) {
+                if (u.getId() == aGroup.getId()) {
+                    groupInformation.add(aGroup);
+                }
+            }
+        }
+        return groupInformation;
+    }
+
+    public List<Group> getAllGroupsUserIn() {
+        List<Group> userInGroups = user.getMemberOfGroups();
+        List<Group> userLeadGroups = user.getLeadsGroups();
+        List<Group> mAllGroupsUserIn = new ArrayList<>(userInGroups);
+        mAllGroupsUserIn.addAll(userLeadGroups);
+        return mAllGroupsUserIn;
+    }
+
+
+
+    private class MonitoringUsersGroupList extends ArrayAdapter<Group> {
+        List<Group> mGroupList;
+
+        public MonitoringUsersGroupList(List<Group> groupList) {
+            super(MonitoringUsersActivity.this, R.layout.group_layout
+                , groupList);
+            mGroupList = groupList;
+        }
+
+        @NonNull
+        @Override
+        public  View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (convertView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.group_layout,
+                        parent,
+                        false);
+            }
+
+            Group currentGroup;
+            if (mGroupList.isEmpty()) {
+                currentGroup = new Group();
+            } else {
+                currentGroup = mGroupList.get(position);
+                itemView.setTag(currentGroup.getId());
+            }
+            if (currentGroup.getGroupDescription() != null) {
+                try {
+                    TextView nameText = itemView.findViewById(R.id.group_name);
+                    nameText.setText(currentGroup.getGroupDescription());
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + mGroupList.toString());
+                }
+            }
+            return itemView;
         }
     }
 
