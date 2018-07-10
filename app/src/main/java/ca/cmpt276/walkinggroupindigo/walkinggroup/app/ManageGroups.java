@@ -34,9 +34,10 @@ import retrofit2.Call;
 public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
+    public static final int PICK_REQUEST = 9;
     private WGServerProxy proxy;
     private User user;
-    private Group group;
+    //private Group group;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +45,22 @@ public class ManageGroups extends AppCompatActivity {
         setContentView(R.layout.activity_manage_group);
         user = User.getInstance();
         getApiKey();
-        populateGroups();
+        updateUI();
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
-        populateGroups();
+        updateUI();
+    }
+
+    private void updateUI() {
+        Call<List<Group>> groupsCaller = proxy.getGroups();
+        ProxyBuilder.callProxy(
+                ManageGroups.this, groupsCaller,
+                returnedGroups -> {
+                    populateGroupsListView(returnedGroups);
+                });
     }
 
     private void getApiKey() {
@@ -57,7 +68,6 @@ public class ManageGroups extends AppCompatActivity {
         String token = getToken();
         proxy = ProxyBuilder.getProxy(apiKey, token);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,17 +89,8 @@ public class ManageGroups extends AppCompatActivity {
         }
     }
 
-
-    private void populateGroups() {
-        Call<List<Group>> groupsCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(ManageGroups.this, groupsCaller,
-                returnedGroups -> {
-                    populateGroupsListView(returnedGroups);
-                });
-    }
-//
     private void populateGroupsListView(List<Group> returnedGroups) {
-        List<Group> userInGroups = allGroupsUserIn(returnedGroups);
+        List<Group> userInGroups = getAllGroups(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
         ListView groupsList = findViewById(R.id.group_listview);
         groupsList.setAdapter(adapter);
@@ -130,42 +131,64 @@ public class ManageGroups extends AppCompatActivity {
         });
     }
 
-    private boolean checkForUserGroups(List<User> returnedUsers) {
-        boolean isFound = false;
-        for (User returnedUser : returnedUsers) {
-            if(returnedUser.getEmail().equalsIgnoreCase(user.getEmail())){
-                isFound = true;
-                return isFound;
-            }
-        }
-        return isFound;
+    private List<Group> getAllGroups(List<Group> returnedGroups) {
+        List<Group> userIn = getGroupsUserIn(returnedGroups);
+        userIn.addAll(getGroupsUserLead(returnedGroups));
+        return userIn;
     }
 
-    private List<Group> allGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groups = new ArrayList<>();
-        for(Group aGroup: returnedGroups){
-            long groupId = aGroup.getId();
-            Call<List<User>> allUsers = proxy.getGroupMembers(groupId);
-            ProxyBuilder.callProxy(ManageGroups.this, allUsers,
-                    returnedGroupUserIn -> {
-                        if(checkForUserGroups(returnedGroupUserIn)){
-                            groups.add(aGroup);
-                        }
-                    });
+
+    private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
+        List<Group> groupInformation = new ArrayList<>();
+        for(Group aGroup : returnedGroups) {
+            if (aGroup.getLeader().getId().equals(user.getId())) {
+                groupInformation.add(aGroup);
+            }
         }
-        return groups;
+        return groupInformation;
     }
+
+
+    private List<Group> getGroupsUserIn(List<Group> returnedGroups) {
+        List<Group> groupInformation = new ArrayList<>();
+        List<Group> userGroups = user.getMemberOfGroups();
+        for(Group aGroup : returnedGroups) {
+            for (Group u: userGroups) {
+                if (u.getId() == aGroup.getId())
+                    groupInformation.add(aGroup);
+            }
+        }
+        return groupInformation;
+    }
+
 
     private void exitGroup(Long groupId) {
         Long currentUserId = user.getId();
-        Call<Void> exitCaller = proxy.removeGroupMember(groupId, currentUserId);
-        ProxyBuilder.callProxy(exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        Call<Group> getCurrentGroup = proxy.getGroupById(groupId);
+        ProxyBuilder.callProxy(ManageGroups.this,
+                getCurrentGroup,
+                returnInformation ->
+                       removeMember(returnInformation, currentUserId));
+        }
+
+    private void removeMember(Group group, Long currentUserId) {
+        if(group.getLeader().getId().equals(currentUserId)){
+            Call<Void> deleteCaller = proxy.deleteGroup(group.getId());
+            ProxyBuilder.callProxy(ManageGroups.this, deleteCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        }
+        else {
+            Call<Void> exitCaller = proxy.removeGroupMember(group.getId(), currentUserId);
+            ProxyBuilder.callProxy(ManageGroups.this, exitCaller, returnNothing -> exitFromGroupSuccess(returnNothing));
+        }
     }
+
+
 
     private void exitFromGroupSuccess(Void returnNothing) {
         Toast.makeText(ManageGroups.this,
-                R.string.remove_group_toast,
+                "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
+        updateUI();
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
@@ -199,7 +222,7 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
-
+                    //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
