@@ -35,6 +35,7 @@
         <activity android:name=".app.CreateGroup" />
         <activity android:name=".app.AddMonitoredActivity" />
         <activity android:name=".app.GroupDetailsActivity" />
+        <activity android:name=".app.AccountInfoActivity"></activity>
     </application>
 
 </manifest>

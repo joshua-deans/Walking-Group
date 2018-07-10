@@ -78,4 +78,6 @@
     <string name="emergency_contact_info_sign_up">Emergency contact Info</string>
     <string name="account_info">Account Info</string>
     <string name="log_out">Log Out</string>
+    <string name="update_info">Update Info</string>
+    <string name="account_information">Account Information</string>
 </resources>
