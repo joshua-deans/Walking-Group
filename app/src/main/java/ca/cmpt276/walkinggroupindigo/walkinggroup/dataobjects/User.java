@@ -1,12 +1,14 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,20 +36,19 @@ public class User extends IdItemBase{
     private String teacherName;
     private String emergencyContactInfo;
 
-    // The user's current latitude
-    private Double currentLat;
-    // The user's current longitude
-    private Double currentLong;
+    private GpsLocation lastGpsLocation = new GpsLocation();
 
     private Integer currentPoints;
     private Integer totalPointsEarned;
     private EarnedRewards rewards;
 
-    private List<User> monitoredByUsers = new ArrayList<>();// <-- TO BE IMPLEMENTED
-    private List<User> monitorsUsers = new ArrayList<>();   // <-- TO BE IMPLEMENTED
+    @JsonIgnore
+    private List<User> monitoredByUsers = new ArrayList<>();
+    @JsonIgnore
+    private List<User> monitorsUsers = new ArrayList<>();
 
-    private List<Group> memberOfGroups = new ArrayList<>(); // <-- TO BE IMPLEMENTED
-    private List<Group> leadsGroups = new ArrayList<>();    // <-- TO BE IMPLEMENTED
+    private List<Group> memberOfGroups = new ArrayList<>();
+    private List<Group> leadsGroups = new ArrayList<>();
 
     private static User ourInstance;
 
@@ -255,19 +256,14 @@ public class User extends IdItemBase{
         this.emergencyContactInfo = emergencyContactInfo;
     }
 
-    public Double getCurrentLat() {
-        return currentLat;
+    public GpsLocation getLastGpsLocation() {
+        return lastGpsLocation;
     }
 
-    public void setCurrentLat(Double currentLat) {
-        this.currentLat = currentLat;
-    }
-
-    public Double getCurrentLong() {
-        return currentLong;
-    }
-
-    public void setCurrentLong(Double currentLong) {
-        this.currentLong = currentLong;
+    public void setLastGpsLocation(Double currLat, Double currLng) {
+        Date currentDate = new Date();
+        lastGpsLocation.setLat(currLat);
+        lastGpsLocation.setLng(currLng);
+        this.lastGpsLocation = lastGpsLocation;
     }
 }
