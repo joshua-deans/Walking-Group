@@ -23,6 +23,7 @@ public class AccountInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_info);
+        setActionBarText("Account Information");
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(AccountInfoActivity.this, getString(R.string.apikey));
         populateForm();
@@ -108,5 +109,14 @@ public class AccountInfoActivity extends AppCompatActivity {
         grade.setText(mUser.getGrade());
         teacher.setText(mUser.getTeacherName());
         emergencyContact.setText(mUser.getEmergencyContactInfo());
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }

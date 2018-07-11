@@ -1,8 +1,6 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -24,9 +22,6 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
-
 public class CreateGroup extends AppCompatActivity {
 
     private int START_REQUEST = 1;
@@ -41,6 +36,7 @@ public class CreateGroup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
+        setActionBarText(getString(R.string.create_group_title));
         proxy = ProxyFunctions.setUpProxy(CreateGroup.this, getString(R.string.apikey));
         currentGroup = new Group();
         mUser = User.getInstance();
@@ -49,10 +45,13 @@ public class CreateGroup extends AppCompatActivity {
         setUpOK();
     }
 
-    private void getAPIKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     private void setUpStartingLocation(){
@@ -135,14 +134,6 @@ public class CreateGroup extends AppCompatActivity {
                 destLatLng = place.getLatLng();
             }
         }
-    }
-
-    private String getToken() {
-        Context context = CreateGroup.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LOG_IN_SAVE_TOKEN, null);
-        return token;
     }
 }
 

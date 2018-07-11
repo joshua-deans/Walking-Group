@@ -29,6 +29,8 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        setActionBarText(getString(R.string.dashboard));
+
         mUser = User.getInstance();
 
         createGreeting();
@@ -86,7 +88,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupGroupButton() {
-        Button groupButton = (Button) findViewById(R.id.manage_group);
+        Button groupButton = findViewById(R.id.manage_group);
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupMonitorButton() {
-        Button monitorButton = (Button) findViewById(R.id.manage_monitoring);
+        Button monitorButton = findViewById(R.id.manage_monitoring);
         monitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +110,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupMapButton() {
-        Button mapButton = (Button) findViewById(R.id.viewMapButton);
+        Button mapButton = findViewById(R.id.viewMapButton);
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,5 +118,14 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }

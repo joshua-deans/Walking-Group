@@ -1,8 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">WalkingGroup</string>
 
     <!--Hardcode your API key like this. Don't use this test one!-->
-    <string name="apikey">51B4A229-C683-477B-B37E-1ABF72610F869</string>
+    <string name="apikey" tools:ignore="TypographyDashes">51B4A229-C683-477B-B37E-1ABF72610F869</string>
     <string name="loginTitle">Login</string>
     <string name="emailEdit">E-mail</string>
     <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
@@ -16,7 +16,6 @@
     <string name="duplicated_email"> Email is already registered.</string>
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
     <string name="view_map">View Map</string>
-    <string name="manage_monitoring">Manage Monitoring</string>
     <string name="manage_group">Manage Groups</string>
     <string name="please_enter_name"> Please enter your name </string>
     <string name="please_enter_email"> Please enter your email address </string>
@@ -93,4 +92,12 @@
     <string name="emergency_contact_info">Emergency contact Info</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_group_title">Create group</string>
+    <string name="manage_monitoring">Manage Monitoring</string>
+    <string name="manage_groups">Manage Groups</string>
+    <string name="add_user_monitor_you">Add User to Monitor You</string>
+    <string name="user_to_monitor">Add User to Monitor</string>
 </resources>

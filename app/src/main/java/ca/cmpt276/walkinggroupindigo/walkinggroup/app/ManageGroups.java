@@ -42,6 +42,7 @@ public class ManageGroups extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
+        setActionBarText(getString(R.string.manage_groups));
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
         updateUI();
@@ -220,6 +221,15 @@ public class ManageGroups extends AppCompatActivity {
                 }
             }
             return itemView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }
