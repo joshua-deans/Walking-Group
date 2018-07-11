@@ -40,6 +40,7 @@ public class ManageMonitoring extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
+        setActionBarText(getString(R.string.manage_monitoring));
         user = User.getInstance();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
@@ -112,15 +113,15 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
-                builder.setMessage("Would you like to not monitor this user?");
+                builder.setMessage("Would you like to stop monitoring this user?");
                 // Add the buttons
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Long monitoredUserID = (Long) view.getTag();
                         deleteMonitoringUser(monitoredUserID);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -140,7 +141,7 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void deleteMonitoringUserSuccess(Void returnNothing) {
-        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ManageMonitoring.this, "No longer monitoring user", Toast.LENGTH_SHORT).show();
         populateMonitorsUser();
     }
 
@@ -157,13 +158,13 @@ public class ManageMonitoring extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
                 builder.setMessage("Would you like to not be monitored by this user?");
                 // Add the buttons
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Long monitoringUserID = (Long) view.getTag();
                         deleteMonitoredByUser(monitoringUserID);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -182,7 +183,7 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void deleteMonitoredByUserSuccess(Void returnNothing) {
-        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ManageMonitoring.this, "No longer being monitored by user", Toast.LENGTH_SHORT).show();
         populateMonitoredByUsers();
     }
 
@@ -254,16 +255,6 @@ public class ManageMonitoring extends AppCompatActivity {
                         false);
             }
 
-//            @NonNull
-//            @Override
-//            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//                View itemView = convertView;
-//                if(convertView == null){
-//                    itemView = getLayoutInflater().inflate(R.layout.monitoring_layout,
-//                            parent,
-//                            false);
-//                }
-
             User currentUser;
 
             // Find the current User
@@ -289,6 +280,15 @@ public class ManageMonitoring extends AppCompatActivity {
             }
 
             return itemView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }

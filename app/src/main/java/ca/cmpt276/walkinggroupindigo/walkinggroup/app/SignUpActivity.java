@@ -42,6 +42,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        setActionBarText(getString(R.string.sign_up));
         proxy = ProxyFunctions.setUpProxy(SignUpActivity.this, getString(R.string.apikey));
         setupSignUpButton();
     }
@@ -150,5 +151,14 @@ public class SignUpActivity extends AppCompatActivity {
     private void successfulSignUp(User returnedUser) {
         Toast.makeText(SignUpActivity.this, R.string.success_sign_up, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    public void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }

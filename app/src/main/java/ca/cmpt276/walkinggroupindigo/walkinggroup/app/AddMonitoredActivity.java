@@ -31,6 +31,7 @@ public class AddMonitoredActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_monitored);
+        setActionBarText(getString(R.string.add_user_monitor_you));
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(AddMonitoredActivity.this, getString(R.string.apikey));
         setUpGetMonitoredButton();
@@ -90,5 +91,14 @@ public class AddMonitoredActivity extends AppCompatActivity {
     private void successMonitored(List<User> returnMonitors) {
         Toast.makeText(AddMonitoredActivity.this, "Monitoring successful", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }

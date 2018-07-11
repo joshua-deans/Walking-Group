@@ -23,6 +23,7 @@ public class UserInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
+        setActionBarText("");
         proxy = ProxyFunctions.setUpProxy(UserInfoActivity.this, getString(R.string.apikey));
         getUserId();
         if (mUserId == -1) {
@@ -38,6 +39,7 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void extractUserData(User returnedUser) {
+        setActionBarText(returnedUser.getName());
         EditText fullName = findViewById(R.id.userInfoUserName);
         EditText email = findViewById(R.id.userInfoEmail);
         EditText birthMonth = findViewById(R.id.userInfoBirthMonth);
@@ -72,5 +74,14 @@ public class UserInfoActivity extends AppCompatActivity {
     private void errorMessage() {
         Toast.makeText(UserInfoActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }

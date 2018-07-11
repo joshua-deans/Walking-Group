@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         proxy = ProxyFunctions.setUpProxy(LoginActivity.this, getString(R.string.apikey));
+        setActionBarText(getString(R.string.login));
         checkIfUserIsLoggedIn();
         setUpLoginButton();
     }
@@ -173,5 +174,14 @@ public class LoginActivity extends AppCompatActivity {
         user.setHomePhone(returnedUser.getHomePhone());
         user.setAddress(returnedUser.getAddress());
         user.setGrade(returnedUser.getGrade());
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }
