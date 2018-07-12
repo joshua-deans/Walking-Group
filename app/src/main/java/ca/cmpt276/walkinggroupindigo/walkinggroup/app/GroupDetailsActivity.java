@@ -47,10 +47,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         leaderUser = new User();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
-        checkGroupID();
-    }
-
-    private void checkGroupID() {
         if (mGroupId == -1) {
             errorMessage();
         } else {
@@ -60,9 +56,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupUsers(long groupId) {
         Call<List<User>> groupCaller = proxy.getGroupMembers(groupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this,
-                groupCaller,
-                this::populateUserListView);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedListOfUsers -> populateUserListView(returnedListOfUsers));
     }
 
     private void populateUserListView(List<User> returnedListOfUsers) {
@@ -75,7 +69,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = UserInfoActivity.makeIntent(GroupDetailsActivity.this);
+                Intent intent = new Intent(GroupDetailsActivity.this, UserInfoActivity.class);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
@@ -122,9 +116,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupDetails(long groupId) {
         Call<Group> groupCaller = proxy.getGroupById(groupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this,
-                groupCaller,
-                returnedGroup -> extractGroupData(returnedGroup));
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> extractGroupData(returnedGroup));
     }
 
     private void extractGroupData(Group returnedGroup) {
@@ -133,9 +125,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         setActionBarText(returnedGroup.getGroupDescription());
         leaderId = returnedGroup.getLeader().getId();
         Call<User> leaderCaller = proxy.getUserById(leaderId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this,
-                leaderCaller,
-                this::getLeaderData);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, leaderCaller, returnedLeader -> getLeaderData(returnedLeader));
     }
 
     private void getLeaderData(User returnedLeader) {
@@ -154,6 +144,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupId() {
         mGroupId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
+    }
+
+    public String getToken() {
+        Context context = GroupDetailsActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
+        return token;
     }
 
     public static Intent makeIntent(Context context) {
@@ -198,66 +196,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         TextView leaderText = itemView.findViewById(R.id.groupLeaderTag);
                         leaderText.setText(R.string.leader_tag);
                     }
-                    setMonitorUserInformation(currentUser);
+
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mUserList.toString());
-                }
-            }
-            return itemView;
-        }
-    }
-
-    private void setMonitorUserInformation(User current) {
-        List<User> monitorUsers = current.getMonitorsUsers();
-        ArrayAdapter<User> adapter = new MyMonitorList(monitorUsers);
-        ListView groupsList = findViewById(R.id.group_listview);
-        groupsList.setAdapter(adapter);
-        new ArrayAdapter<>(this,
-                R.layout.group_layout);
-        groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long groupId = (Long) view.getTag();
-                Intent intent = AccountInfoActivity.makeIntent(GroupDetailsActivity.this);
-                intent.putExtra(GROUP_ID_EXTRA, groupId);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private class MyMonitorList extends ArrayAdapter<User>{
-        List<User> mMinitorList;
-        public MyMonitorList(List<User> groupList) {
-            super(GroupDetailsActivity.this,
-                    R.layout.monitoring_layout
-                    , groupList);
-            mMinitorList = groupList;
-        }
-
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View itemView = convertView;
-            if (convertView == null) {
-                itemView = getLayoutInflater().inflate(R.layout.group_layout,
-                        parent,
-                        false);
-            }
-
-            User currentUser;
-
-            if (mMinitorList.isEmpty()) {
-                currentUser = new User();
-            } else {
-                currentUser = mMinitorList.get(position);
-                itemView.setTag(currentUser.getId());
-            }
-            if (currentUser.getName() != null || currentUser.getEmail() != null) {
-                try {
-                    TextView nameText = itemView.findViewById(R.id.txtMonitoringName);
-                    nameText.setText(currentUser.getName());
-                    TextView emailText = itemView.findViewById(R.id.txtMonitoringEmail);
-                    emailText.setText(currentUser.getEmail());
-                } catch (NullPointerException e) {
-                    Log.e("Error", e + ":" + mMinitorList.toString());
                 }
             }
             return itemView;
