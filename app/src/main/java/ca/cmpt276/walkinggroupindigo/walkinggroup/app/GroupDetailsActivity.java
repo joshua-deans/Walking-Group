@@ -116,7 +116,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupDetails(long groupId) {
         Call<Group> groupCaller = proxy.getGroupById(groupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> extractGroupData(returnedGroup));
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCaller,
+                returnedGroup -> extractGroupData(returnedGroup));
     }
 
     private void extractGroupData(Group returnedGroup) {
