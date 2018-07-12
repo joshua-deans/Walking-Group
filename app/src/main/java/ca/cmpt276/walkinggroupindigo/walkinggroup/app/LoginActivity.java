@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void logInAlreadySaved(Void returnedNothing) {
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();
     }
@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
         if (saveInfo) {
             saveLogIn(user.toString());
         }
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();
     }
