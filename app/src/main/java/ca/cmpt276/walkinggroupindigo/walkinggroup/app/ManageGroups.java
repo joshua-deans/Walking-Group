@@ -224,7 +224,6 @@ public class ManageGroups extends AppCompatActivity {
 
             Group currentGroup;
             Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
-            ;
 
             if (mGroupsList.isEmpty()) {
                 currentGroup = new Group();
