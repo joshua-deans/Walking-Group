@@ -99,7 +99,7 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+                Intent intent = GroupDetailsActivity.makeIntent(ManageGroups.this);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
