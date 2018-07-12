@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -184,6 +186,21 @@ public class ManageGroups extends AppCompatActivity {
         updateUI();
     }
 
+    private void toggleSwitchListener(Group currentGroup, Switch toggleWalkSwitch) {
+        toggleWalkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(ManageGroups.this, "Toggle on for " + currentGroup.getGroupDescription(),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ManageGroups.this, "Toggle off for " + currentGroup.getGroupDescription(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupsList;
 
@@ -197,6 +214,7 @@ public class ManageGroups extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View itemView = convertView;
+
             if (convertView == null) {
                 itemView = getLayoutInflater().inflate(R.layout.group_layout,
                         parent,
@@ -204,6 +222,8 @@ public class ManageGroups extends AppCompatActivity {
             }
 
             Group currentGroup;
+            Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
+            ;
 
             if (mGroupsList.isEmpty()) {
                 currentGroup = new Group();
@@ -215,11 +235,14 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
+
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
+                toggleSwitchListener(currentGroup, toggleWalkSwitch);
             }
+
             return itemView;
         }
     }
