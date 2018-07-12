@@ -1,5 +1,6 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -182,6 +183,10 @@ public class ManageGroups extends AppCompatActivity {
                 "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
         updateUI();
+    }
+
+    public static Intent makeIntent(Context context) {
+        return new Intent (context, ManageGroups.class);
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {

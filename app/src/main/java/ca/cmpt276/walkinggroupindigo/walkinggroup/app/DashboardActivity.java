@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Dash;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 
@@ -92,7 +94,7 @@ public class DashboardActivity extends AppCompatActivity {
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, ManageGroups.class);
+                Intent intent =  ManageGroups.makeIntent(DashboardActivity.this);
                 startActivity(intent);
             }
         });
@@ -103,7 +105,7 @@ public class DashboardActivity extends AppCompatActivity {
         monitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, ManageMonitoring.class);
+                Intent intent = ManageMonitoring.makeIntent(DashboardActivity.this);
                 startActivity(intent);
             }
         });

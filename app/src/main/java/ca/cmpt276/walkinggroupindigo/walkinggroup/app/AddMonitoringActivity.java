@@ -22,7 +22,6 @@ public class AddMonitoringActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private User user;
-    private String address;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, AddMonitoringActivity.class);
@@ -58,7 +57,6 @@ public class AddMonitoringActivity extends AppCompatActivity {
 
     private void findUser(String address) {
         Call<List<User>> usersCaller = proxy.getUsers();
-
         ProxyBuilder.callProxy(AddMonitoringActivity.this, usersCaller,
                 returnedUsers -> checkIfFound(returnedUsers, address));
     }
@@ -91,15 +89,6 @@ public class AddMonitoringActivity extends AppCompatActivity {
         } else {
             Toast.makeText(AddMonitoringActivity.this, "User not found", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private boolean isFound(List<User> users, String address) {
-        for (User aUser : users) {
-            if (aUser.getEmail().equalsIgnoreCase(address)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void successMonitor(List<User> returnMonitors) {
