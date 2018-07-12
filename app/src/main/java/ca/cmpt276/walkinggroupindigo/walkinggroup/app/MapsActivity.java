@@ -6,14 +6,18 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -39,7 +43,11 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int DEFAULT_ZOOM = 15;
     private GoogleMap mMap;
@@ -68,6 +76,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findGroupMarkers();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Creates action bar buttons
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_dashboard, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Click listener for action bar
+        switch (item.getItemId()) {
+            case R.id.logOutButton:
+                Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
+                return true;
+
+            case R.id.accountInfoButton:
+                Intent intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void logUserOut() {
+        Context context = MapsActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void createAlertDialog(Marker marker) {
