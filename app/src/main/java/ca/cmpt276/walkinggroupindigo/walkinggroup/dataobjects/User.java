@@ -49,11 +49,6 @@ public class User extends IdItemBase{
     @JsonIgnore
     private List<User> monitorsUsers = new ArrayList<>();
 
-    private List<Group> memberOfGroups = new ArrayList<>();
-    private List<Group> leadsGroups = new ArrayList<>();
-
-    // The group that the user is walking with.
-    private Group currentWalkingGroup = new Group();
     // Messages
     // - - - - - - - - - - - - - - - - - - - - - - - - - -
     private List<Message> messages;
@@ -61,6 +56,11 @@ public class User extends IdItemBase{
     // Permissions
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
     private List<PermissionRequest> pendingPermissionRequests;
+    private List<Group> memberOfGroups = new ArrayList<>();
+    private List<Group> leadsGroups = new ArrayList<>();
+
+    // The group that the user is walking with.
+    private Group currentWalkingGroup = new Group();
 
     private static User ourInstance;
 
