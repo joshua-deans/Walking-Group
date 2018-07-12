@@ -34,7 +34,6 @@ import retrofit2.Call;
 public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
-    public static final int PICK_REQUEST = 9;
     private WGServerProxy proxy;
     private User user;
 

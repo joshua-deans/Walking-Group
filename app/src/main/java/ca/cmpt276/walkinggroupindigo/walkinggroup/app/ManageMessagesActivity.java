@@ -1,7 +1,10 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -21,11 +24,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
 public class ManageMessagesActivity extends AppCompatActivity {
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageMassages groupID";
@@ -40,9 +45,16 @@ public class ManageMessagesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_messages);
+        getAPIKey();
         getGroupId();
         setUpNewMessageButton();
-//        populateMessages();
+        populateMessages();
+    }
+
+    private void getAPIKey() {
+        String apiKey = getString(R.string.apikey);
+        String token = getToken();
+        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void getGroupId() {
@@ -103,7 +115,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
 
     private void populateMessages() {
         Call<List<Message>> messageCaller = proxy.getMessages(user.getId());
-        ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCaller, returnedMessages -> {
+       ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCaller, returnedMessages -> {
             populateMessagesListView(returnedMessages);
         });
     }
@@ -138,6 +150,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
             mMessageList = messageList;
         }
 
+        /*
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -167,6 +180,14 @@ public class ManageMessagesActivity extends AppCompatActivity {
                 }
             }
             return itemView;
-        }
+        }*/
+    }
+
+    private String getToken() {
+        Context context = ManageMessagesActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        String token = sharedPref.getString(LOG_IN_SAVE_TOKEN, null);
+        return token;
     }
 }

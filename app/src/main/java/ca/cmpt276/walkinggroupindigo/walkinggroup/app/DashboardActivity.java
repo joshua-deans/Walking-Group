@@ -138,54 +138,56 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-//    private void populateCoversations() {
-//        Call<List<Message>> messagesCaller = proxy.getMessages();
-//        ProxyBuilder.callProxy(
-//                DashboardActivity.this, messagesCaller,
-//                returnedMessages -> {
-//                    populateConversationsListView(returnedMessages);
-//                });
-//    }
-//
-//    private void populateConversationsListView(List<Message> returnedMessages) {
-//        Call<List<Message>> adapter = new MessagesList(returnedMessages);
-//    }
-//
-//    private class MessagesList extends ArrayAdapter {
-//        List<Message> mMessageList;
-//
-//        public MessagesList(List<Message> messageList) {
-//            super(DashboardActivity.this, R.layout.messages_layout
-//                    , messageList);
-//            mMessageList = messageList;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//            View itemView = convertView;
-//            if (convertView == null) {
-//                itemView = getLayoutInflater().inflate(R.layout.group_layout,
-//                        parent,
-//                        false);
-//            }
-//
-//            Message message;
-//
-//            if (mMessageList.isEmpty()) {
-//                message = new Message();
-//            } else {
-//                message = mMessageList.get(position);
-//                itemView.setTag(message.getData());
-//            }
-//            if (message.getData() != null) {
-//                try {
-//                    TextView
-//                }
-//            }
-//        }
-//
-//    }
+    /*
+    private void populateCoversations() {
+        Call<List<Message>> messagesCaller = proxy.getMessages();
+        ProxyBuilder.callProxy(
+                DashboardActivity.this, messagesCaller,
+                returnedMessages -> {
+                    populateConversationsListView(returnedMessages);
+                });
+    }
+
+
+    private void populateConversationsListView(List<Message> returnedMessages) {
+        Call<List<Message>> adapter = new MessagesList(returnedMessages);
+    }
+
+    private class MessagesList extends ArrayAdapter {
+        List<Message> mMessageList;
+
+        public MessagesList(List<Message> messageList) {
+            super(DashboardActivity.this, R.layout.messages_layout
+                    , messageList);
+            mMessageList = messageList;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (convertView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.group_layout,
+                        parent,
+                        false);
+            }
+
+            Message message;
+
+            if (mMessageList.isEmpty()) {
+                message = new Message();
+            } else {
+                message = mMessageList.get(position);
+                itemView.setTag(message.getData());
+            }
+            if (message.getData() != null) {
+                try {
+                    TextView
+                }
+            }
+        }
+
+    }*/
 
     public String getToken() {
         Context context = DashboardActivity.this;
