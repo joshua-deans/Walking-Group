@@ -54,6 +54,13 @@ public class User extends IdItemBase{
 
     // The group that the user is walking with.
     private Group currentWalkingGroup = new Group();
+    // Messages
+    // - - - - - - - - - - - - - - - - - - - - - - - - - -
+    private List<Message> messages;
+
+    // Permissions
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    private List<PermissionRequest> pendingPermissionRequests;
 
     private static User ourInstance;
 
@@ -192,7 +199,7 @@ public class User extends IdItemBase{
                 ", monitorsUsers=" + monitorsUsers +
                 ", memberOfGroups=" + memberOfGroups +
                 ", leadsGroups=" + leadsGroups +
-                ", hasFullData=" + hasFullData()+
+                ", hasFullData=" + hasFullData +
                 ", href='" + getHref() + '\'' +
                 '}';
     }
@@ -280,5 +287,21 @@ public class User extends IdItemBase{
 
     public void setCurrentWalkingGroup(Group currentWalkingGroup) {
         this.currentWalkingGroup = currentWalkingGroup;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public List<PermissionRequest> getPendingPermissionRequests() {
+        return pendingPermissionRequests;
+    }
+
+    public void setPendingPermissionRequests(List<PermissionRequest> pendingPermissionRequests) {
+        this.pendingPermissionRequests = pendingPermissionRequests;
     }
 }

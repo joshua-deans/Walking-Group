@@ -2,6 +2,10 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group extends IdItemBase{
     private String groupDescription;
@@ -11,6 +15,8 @@ public class Group extends IdItemBase{
     // The latitude of the starting location
     private double[] routeLngArray;
     private User leader;
+    private Set<User> memberUsers = new HashSet<>();
+    private String customJson;
 
     public Group() {
         routeLatArray = new double[2];
@@ -88,5 +94,28 @@ public class Group extends IdItemBase{
 
     public void setLeader(User leader) {
         this.leader = leader;
+    }
+
+    public String getCustomJson() {
+        return customJson;
+    }
+
+    public void setCustomJson(String customJson) {
+        this.customJson = customJson;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "groupDescription='" + groupDescription + '\'' +
+                ", routeLatArray=" + Arrays.toString(routeLatArray) +
+                ", routeLngArray=" + Arrays.toString(routeLngArray) +
+                ", leader=" + leader +
+                ", memberUsers=" + memberUsers +
+                ", customJson='" + customJson + '\'' +
+                ", id=" + id +
+                ", hasFullData=" + hasFullData +
+                ", href='" + href + '\'' +
+                '}';
     }
 }
