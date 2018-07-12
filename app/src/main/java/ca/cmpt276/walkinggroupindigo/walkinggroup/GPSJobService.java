@@ -23,6 +23,7 @@ import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_JO
 
 public class GPSJobService extends Service {
     private static final String TAG = "GPSJobService";
+    // Interval is approximately every 30 seconds
     private static final int LOCATION_INTERVAL = 30000;
     private static final float LOCATION_DISTANCE = 10f;
     LocationListener[] mLocationListeners = new LocationListener[]{

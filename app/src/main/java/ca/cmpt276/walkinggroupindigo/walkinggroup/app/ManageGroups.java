@@ -94,6 +94,12 @@ public class ManageGroups extends AppCompatActivity {
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_layout);
+        setGroupListItemClicker(groupsList);
+
+        setGroupListItemLongClicker(groupsList);
+    }
+
+    private void setGroupListItemClicker(ListView groupsList) {
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -103,7 +109,9 @@ public class ManageGroups extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
 
+    private void setGroupListItemLongClicker(ListView groupsList) {
         groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -227,6 +235,7 @@ public class ManageGroups extends AppCompatActivity {
             }
 
             Group currentGroup;
+            Group groupWalkingWith = user.getCurrentWalkingGroup();
             Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
 
             if (mGroupsList.isEmpty()) {
@@ -245,6 +254,9 @@ public class ManageGroups extends AppCompatActivity {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
+                if (currentGroup.getId().equals(groupWalkingWith.getId())) {
+                    toggleWalkSwitch.setChecked(true);
+                }
             }
 
             return itemView;

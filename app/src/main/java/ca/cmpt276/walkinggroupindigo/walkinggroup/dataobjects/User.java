@@ -52,6 +52,9 @@ public class User extends IdItemBase{
     private List<Group> memberOfGroups = new ArrayList<>();
     private List<Group> leadsGroups = new ArrayList<>();
 
+    // The group that the user is walking with.
+    private Group currentWalkingGroup = new Group();
+
     private static User ourInstance;
 
     public static User getInstance() {
@@ -269,5 +272,13 @@ public class User extends IdItemBase{
         lastGpsLocation.setLat(currLat);
         lastGpsLocation.setLng(currLng);
         lastGpsLocation.setTimestamp(ft.format(currDate));
+    }
+
+    public Group getCurrentWalkingGroup() {
+        return currentWalkingGroup;
+    }
+
+    public void setCurrentWalkingGroup(Group currentWalkingGroup) {
+        this.currentWalkingGroup = currentWalkingGroup;
     }
 }
