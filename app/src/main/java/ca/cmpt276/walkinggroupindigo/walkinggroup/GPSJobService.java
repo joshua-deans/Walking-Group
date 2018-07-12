@@ -10,8 +10,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
+
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_JOB_ID;
 
 // Used stack overflow help to create this service
 // https://stackoverflow.com/questions/8828639/get-gps-location-via-a-service-in-android
@@ -37,14 +42,15 @@ public class GPSJobService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
+        currUserId = intent.getLongExtra(GPS_JOB_ID, 0);
         return START_STICKY;
     }
 
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
-        initializeLocationManager();
         proxy = ProxyFunctions.setUpProxy(GPSJobService.this, getString(R.string.apikey));
+        initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
@@ -70,9 +76,9 @@ public class GPSJobService extends Service {
         Log.e(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
+            for (LocationListener mLocationListener : mLocationListeners) {
                 try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                    mLocationManager.removeUpdates(mLocationListener);
                 } catch (Exception ex) {
                     Log.i(TAG, "fail to remove location listners, ignore", ex);
                 }
@@ -87,6 +93,10 @@ public class GPSJobService extends Service {
         }
     }
 
+    private void successfulLocationUpdate(GpsLocation gpsLocation) {
+        Toast.makeText(getApplicationContext(), "Location updated", Toast.LENGTH_SHORT).show();
+    }
+
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
@@ -97,7 +107,12 @@ public class GPSJobService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             mLastLocation.set(location);
-            Toast.makeText(getApplicationContext(), mLastLocation.toString(), Toast.LENGTH_LONG).show();
+            GpsLocation currGPS = new GpsLocation();
+            currGPS.setCurrentTimestamp();
+            currGPS.setLat(location.getLatitude());
+            currGPS.setLng(location.getLongitude());
+            Call<GpsLocation> gpsLocationCall = proxy.setLastGpsLocation(currUserId, currGPS);
+            ProxyBuilder.callProxy(gpsLocationCall, gpsLocation -> successfulLocationUpdate(gpsLocation));
         }
 
         @Override
