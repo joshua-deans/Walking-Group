@@ -190,6 +190,7 @@ public class ManageGroups extends AppCompatActivity {
         toggleWalkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO: Implement toggle listener function.
                 if (isChecked) {
                     Toast.makeText(ManageGroups.this, "Toggle on for " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
