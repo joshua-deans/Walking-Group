@@ -7,9 +7,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * User class to store the data the server expects and returns.
@@ -261,9 +263,11 @@ public class User extends IdItemBase{
     }
 
     public void setLastGpsLocation(Double currLat, Double currLng) {
-        Date currentDate = new Date();
+        Date currDate = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ss");
+        ft.setTimeZone(TimeZone.getTimeZone("PST"));
         lastGpsLocation.setLat(currLat);
         lastGpsLocation.setLng(currLng);
-        this.lastGpsLocation = lastGpsLocation;
+        lastGpsLocation.setTimestamp(ft.format(currDate));
     }
 }
