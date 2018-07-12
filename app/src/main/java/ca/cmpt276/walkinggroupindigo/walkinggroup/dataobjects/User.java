@@ -43,11 +43,19 @@ public class User extends IdItemBase{
     private Integer totalPointsEarned;
     private EarnedRewards rewards;
 
-    private List<User> monitoredByUsers = new ArrayList<>();// <-- TO BE IMPLEMENTED
-    private List<User> monitorsUsers = new ArrayList<>();   // <-- TO BE IMPLEMENTED
+    private List<User> monitoredByUsers = new ArrayList<>();
+    private List<User> monitorsUsers = new ArrayList<>();
 
-    private List<Group> memberOfGroups = new ArrayList<>(); // <-- TO BE IMPLEMENTED
-    private List<Group> leadsGroups = new ArrayList<>();    // <-- TO BE IMPLEMENTED
+    private List<Group> memberOfGroups = new ArrayList<>();
+    private List<Group> leadsGroups = new ArrayList<>();
+
+    // Messages
+    // - - - - - - - - - - - - - - - - - - - - - - - - - -
+    private List<Message> messages;
+
+    // Permissions
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    private List<PermissionRequest> pendingPermissionRequests;
 
     private static User ourInstance;
 
@@ -186,7 +194,7 @@ public class User extends IdItemBase{
                 ", monitorsUsers=" + monitorsUsers +
                 ", memberOfGroups=" + memberOfGroups +
                 ", leadsGroups=" + leadsGroups +
-                ", hasFullData=" + hasFullData()+
+                ", hasFullData=" + hasFullData +
                 ", href='" + getHref() + '\'' +
                 '}';
     }
@@ -269,5 +277,21 @@ public class User extends IdItemBase{
 
     public void setCurrentLong(Double currentLong) {
         this.currentLong = currentLong;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public List<PermissionRequest> getPendingPermissionRequests() {
+        return pendingPermissionRequests;
+    }
+
+    public void setPendingPermissionRequests(List<PermissionRequest> pendingPermissionRequests) {
+        this.pendingPermissionRequests = pendingPermissionRequests;
     }
 }
