@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -95,7 +94,6 @@ public class GPSJobService extends Service {
     }
 
     private void successfulLocationUpdate(GpsLocation gpsLocation) {
-        Toast.makeText(getApplicationContext(), "Location updated", Toast.LENGTH_SHORT).show();
     }
 
     private class LocationListener implements android.location.LocationListener {
