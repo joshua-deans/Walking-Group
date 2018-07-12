@@ -192,10 +192,10 @@ public class ManageGroups extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO: Implement toggle listener function.
                 if (isChecked) {
-                    Toast.makeText(ManageGroups.this, "Toggle on for " + currentGroup.getGroupDescription(),
+                    Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(ManageGroups.this, "Toggle off for " + currentGroup.getGroupDescription(),
+                    Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -205,7 +205,7 @@ public class ManageGroups extends AppCompatActivity {
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupsList;
 
-        public MyGroupsList(List<Group> groupList) {
+        MyGroupsList(List<Group> groupList) {
             super(ManageGroups.this, R.layout.group_layout
                     , groupList);
             mGroupsList = groupList;
