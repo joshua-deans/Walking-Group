@@ -1,5 +1,8 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.proxy;
 
+import android.app.Notification;
+import android.os.Message;
+import android.support.annotation.RequiresPermission;
 import android.webkit.PermissionRequest;
 
 import java.util.List;
@@ -106,11 +109,39 @@ public interface WGServerProxy {
     @DELETE("/groups/{id}/memberUsers/{userId}")
     Call<Void> removeGroupMember(@Path("id") Long groupId, @Path("userId") Long userId);
 
-
     // -----------------------------
     // Messages
     // -----------------------------
-    // TODO: Implement
+    @POST("/messages/togroup/{groupId}")
+    Call<List<Message>> newMessageToGroup(@Path("groupId") Long groupId, @Body Message message);
+
+    @POST("/messages/toparentsof/{userId}")
+    Call<List<Message>> newMessageToParentsOf(@Path("userId") Long userId, @Body Message message);
+
+    @GET("/messages")
+    Call<List<Message>> getMessages();
+    @GET("/messages")
+    Call<List<Message>> getMessages(@Query("touser") Long toUserId);
+    @GET("/messages")
+    Call<List<Message>> getMessages(@Query("touser") Long toUserId, @Query("is-emergency") Boolean isEmergency);
+    @GET("/messages?status=unread")
+    Call<List<Message>> getUnreadMessages(
+            @Query("touser") Long toUserId,
+            @Query("is-emergency") Boolean isEmergency);    // null for not filtering
+    @GET("/messages?status=read")
+    Call<List<Message>> getReadMessages(
+            @Query("touser") Long toUserId,
+            @Query("is-emergency") Boolean isEmergency);    // null for not filtering
+
+    @GET("/messages/{id}")
+    Call<Message> getOneMessage(@Path("id") Long id);
+
+    // if markAsRead is false, then marks it as unread.
+    @POST("/messages/{id}/mark-read-or-unread")
+    Call<Message> markMessageAsRead(@Path("id") Long id, @Body Boolean markAsRead);
+
+    @DELETE("/messages/{id}")
+    Call<Void> deleteMessage(@Path("id") Long id);
 
     // -----------------------------
     // Permissions

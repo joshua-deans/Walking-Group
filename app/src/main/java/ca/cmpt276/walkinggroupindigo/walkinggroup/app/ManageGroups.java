@@ -37,7 +37,6 @@ public class ManageGroups extends AppCompatActivity {
     public static final int PICK_REQUEST = 9;
     private WGServerProxy proxy;
     private User user;
-    //private Group group;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +99,10 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+//                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+//                intent.putExtra(GROUP_ID_EXTRA, groupId);
+//                startActivity(intent);
+                Intent intent = new Intent(ManageGroups.this, ManageMessagesActivity.class);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
@@ -221,7 +223,9 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
-                    //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
+
+                    TextView leaderText = itemView.findViewById(R.id.group_id);
+                    leaderText.setText(currentGroup.getLeader().toString());
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }

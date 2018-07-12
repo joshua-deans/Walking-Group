@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,9 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.List;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;

@@ -36,7 +36,8 @@
         <activity android:name=".app.AddMonitoredActivity" />
         <activity android:name=".app.GroupDetailsActivity" />
         <activity android:name=".app.AccountInfoActivity" />
-        <activity android:name=".app.UserInfoActivity"></activity>
+        <activity android:name=".app.UserInfoActivity" />
+        <activity android:name=".app.ManageMessagesActivity" />
     </application>
 
 </manifest>
