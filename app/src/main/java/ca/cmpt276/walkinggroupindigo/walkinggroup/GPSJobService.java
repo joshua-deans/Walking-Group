@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -15,6 +16,8 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_DEST_LAT;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_DEST_LONG;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_JOB_ID;
 
 // Used stack overflow help to create this service
@@ -32,6 +35,9 @@ public class GPSJobService extends Service {
     private WGServerProxy proxy;
     private LocationManager mLocationManager = null;
     private Long currUserId;
+    private double destLat;
+    private double destLng;
+    private boolean atDestination = false;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -43,6 +49,8 @@ public class GPSJobService extends Service {
         Log.e(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
         currUserId = intent.getLongExtra(GPS_JOB_ID, 0);
+        destLat = intent.getDoubleExtra(GPS_DEST_LAT, 0);
+        destLng = intent.getDoubleExtra(GPS_DEST_LONG, 0);
         return START_STICKY;
     }
 
@@ -80,7 +88,7 @@ public class GPSJobService extends Service {
                 try {
                     mLocationManager.removeUpdates(mLocationListener);
                 } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
                 }
             }
         }
@@ -105,7 +113,14 @@ public class GPSJobService extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
+            Location destLoc = new Location("");
+            destLoc.setLatitude(destLat);
+            destLoc.setLongitude(destLng);
             mLastLocation.set(location);
+            // Shows distance
+            if (location.distanceTo(destLoc) <= 75f) {
+                Toast.makeText(getApplicationContext(), "Close to destination", Toast.LENGTH_SHORT).show();
+            }
             GpsLocation currGPS = new GpsLocation();
             currGPS.setCurrentTimestamp();
             currGPS.setLat(location.getLatitude());
