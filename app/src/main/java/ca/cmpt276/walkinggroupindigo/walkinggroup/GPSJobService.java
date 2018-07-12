@@ -1,117 +1,118 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup;
 
-import android.Manifest;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
-import android.content.pm.PackageManager;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-import retrofit2.Call;
 
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GPS_JOB_ID;
+// Used stack overflow help to create this service
+// https://stackoverflow.com/questions/8828639/get-gps-location-via-a-service-in-android
 
-// Class made using various online tutorials on JobSchedulers
-public class GPSJobService extends JobService {
-    private static final String TAG = GPSJobService.class.getSimpleName();
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    boolean isWorking = false;
-    boolean jobCancelled = false;
+public class GPSJobService extends Service {
+    private static final String TAG = "GPSJobService";
+    private static final int LOCATION_INTERVAL = 30000;
+    private static final float LOCATION_DISTANCE = 10f;
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(LocationManager.GPS_PROVIDER),
+            new LocationListener(LocationManager.NETWORK_PROVIDER)
+    };
     private WGServerProxy proxy;
+    private LocationManager mLocationManager = null;
+    private Long currUserId;
 
-    // Called by the Android system when it's time to run the job
     @Override
-    public boolean onStartJob(JobParameters jobParameters) {
-        Toast.makeText(getApplicationContext(),
-                "JobService task running", Toast.LENGTH_LONG)
-                .show();
-        isWorking = true;
+    public IBinder onBind(Intent arg0) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e(TAG, "onStartCommand");
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        Log.e(TAG, "onCreate");
+        initializeLocationManager();
         proxy = ProxyFunctions.setUpProxy(GPSJobService.this, getString(R.string.apikey));
-        startWorkOnNewThread(jobParameters);
-
-        return isWorking;
-    }
-
-    private void startWorkOnNewThread(final JobParameters jobParameters) {
-        new Thread(new Runnable() {
-            public void run() {
-                sendGPS(jobParameters);
-            }
-        }).start();
-    }
-
-    private void sendGPS(JobParameters jobParameters) {
-        PersistableBundle b = jobParameters.getExtras();
-        Long userID = b.getLong(GPS_JOB_ID);
-
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            jobCancelled = true;
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[1]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
         }
-        if (!jobCancelled) {
-            Task<Location> currentLocation = mFusedLocationClient.getLastLocation();
-
-            currentLocation.addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if (task.isSuccessful()) {
-                        // Set the map's camera position to the current location of the device.
-                        Location mLastKnownLocation = task.getResult();
-                        try {
-                            GpsLocation currGPS = new GpsLocation();
-                            currGPS.setLat(mLastKnownLocation.getLatitude());
-                            currGPS.setLng(mLastKnownLocation.getLongitude());
-                            currGPS.setCurrentTimestamp();
-
-                            Call<GpsLocation> gpsCaller = proxy.setLastGpsLocation(userID, currGPS);
-                            ProxyBuilder.callProxy(gpsCaller, gps -> successfulUpdate(gps, jobParameters));
-                        } catch (NullPointerException e) {
-                            Toast.makeText(getApplicationContext(), "Exception", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Task not successfull", Toast.LENGTH_LONG).show();
-                        isWorking = false;
-                        boolean needsReschedule = false;
-                        jobFinished(jobParameters, needsReschedule);
-                    }
-                }
-            });
-        } else {
-            Toast.makeText(getApplicationContext(), "Task not successfull", Toast.LENGTH_LONG).show();
-            isWorking = false;
-            boolean needsReschedule = false;
-            jobFinished(jobParameters, needsReschedule);
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[0]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
     }
 
-    private void successfulUpdate(GpsLocation gps, JobParameters jobParameters) {
-        Toast.makeText(getApplicationContext(), "GPS location updated", Toast.LENGTH_LONG).show();
-        isWorking = false;
-        boolean needsReschedule = false;
-        jobFinished(jobParameters, needsReschedule);
-    }
-
-    // Called if the job was cancelled before being finished
     @Override
-    public boolean onStopJob(JobParameters jobParameters) {
-        Log.d(TAG, "Job cancelled before being completed.");
-        jobCancelled = true;
-        boolean needsReschedule = isWorking;
-        jobFinished(jobParameters, needsReschedule);
-        return needsReschedule;
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        super.onDestroy();
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                }
+            }
+        }
+    }
+
+    private void initializeLocationManager() {
+        Log.e(TAG, "initializeLocationManager");
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
+    private class LocationListener implements android.location.LocationListener {
+        Location mLastLocation;
+
+        public LocationListener(String provider) {
+            mLastLocation = new Location(provider);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            mLastLocation.set(location);
+            Toast.makeText(getApplicationContext(), mLastLocation.toString(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.e(TAG, "onProviderDisabled: " + provider);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.e(TAG, "onProviderEnabled: " + provider);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.e(TAG, "onStatusChanged: " + provider);
+        }
     }
 }

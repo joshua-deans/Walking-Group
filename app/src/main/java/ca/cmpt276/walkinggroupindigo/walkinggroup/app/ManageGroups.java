@@ -1,12 +1,8 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -197,25 +193,12 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO: Implement toggle listener function.
+                Intent intent = new Intent(ManageGroups.this, GPSJobService.class);
                 if (isChecked) {
-                    JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                    ComponentName componentName = new ComponentName(ManageGroups.this, GPSJobService.class);
-                    PersistableBundle b = new PersistableBundle();
-                    b.putLong(GPS_JOB_ID, user.getId());
-                    JobInfo jobInfo = new JobInfo.Builder(12, componentName)
-                            .setPersisted(true)
-                            .setExtras(b)
-                            .setPeriodic(30000)
-                            .build();
-                    int resultCode = jobScheduler.schedule(jobInfo);
-                    if (resultCode == JobScheduler.RESULT_SUCCESS) {
-                        Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(ManageGroups.this, "Error",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    intent.putExtra(GPS_JOB_ID, user.getId());
+                    startService(intent);
                 } else {
+                    stopService(intent);
                     Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
                 }
