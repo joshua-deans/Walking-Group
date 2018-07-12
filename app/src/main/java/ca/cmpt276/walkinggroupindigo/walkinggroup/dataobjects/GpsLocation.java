@@ -2,6 +2,10 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Store information about a GPS location of a user.
  *
@@ -14,7 +18,7 @@ public class GpsLocation {
     private Double lat;
     private String timestamp;
 
-    GpsLocation() {
+    public GpsLocation() {
         lng = null;
         lat = null;
         timestamp = null;
@@ -42,5 +46,12 @@ public class GpsLocation {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public void setCurrentTimestamp() {
+        Date currDate = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ss");
+        ft.setTimeZone(TimeZone.getTimeZone("PST"));
+        this.timestamp = ft.format(currDate);
     }
 }

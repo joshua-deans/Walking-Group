@@ -1,8 +1,12 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +28,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.GPSJobService;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -36,6 +41,7 @@ public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     public static final int PICK_REQUEST = 9;
+    public static final String GPS_JOB_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS Job ID";
     private WGServerProxy proxy;
     private User user;
     //private Group group;
@@ -192,8 +198,23 @@ public class ManageGroups extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO: Implement toggle listener function.
                 if (isChecked) {
-                    Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
-                            Toast.LENGTH_SHORT).show();
+                    JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                    ComponentName componentName = new ComponentName(ManageGroups.this, GPSJobService.class);
+                    PersistableBundle b = new PersistableBundle();
+                    b.putLong(GPS_JOB_ID, user.getId());
+                    JobInfo jobInfo = new JobInfo.Builder(12, componentName)
+                            .setPersisted(true)
+                            .setExtras(b)
+                            .setPeriodic(30000)
+                            .build();
+                    int resultCode = jobScheduler.schedule(jobInfo);
+                    if (resultCode == JobScheduler.RESULT_SUCCESS) {
+                        Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ManageGroups.this, "Error",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
