@@ -200,12 +200,13 @@ public class ManageGroups extends AppCompatActivity {
         toggleWalkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // TODO: Implement toggle listener function.
                 Intent intent = new Intent(ManageGroups.this, GPSJobService.class);
                 if (isChecked) {
+                    user.setCurrentWalkingGroup(currentGroup);
                     intent.putExtra(GPS_JOB_ID, user.getId());
                     startService(intent);
                 } else {
+                    user.setCurrentWalkingGroup(null);
                     stopService(intent);
                     Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
@@ -254,7 +255,7 @@ public class ManageGroups extends AppCompatActivity {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
-                if (currentGroup.getId().equals(groupWalkingWith.getId())) {
+                if (groupWalkingWith != null && currentGroup.getId().equals(groupWalkingWith.getId())) {
                     toggleWalkSwitch.setChecked(true);
                 }
             }
