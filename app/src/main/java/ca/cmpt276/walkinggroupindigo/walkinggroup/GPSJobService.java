@@ -130,7 +130,7 @@ public class GPSJobService extends Service {
             }
         };
         // Scheduled for 10 minutes from now
-        timer.schedule(timerTask, 10 * 60 * 1000);
+        timer.schedule(timerTask, 600000);
     }
 
     private class LocationListener implements android.location.LocationListener {
