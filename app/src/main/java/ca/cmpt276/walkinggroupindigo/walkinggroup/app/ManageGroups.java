@@ -38,6 +38,8 @@ public class ManageGroups extends AppCompatActivity {
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     public static final int PICK_REQUEST = 9;
     public static final String GPS_JOB_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS Job ID";
+    public static final String GPS_DEST_LAT = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS dest lat";
+    public static final String GPS_DEST_LONG = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS dest long";
     private WGServerProxy proxy;
     private User user;
     //private Group group;
@@ -204,6 +206,8 @@ public class ManageGroups extends AppCompatActivity {
                 if (isChecked) {
                     user.setCurrentWalkingGroup(currentGroup);
                     intent.putExtra(GPS_JOB_ID, user.getId());
+                    intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
+                    intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
                     startService(intent);
                 } else {
                     user.setCurrentWalkingGroup(null);
@@ -239,6 +243,13 @@ public class ManageGroups extends AppCompatActivity {
             Group groupWalkingWith = user.getCurrentWalkingGroup();
             Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
 
+            manageGroupView(position, itemView, groupWalkingWith, toggleWalkSwitch);
+
+            return itemView;
+        }
+
+        private void manageGroupView(int position, View itemView, Group groupWalkingWith, Switch toggleWalkSwitch) {
+            Group currentGroup;
             if (mGroupsList.isEmpty()) {
                 currentGroup = new Group();
             } else {
@@ -259,8 +270,6 @@ public class ManageGroups extends AppCompatActivity {
                     toggleWalkSwitch.setChecked(true);
                 }
             }
-
-            return itemView;
         }
     }
 
