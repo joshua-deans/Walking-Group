@@ -1,13 +1,17 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * User class to store the data the server expects and returns.
@@ -34,20 +38,16 @@ public class User extends IdItemBase{
     private String teacherName;
     private String emergencyContactInfo;
 
-    // The user's current latitude
-    private Double currentLat;
-    // The user's current longitude
-    private Double currentLong;
+    private GpsLocation lastGpsLocation = new GpsLocation();
 
     private Integer currentPoints;
     private Integer totalPointsEarned;
     private EarnedRewards rewards;
 
+    @JsonIgnore
     private List<User> monitoredByUsers = new ArrayList<>();
+    @JsonIgnore
     private List<User> monitorsUsers = new ArrayList<>();
-
-    private List<Group> memberOfGroups = new ArrayList<>();
-    private List<Group> leadsGroups = new ArrayList<>();
 
     // Messages
     // - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -56,6 +56,11 @@ public class User extends IdItemBase{
     // Permissions
     // - - - - - - - - - - - - - - - - - - - - - - - - - - -
     private List<PermissionRequest> pendingPermissionRequests;
+    private List<Group> memberOfGroups = new ArrayList<>();
+    private List<Group> leadsGroups = new ArrayList<>();
+
+    // The group that the user is walking with.
+    private Group currentWalkingGroup = new Group();
 
     private static User ourInstance;
 
@@ -263,20 +268,25 @@ public class User extends IdItemBase{
         this.emergencyContactInfo = emergencyContactInfo;
     }
 
-    public Double getCurrentLat() {
-        return currentLat;
+    public GpsLocation getLastGpsLocation() {
+        return lastGpsLocation;
     }
 
-    public void setCurrentLat(Double currentLat) {
-        this.currentLat = currentLat;
+    public void setLastGpsLocation(Double currLat, Double currLng) {
+        Date currDate = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ss");
+        ft.setTimeZone(TimeZone.getTimeZone("PST"));
+        lastGpsLocation.setLat(currLat);
+        lastGpsLocation.setLng(currLng);
+        lastGpsLocation.setTimestamp(ft.format(currDate));
     }
 
-    public Double getCurrentLong() {
-        return currentLong;
+    public Group getCurrentWalkingGroup() {
+        return currentWalkingGroup;
     }
 
-    public void setCurrentLong(Double currentLong) {
-        this.currentLong = currentLong;
+    public void setCurrentWalkingGroup(Group currentWalkingGroup) {
+        this.currentWalkingGroup = currentWalkingGroup;
     }
 
     public List<Message> getMessages() {

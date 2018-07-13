@@ -155,7 +155,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void placeGroupMarkers(List<Group> groupList) {
         for (Group group : groupList) {
-            // TODO: add markers for the location of every group
             if (group.getRouteLatArray().length > 0 && group.getRouteLngArray().length > 0) {
                 Marker currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng
                         (group.getDestLatitude(), group.getDestLongitude()))

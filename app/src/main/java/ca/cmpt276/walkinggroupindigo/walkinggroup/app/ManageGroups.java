@@ -15,13 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.GPSJobService;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -34,6 +37,9 @@ public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     public static final int PICK_REQUEST = 9;
+    public static final String GPS_JOB_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS Job ID";
+    public static final String GPS_DEST_LAT = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS dest lat";
+    public static final String GPS_DEST_LONG = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups - GPS dest long";
     private WGServerProxy proxy;
     private User user;
     //private Group group;
@@ -90,6 +96,12 @@ public class ManageGroups extends AppCompatActivity {
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.group_layout);
+        setGroupListItemClicker(groupsList);
+
+        setGroupListItemLongClicker(groupsList);
+    }
+
+    private void setGroupListItemClicker(ListView groupsList) {
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -99,7 +111,9 @@ public class ManageGroups extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
 
+    private void setGroupListItemLongClicker(ListView groupsList) {
         groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -184,10 +198,31 @@ public class ManageGroups extends AppCompatActivity {
         updateUI();
     }
 
+    private void toggleSwitchListener(Group currentGroup, Switch toggleWalkSwitch) {
+        toggleWalkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Intent intent = new Intent(ManageGroups.this, GPSJobService.class);
+                if (isChecked) {
+                    user.setCurrentWalkingGroup(currentGroup);
+                    intent.putExtra(GPS_JOB_ID, user.getId());
+                    intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
+                    intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
+                    startService(intent);
+                } else {
+                    user.setCurrentWalkingGroup(null);
+                    stopService(intent);
+                    Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupsList;
 
-        public MyGroupsList(List<Group> groupList) {
+        MyGroupsList(List<Group> groupList) {
             super(ManageGroups.this, R.layout.group_layout
                     , groupList);
             mGroupsList = groupList;
@@ -197,6 +232,7 @@ public class ManageGroups extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View itemView = convertView;
+
             if (convertView == null) {
                 itemView = getLayoutInflater().inflate(R.layout.group_layout,
                         parent,
@@ -204,7 +240,16 @@ public class ManageGroups extends AppCompatActivity {
             }
 
             Group currentGroup;
+            Group groupWalkingWith = user.getCurrentWalkingGroup();
+            Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
 
+            manageGroupView(position, itemView, groupWalkingWith, toggleWalkSwitch);
+
+            return itemView;
+        }
+
+        private void manageGroupView(int position, View itemView, Group groupWalkingWith, Switch toggleWalkSwitch) {
+            Group currentGroup;
             if (mGroupsList.isEmpty()) {
                 currentGroup = new Group();
             } else {
@@ -215,12 +260,16 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
+
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
+                toggleSwitchListener(currentGroup, toggleWalkSwitch);
+                if (groupWalkingWith != null && currentGroup.getId().equals(groupWalkingWith.getId())) {
+                    toggleWalkSwitch.setChecked(true);
+                }
             }
-            return itemView;
         }
     }
 
