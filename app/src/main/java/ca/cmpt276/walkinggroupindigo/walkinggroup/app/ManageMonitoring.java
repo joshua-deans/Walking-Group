@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -106,6 +109,36 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_manage_groups, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.create_group:
+                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
+                startActivity(intent);
+                return true;
+            case R.id.accountInfoButton:
+                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void populateMonitorsUser() {
