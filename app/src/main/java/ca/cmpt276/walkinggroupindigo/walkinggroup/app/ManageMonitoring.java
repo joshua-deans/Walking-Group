@@ -41,12 +41,42 @@ public class ManageMonitoring extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
         setActionBarText(getString(R.string.manage_monitoring));
+        setUpToolBar();
         user = User.getInstance();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
         proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
         populateMonitorsUser();
         populateMonitoredByUsers();
+    }
+
+    private void setUpToolBar() {
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        monitoringLink.setClickable(false);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMonitoring.this, ManageGroups.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ManageMonitoring.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void onResume() {

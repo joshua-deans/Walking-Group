@@ -1,7 +1,9 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -33,6 +36,10 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
 public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
@@ -48,6 +55,7 @@ public class ManageGroups extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
+        setUpToolBar();
         setActionBarText(getString(R.string.manage_groups));
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
@@ -78,15 +86,70 @@ public class ManageGroups extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
+
+            case R.id.logOutButton:
+                Toast.makeText(ManageGroups.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
+                return true;
+
+            case R.id.accountInfoButton:
+                intent = new Intent(ManageGroups.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+
             case R.id.create_group:
-                Intent intent = new Intent(ManageGroups.this, CreateGroup.class);
+                intent = new Intent(ManageGroups.this, CreateGroup.class);
                 startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void logUserOut() {
+        Context context = ManageGroups.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(ManageGroups.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+        finish();
+    }
+
+    private void setUpToolBar() {
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        groupsLink.setClickable(false);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageGroups.this, ManageMonitoring.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ManageGroups.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void populateGroupsListView(List<Group> returnedGroups) {

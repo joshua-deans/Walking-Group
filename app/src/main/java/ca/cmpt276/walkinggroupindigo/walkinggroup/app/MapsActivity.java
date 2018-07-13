@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -72,11 +74,40 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setActionBarText(getString(R.string.map));
+        setUpToolBar();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findGroupMarkers();
+    }
+
+    private void setUpToolBar() {
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        mapLink.setClickable(false);
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ManageGroups.class);
+                startActivity(intent);
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MapsActivity.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
