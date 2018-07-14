@@ -1,7 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">WalkingGroup</string>
-
-    <!--Hardcode your API key like this. Don't use this test one!-->
     <string name="apikey" tools:ignore="TypographyDashes">51B4A229-C683-477B-B37E-1ABF72610F869</string>
     <string name="loginTitle">Login</string>
     <string name="emailEdit">E-mail</string>
