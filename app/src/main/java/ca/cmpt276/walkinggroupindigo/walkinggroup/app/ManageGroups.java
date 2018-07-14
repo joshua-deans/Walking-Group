@@ -68,6 +68,11 @@ public class ManageGroups extends AppCompatActivity {
         updateUI();
     }
 
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
     private void updateUI() {
         Call<List<Group>> groupsCaller = proxy.getGroups();
         ProxyBuilder.callProxy(
@@ -91,6 +96,9 @@ public class ManageGroups extends AppCompatActivity {
             case R.id.create_group:
                 intent = new Intent(ManageGroups.this, CreateGroup.class);
                 startActivity(intent);
+                return true;
+            case R.id.parentDashboard:
+                Toast.makeText(ManageGroups.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageGroups.this, AccountInfoActivity.class);
@@ -132,6 +140,7 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         monitoringLink.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +148,7 @@ public class ManageGroups extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageGroups.this, ManageMonitoring.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
