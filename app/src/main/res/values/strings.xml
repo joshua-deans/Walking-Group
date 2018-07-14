@@ -96,8 +96,8 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_up">Sign Up</string>
     <string name="create_group_title">Create group</string>
-    <string name="manage_monitoring">Manage Monitoring</string>
-    <string name="manage_groups">Manage Groups</string>
+    <string name="manage_monitoring">Monitoring</string>
+    <string name="manage_groups">Groups</string>
     <string name="add_user_monitor_you">Add User to Monitor You</string>
     <string name="user_to_monitor">Add User to Monitor</string>
     <string name="map">Map</string>
