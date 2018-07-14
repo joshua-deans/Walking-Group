@@ -3,6 +3,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,10 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
 
 public class ManageMonitoring extends AppCompatActivity {
 
@@ -60,6 +65,7 @@ public class ManageMonitoring extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         monitoringLink.setClickable(false);
+        monitoringLink.setAlpha(1f);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,18 +133,32 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.accountInfoButton:
-                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
+                intent = new Intent(ManageMonitoring.this, AccountInfoActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.logOutButton:
-                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                Toast.makeText(ManageMonitoring.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void logUserOut() {
+        Context context = ManageMonitoring.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(ManageMonitoring.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void populateMonitorsUser() {
