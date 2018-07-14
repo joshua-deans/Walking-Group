@@ -28,12 +28,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
+    private List<Marker> inGroupMarkers;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, MapsActivity.class);
@@ -72,6 +75,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
+        inGroupMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setActionBarText(getString(R.string.map));
         setUpToolBar();
@@ -79,6 +83,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        findGroupMarkers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         findGroupMarkers();
     }
 
@@ -160,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         finish();
     }
 
-    private void createAlertDialog(Marker marker) {
+    private void createAddAlertDialog(Marker marker) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         builder.setMessage("Would you like to join this group?")
                 .setTitle(marker.getTitle());
@@ -198,6 +208,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         (group.getDestLatitude(), group.getDestLongitude()))
                         .title(group.getGroupDescription()));
                 currentMarker.setTag(group.getId());
+                if (mUser.getMemberOfGroups().contains(group) || mUser.getLeadsGroups().contains(group)) {
+                    currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                } else {
+                    inGroupMarkers.add(currentMarker);
+                }
             }
         }
     }
@@ -222,7 +237,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                createAlertDialog(marker);
+                if (inGroupMarkers.contains(marker)) {
+                    createAddAlertDialog(marker);
+                }
                 return false;
             }
         });
