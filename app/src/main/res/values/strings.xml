@@ -100,4 +100,5 @@
     <string name="manage_groups">Manage Groups</string>
     <string name="add_user_monitor_you">Add User to Monitor You</string>
     <string name="user_to_monitor">Add User to Monitor</string>
+    <string name="map">Map</string>
 </resources>

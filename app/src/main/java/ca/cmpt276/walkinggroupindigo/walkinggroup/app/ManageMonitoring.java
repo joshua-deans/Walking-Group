@@ -3,12 +3,16 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +31,10 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
 public class ManageMonitoring extends AppCompatActivity {
 
     private WGServerProxy proxy;
@@ -41,12 +49,43 @@ public class ManageMonitoring extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
         setActionBarText(getString(R.string.manage_monitoring));
+        setUpToolBar();
         user = User.getInstance();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
         proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
         populateMonitorsUser();
         populateMonitoredByUsers();
+    }
+
+    private void setUpToolBar() {
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        monitoringLink.setClickable(false);
+        monitoringLink.setAlpha(1f);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMonitoring.this, ManageGroups.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ManageMonitoring.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void onResume() {
@@ -76,6 +115,50 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_manage_groups, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.create_group:
+                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
+                startActivity(intent);
+                return true;
+            case R.id.accountInfoButton:
+                intent = new Intent(ManageMonitoring.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                Toast.makeText(ManageMonitoring.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void logUserOut() {
+        Context context = ManageMonitoring.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(ManageMonitoring.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void populateMonitorsUser() {

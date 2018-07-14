@@ -6,14 +6,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -39,7 +45,11 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int DEFAULT_ZOOM = 15;
     private GoogleMap mMap;
@@ -63,11 +73,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        setActionBarText(getString(R.string.map));
+        setUpToolBar();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findGroupMarkers();
+    }
+
+    private void setUpToolBar() {
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        mapLink.setClickable(false);
+        mapLink.setAlpha(1f);
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ManageGroups.class);
+                startActivity(intent);
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MapsActivity.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Creates action bar buttons
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_dashboard, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Click listener for action bar
+        switch (item.getItemId()) {
+            case R.id.logOutButton:
+                Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
+                return true;
+
+            case R.id.accountInfoButton:
+                Intent intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void logUserOut() {
+        Context context = MapsActivity.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void createAlertDialog(Marker marker) {
@@ -198,5 +283,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         updateMapLocation();
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }
