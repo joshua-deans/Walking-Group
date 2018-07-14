@@ -58,6 +58,11 @@ public class ManageMonitoring extends AppCompatActivity {
         populateMonitoredByUsers();
     }
 
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
+    }
+
     private void setUpToolBar() {
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
         Button mapLink = findViewById(R.id.mapLink);
@@ -70,6 +75,7 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         groupsLink.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +83,7 @@ public class ManageMonitoring extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageMonitoring.this, ManageGroups.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -120,7 +127,7 @@ public class ManageMonitoring extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_manage_groups, menu);
+        inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
         return true;
     }
 
@@ -128,9 +135,8 @@ public class ManageMonitoring extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.create_group:
-                intent = new Intent(ManageMonitoring.this, CreateGroup.class);
-                startActivity(intent);
+            case R.id.parentDashboard:
+                Toast.makeText(ManageMonitoring.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageMonitoring.this, AccountInfoActivity.class);
