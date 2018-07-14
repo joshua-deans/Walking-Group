@@ -64,7 +64,7 @@ public class GPSJobService extends Service {
     public void onCreate() {
         Log.e(TAG, "onCreate");
         proxy = ProxyFunctions.setUpProxy(GPSJobService.this, getString(R.string.apikey));
-        getUserInfo();
+        mUser = User.getInstance();
         initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
@@ -108,6 +108,7 @@ public class GPSJobService extends Service {
                 }
             }
         }
+        mUser.setCurrentWalkingGroup(null);
     }
 
     private void initializeLocationManager() {
