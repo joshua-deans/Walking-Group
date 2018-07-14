@@ -25,6 +25,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -42,9 +43,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
+        setActionBarText("");
         mUser = User.getInstance();
         leaderUser = new User();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
         if (mGroupId == -1) {
             errorMessage();
@@ -113,12 +115,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         getGroupDetails(mGroupId);
     }
 
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
-    }
-
     private void getGroupDetails(long groupId) {
         Call<Group> groupCaller = proxy.getGroupById(groupId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> extractGroupData(returnedGroup));
@@ -127,6 +123,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void extractGroupData(Group returnedGroup) {
         TextView groupName = (TextView) findViewById(R.id.groupNameDetail);
         groupName.setText(returnedGroup.getGroupDescription());
+        setActionBarText(returnedGroup.getGroupDescription());
         leaderId = returnedGroup.getLeader().getId();
         Call<User> leaderCaller = proxy.getUserById(leaderId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this, leaderCaller, returnedLeader -> getLeaderData(returnedLeader));
@@ -202,6 +199,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 }
             }
             return itemView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }

@@ -4,27 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-import retrofit2.Call;
 
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
@@ -32,29 +22,21 @@ import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_I
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private WGServerProxy proxy;
     private User mUser;
-    private Message mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        setActionBarText(getString(R.string.dashboard));
+
         mUser = User.getInstance();
 
-        getApiKey();
         createGreeting();
         setupMapButton();
         setupMonitorButton();
         setupGroupButton();
-//        populateMessages();
-    }
-
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void createGreeting() {
@@ -106,7 +88,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupGroupButton() {
-        Button groupButton = (Button) findViewById(R.id.manage_group);
+        Button groupButton = findViewById(R.id.manage_group);
         groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupMonitorButton() {
-        Button monitorButton = (Button) findViewById(R.id.manage_monitoring);
+        Button monitorButton = findViewById(R.id.manage_monitoring);
         monitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +110,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void setupMapButton() {
-        Button mapButton = (Button) findViewById(R.id.viewMapButton);
+        Button mapButton = findViewById(R.id.viewMapButton);
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,62 +120,12 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    private void populateCoversations() {
-        Call<List<Message>> messagesCaller = proxy.getMessages();
-        ProxyBuilder.callProxy(
-                DashboardActivity.this, messagesCaller,
-                returnedMessages -> {
-                    populateConversationsListView(returnedMessages);
-                });
-    }
-
-
-    private void populateConversationsListView(List<Message> returnedMessages) {
-        Call<List<Message>> adapter = new MessagesList(returnedMessages);
-    }
-
-    private class MessagesList extends ArrayAdapter {
-        List<Message> mMessageList;
-
-        public MessagesList(List<Message> messageList) {
-            super(DashboardActivity.this, R.layout.messages_layout
-                    , messageList);
-            mMessageList = messageList;
+    public void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View itemView = convertView;
-            if (convertView == null) {
-                itemView = getLayoutInflater().inflate(R.layout.group_layout,
-                        parent,
-                        false);
-            }
-
-            Message message;
-
-            if (mMessageList.isEmpty()) {
-                message = new Message();
-            } else {
-                message = mMessageList.get(position);
-                itemView.setTag(message.getData());
-            }
-            if (message.getData() != null) {
-                try {
-                    TextView
-                }
-            }
-        }
-
-    }*/
-
-    public String getToken() {
-        Context context = DashboardActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
     }
 }

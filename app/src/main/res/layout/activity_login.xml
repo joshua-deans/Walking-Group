@@ -15,35 +15,50 @@
         android:text="@string/loginTitle"
         android:textSize="24sp" />
 
-    <EditText
-        android:id="@+id/emailEdit"
+    <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/loginTitle"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:hint="@string/emailEdit"
-        android:inputType="textEmailAddress" />
+        android:layout_centerInParent="true">
 
-    <EditText
-        android:id="@+id/passEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/emailEdit"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="15dp">
 
-    <Button
-        android:id="@+id/login_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/passEdit"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="0dp"
-        android:text="Log In" />
+            <EditText
+                android:id="@+id/emailEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loginTitle"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="@string/emailEdit"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/passEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/emailEdit"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/login_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/passEdit"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="0dp"
+                android:text="Log In" />
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

@@ -3,12 +3,11 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,23 +19,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.RemoveMonitoringUserGroupMessageFragment;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.fragments.StopMonitoringUserMessageFragment;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
-import retrofit2.Response;
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
-import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class MonitoringUsersActivity extends AppCompatActivity {
@@ -56,7 +49,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitoring_users);
         user = User.getInstance();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(MonitoringUsersActivity.this, getString(R.string.apikey));
         setUpAddGroupButton();
         populateMonitorsUserGroups();
     }
@@ -77,29 +70,21 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 });
     }
 
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
-    }
-
     private void setUpAddGroupButton() {
         Button addToGroupButton = findViewById(R.id.add_to_group_btn);
         addToGroupButton.setOnClickListener(view -> {
             EditText findGroupEditText = findViewById(R.id.group_id_edittxt);
             String address = findGroupEditText.getText().toString();
-            if (address == null) {
+            if (address.matches("")) {
                 Toast.makeText(MonitoringUsersActivity.this,
                         "" + R.string.group_id_empty,
                         Toast.LENGTH_SHORT).show();
-                return;
             }
             else {
                 groupExists(address);
                 Toast.makeText(MonitoringUsersActivity.this,
                         "" + R.string.group_not_found,
                         Toast.LENGTH_SHORT).show();
-                return;
             }
         });
     }
@@ -263,13 +248,5 @@ public class MonitoringUsersActivity extends AppCompatActivity {
             }
             return itemView;
         }
-    }
-
-    public String getToken() {
-        Context context = MonitoringUsersActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LOG_IN_SAVE_TOKEN, null);
-        return token;
     }
 }

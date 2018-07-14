@@ -3,7 +3,6 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,12 +18,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -41,12 +40,43 @@ public class ManageMonitoring extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
+        setActionBarText(getString(R.string.manage_monitoring));
+        setUpToolBar();
         user = User.getInstance();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
-        getApiKey();
+        proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
         populateMonitorsUser();
         populateMonitoredByUsers();
+    }
+
+    private void setUpToolBar() {
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        monitoringLink.setClickable(false);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMonitoring.this, ManageGroups.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ManageMonitoring.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void onResume() {
@@ -76,13 +106,6 @@ public class ManageMonitoring extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
     }
 
     private void populateMonitorsUser() {
@@ -120,15 +143,15 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
-                builder.setMessage("Would you like to not monitor this user?");
+                builder.setMessage("Would you like to stop monitoring this user?");
                 // Add the buttons
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Long monitoredUserID = (Long) view.getTag();
                         deleteMonitoringUser(monitoredUserID);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -148,7 +171,7 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void deleteMonitoringUserSuccess(Void returnNothing) {
-        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ManageMonitoring.this, "No longer monitoring user", Toast.LENGTH_SHORT).show();
         populateMonitorsUser();
     }
 
@@ -165,13 +188,13 @@ public class ManageMonitoring extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageMonitoring.this);
                 builder.setMessage("Would you like to not be monitored by this user?");
                 // Add the buttons
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Long monitoringUserID = (Long) view.getTag();
                         deleteMonitoredByUser(monitoringUserID);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -190,7 +213,7 @@ public class ManageMonitoring extends AppCompatActivity {
     }
 
     private void deleteMonitoredByUserSuccess(Void returnNothing) {
-        Toast.makeText(ManageMonitoring.this, "Monitoring relationship deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ManageMonitoring.this, "No longer being monitored by user", Toast.LENGTH_SHORT).show();
         populateMonitoredByUsers();
     }
 
@@ -228,10 +251,10 @@ public class ManageMonitoring extends AppCompatActivity {
             }
             if (currentUser.getName() != null && currentUser.getEmail() != null) {
                 try {
-                    TextView nameText = (TextView) itemView.findViewById(R.id.txtMonitoringName);
+                    TextView nameText = itemView.findViewById(R.id.txtMonitoringName);
                     nameText.setText(currentUser.getName());
 
-                    TextView emailText = (TextView) itemView.findViewById(R.id.txtMonitoringEmail);
+                    TextView emailText = itemView.findViewById(R.id.txtMonitoringEmail);
                     emailText.setText(currentUser.getEmail());
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mUserList.toString());
@@ -261,6 +284,7 @@ public class ManageMonitoring extends AppCompatActivity {
                         parent,
                         false);
             }
+
             User currentUser;
 
             // Find the current User
@@ -289,12 +313,12 @@ public class ManageMonitoring extends AppCompatActivity {
         }
     }
 
-    public String getToken() {
-        Context context = ManageMonitoring.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
-
 }

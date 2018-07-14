@@ -1,14 +1,12 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.proxy;
 
-import android.app.Notification;
-import android.os.Message;
-import android.support.annotation.RequiresPermission;
 import android.webkit.PermissionRequest;
 
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -109,6 +107,7 @@ public interface WGServerProxy {
     @DELETE("/groups/{id}/memberUsers/{userId}")
     Call<Void> removeGroupMember(@Path("id") Long groupId, @Path("userId") Long userId);
 
+
     // -----------------------------
     // Messages
     // -----------------------------
@@ -120,14 +119,18 @@ public interface WGServerProxy {
 
     @GET("/messages")
     Call<List<Message>> getMessages();
+
     @GET("/messages")
     Call<List<Message>> getMessages(@Query("touser") Long toUserId);
+
     @GET("/messages")
     Call<List<Message>> getMessages(@Query("touser") Long toUserId, @Query("is-emergency") Boolean isEmergency);
+
     @GET("/messages?status=unread")
     Call<List<Message>> getUnreadMessages(
             @Query("touser") Long toUserId,
             @Query("is-emergency") Boolean isEmergency);    // null for not filtering
+
     @GET("/messages?status=read")
     Call<List<Message>> getReadMessages(
             @Query("touser") Long toUserId,

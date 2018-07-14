@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ca.cmpt276.walkinggroupindigo.walkinggroup">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -11,7 +14,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <service
+            android:name=".GPSJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -37,7 +44,7 @@
         <activity android:name=".app.GroupDetailsActivity" />
         <activity android:name=".app.AccountInfoActivity" />
         <activity android:name=".app.UserInfoActivity" />
-        <activity android:name=".app.ManageMessagesActivity" />
+        <activity android:name=".app.MonitoredUserActivity" />
     </application>
 
 </manifest>

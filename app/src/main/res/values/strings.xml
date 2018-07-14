@@ -1,11 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">WalkingGroup</string>
 
     <!--Hardcode your API key like this. Don't use this test one!-->
-    <string name="apikey">51B4A229-C683-477B-B37E-1ABF72610F869</string>
+    <string name="apikey" tools:ignore="TypographyDashes">51B4A229-C683-477B-B37E-1ABF72610F869</string>
     <string name="loginTitle">Login</string>
     <string name="emailEdit">E-mail</string>
-    <string name="password">Password</string>
     <string name="sign_up_prompt">Don\'t Have An Account?  Sign Up Here</string>
     <string name="signup_txtview">Sign Up</string>
     <string name="input_email_txtview">Please enter an E-mail address: </string>
@@ -16,9 +15,7 @@
     <string name="signup_btn">Sign Up</string>
     <string name="duplicated_email"> Email is already registered.</string>
     <string name="welcome_user_name"><![CDATA[Welcome <user name>!]]></string>
-    <string name="start">start</string>
-    <string name="view_map">start</string>
-    <string name="manage_monitoring">Manage Monitoring</string>
+    <string name="view_map">View Map</string>
     <string name="manage_group">Manage Groups</string>
     <string name="please_enter_name"> Please enter your name </string>
     <string name="please_enter_email"> Please enter your email address </string>
@@ -64,8 +61,6 @@
     <string name="success_deletion">Successfully deleted user</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="send">Send</string>
-    <string name="cancel">Cancel</string>
     <string name="remove_user_from_group_prompt">Would you remove this user from the group?</string>
     <string name="error_occurred">Error occurred</string>
     <string name="no_users_string">No users are in this group</string>
@@ -86,4 +81,24 @@
     <string name="user_info">User Info</string>
     <string name="birth_year">Birth year</string>
     <string name="birth_month">Birth month</string>
+    <string name="full_name">Full Name</string>
+    <string name="e_mail">E-mail</string>
+    <string name="birthday">Birthday</string>
+    <string name="address">Address</string>
+    <string name="home_phone">Home phone</string>
+    <string name="cell_phone">Cell phone</string>
+    <string name="grade">Grade</string>
+    <string name="teacher">Teacher</string>
+    <string name="emergency_contact_info">Emergency contact Info</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_group_title">Create group</string>
+    <string name="manage_monitoring">Manage Monitoring</string>
+    <string name="manage_groups">Manage Groups</string>
+    <string name="add_user_monitor_you">Add User to Monitor You</string>
+    <string name="user_to_monitor">Add User to Monitor</string>
+    <string name="map">Map</string>
 </resources>

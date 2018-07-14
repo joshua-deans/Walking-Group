@@ -1,7 +1,5 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
@@ -10,6 +8,7 @@ import android.widget.Toast;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
@@ -24,7 +23,8 @@ public class UserInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
-        getApiKey();
+        setActionBarText("");
+        proxy = ProxyFunctions.setUpProxy(UserInfoActivity.this, getString(R.string.apikey));
         getUserId();
         if (mUserId == -1) {
             errorMessage();
@@ -39,6 +39,7 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     private void extractUserData(User returnedUser) {
+        setActionBarText(returnedUser.getName());
         EditText fullName = findViewById(R.id.userInfoUserName);
         EditText email = findViewById(R.id.userInfoEmail);
         EditText birthMonth = findViewById(R.id.userInfoBirthMonth);
@@ -70,22 +71,17 @@ public class UserInfoActivity extends AppCompatActivity {
         mUserId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
     }
 
-    private void getApiKey() {
-        String apiKey = getString(R.string.apikey);
-        String token = getToken();
-        proxy = ProxyBuilder.getProxy(apiKey, token);
-    }
-
     private void errorMessage() {
         Toast.makeText(UserInfoActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
         finish();
     }
 
-    public String getToken() {
-        Context context = UserInfoActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 }
