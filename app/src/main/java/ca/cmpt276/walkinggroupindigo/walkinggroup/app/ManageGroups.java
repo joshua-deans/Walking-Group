@@ -274,14 +274,24 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Intent intent = new Intent(ManageGroups.this, GPSJobService.class);
+                // Prevents user from walking with multiple groups
                 if (isChecked) {
-                    user.setCurrentWalkingGroup(currentGroup);
-                    intent.putExtra(GPS_JOB_ID, user.getId());
-                    intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
-                    intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
-                    startService(intent);
+                    if (user.getCurrentWalkingGroup() == null) {
+                        user.setCurrentWalkingGroup(currentGroup);
+                        intent.putExtra(GPS_JOB_ID, user.getId());
+                        intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
+                        intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
+                        // Start tracking GPS
+                        startService(intent);
+                        Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        buttonView.setChecked(!isChecked);
+                        Toast.makeText(ManageGroups.this, "You are currently walking with another group", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     user.setCurrentWalkingGroup(null);
+                    // Stop tracking GPS
                     stopService(intent);
                     Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
@@ -339,6 +349,8 @@ public class ManageGroups extends AppCompatActivity {
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
                 if (groupWalkingWith != null && currentGroup.getId().equals(groupWalkingWith.getId())) {
                     toggleWalkSwitch.setChecked(true);
+                } else {
+                    toggleWalkSwitch.setChecked(false);
                 }
             }
         }

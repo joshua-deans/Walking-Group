@@ -1,9 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -144,14 +142,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupId() {
         mGroupId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
-    }
-
-    public String getToken() {
-        Context context = GroupDetailsActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
     }
 
     private class MyUsersList extends ArrayAdapter<User> {
