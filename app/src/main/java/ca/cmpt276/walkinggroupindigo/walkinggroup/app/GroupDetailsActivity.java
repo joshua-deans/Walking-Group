@@ -38,6 +38,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private long leaderId;
     private boolean leader = false;
 
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, GroupDetailsActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,14 +75,40 @@ public class GroupDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(GroupDetailsActivity.this, UserInfoActivity.class);
+               /* Intent intent = UserInfoActivity.makeIntent(GroupDetailsActivity.this);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
-                startActivity(intent);
+                startActivity(intent);*/
+               generateParentList(groupId);
             }
         });
         if (leader) {
             userListLongClickFunction(userListView);
         }
+    }
+
+    private void generateParentList(Long userID) {
+        Log.i("GroupID: " , userID + "");
+        Call<List<User>> parents = proxy.getMonitoredByUsers(userID);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                parents,
+                returnedUsers->{
+                    Log.i("Returned Users: ", returnedUsers.toString());
+                    ArrayAdapter<User> parentAdapter = new MyParentsList(returnedUsers);
+                    ListView userListView = (ListView) findViewById(R.id.parentUserList);
+                    userListView.setAdapter(parentAdapter);
+                    new ArrayAdapter<>(this,
+                            R.layout.group_detail_list_view);
+                    userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Long groupId = (Long) view.getTag();
+                            Intent intent = UserInfoActivity.makeIntent(GroupDetailsActivity.this);
+                            intent.putExtra(GROUP_ID_EXTRA, groupId);
+                            startActivity(intent);
+                        }
+                    });
+
+                });
     }
 
     private void userListLongClickFunction(ListView userListView) {
@@ -148,18 +178,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         mGroupId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
     }
 
-    public String getToken() {
-        Context context = GroupDetailsActivity.this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                LoginActivity.LOG_IN_KEY, Context.MODE_PRIVATE);
-        String token = sharedPref.getString(LoginActivity.LOG_IN_SAVE_TOKEN, "");
-        return token;
-    }
-
-    public static Intent makeIntent(Context context) {
-        return new Intent(context, GroupDetailsActivity.class);
-    }
-
     private class MyUsersList extends ArrayAdapter<User> {
         List<User> mUserList;
 
@@ -198,13 +216,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         TextView leaderText = itemView.findViewById(R.id.groupLeaderTag);
                         leaderText.setText(R.string.leader_tag);
                     }
-                    if(position >= 0) {
-                        Call<List<User>> allMonitorUsers = proxy.getMonitoredByUsers(currentUser.getId());
-                        ProxyBuilder.callProxy(GroupDetailsActivity.this,
-                                allMonitorUsers,
-                                returnedUser -> updateMonitoredByInfo(returnedUser));
-                    }
-
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mUserList.toString());
                 }
@@ -213,6 +224,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /*
     private void updateMonitoredByInfo(List<User> userList) {
         ArrayAdapter<User> adapter = new MyMonitorUser(userList);
         ListView userListView = (ListView) findViewById(R.id.monitor_user_list);
@@ -231,8 +243,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         if (leader) {
             userListLongClickFunction(userListView);
         }
-    }
+    }*/
 
+    /*
     private class MyMonitorUser extends ArrayAdapter<User> {
         List<User> mMonitoredList;
         public MyMonitorUser(List<User> userList) {
@@ -275,7 +288,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
             return itemView;
         }
-    }
+    }*/
 
     private void setActionBarText(String title) {
         try {
@@ -283,6 +296,48 @@ public class GroupDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(title);
         } catch (NullPointerException e) {
             getSupportActionBar().setTitle(title);
+        }
+    }
+
+
+    private class MyParentsList extends ArrayAdapter<User> {
+        List<User> mUserList;
+
+        public MyParentsList(List<User> userList) {
+            super(GroupDetailsActivity.this, R.layout.parent_details, userList);
+            mUserList = userList;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (convertView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.parent_details,
+                        parent,
+                        false);
+            }
+
+            User currentUser;
+
+            if (mUserList.isEmpty()) {
+                currentUser = new User();
+                currentUser.setName(getString(R.string.no_users_string));
+            } else {
+                currentUser = mUserList.get(position);
+                itemView.setTag(currentUser.getId());
+            }
+            if (currentUser.getName() != null && currentUser.getEmail() != null) {
+                try {
+                    TextView nameText = itemView.findViewById(R.id.parentDetailsName);
+                    TextView emailText = itemView.findViewById(R.id.parentDetailsEmail);
+                    nameText.setText(currentUser.getName());
+                    emailText.setText(currentUser.getEmail());
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + mUserList.toString());
+                }
+            }
+            return itemView;
         }
     }
 }
