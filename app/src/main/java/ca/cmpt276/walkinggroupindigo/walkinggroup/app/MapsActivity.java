@@ -28,6 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -79,6 +80,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        findGroupMarkers();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         findGroupMarkers();
     }
 
@@ -198,6 +205,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         (group.getDestLatitude(), group.getDestLongitude()))
                         .title(group.getGroupDescription()));
                 currentMarker.setTag(group.getId());
+                if (mUser.getMemberOfGroups().contains(group) || mUser.getLeadsGroups().contains(group)) {
+                    currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                }
             }
         }
     }
