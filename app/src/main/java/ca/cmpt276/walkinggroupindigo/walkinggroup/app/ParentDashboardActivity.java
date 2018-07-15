@@ -90,8 +90,13 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
             mMap.addMarker(new MarkerOptions().position(new LatLng
                     (lastGpsLocation.getLat(), lastGpsLocation.getLng()))
                     .title(returnedUser.getName())
-                    .snippet(lastGpsLocation.getTimestamp()));
+                    .snippet(editTimeStamp(lastGpsLocation.getTimestamp())));
         }
+    }
+
+    private String editTimeStamp(String timestamp) {
+        String[] ts = timestamp.split("T");
+        return ("Last update: " + ts[0] + " " + ts[1]);
     }
 
     @Override
