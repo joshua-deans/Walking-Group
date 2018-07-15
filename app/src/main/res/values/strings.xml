@@ -61,6 +61,8 @@
     <string name="success_deletion">Successfully deleted user</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="send">SEND</string>
+    <string name="cancel">CANCEL</string>
     <string name="remove_user_from_group_prompt">Would you remove this user from the group?</string>
     <string name="error_occurred">Error occurred</string>
     <string name="no_users_string">No users are in this group</string>
@@ -98,7 +100,9 @@
     <string name="create_group_title">Create group</string>
     <string name="manage_monitoring">Manage Monitoring</string>
     <string name="manage_groups">Manage Groups</string>
+    <string name="manage_messages">Messages</string>
     <string name="add_user_monitor_you">Add User to Monitor You</string>
     <string name="user_to_monitor">Add User to Monitor</string>
     <string name="map">Map</string>
+    <string name="new_message">New Message</string>
 </resources>

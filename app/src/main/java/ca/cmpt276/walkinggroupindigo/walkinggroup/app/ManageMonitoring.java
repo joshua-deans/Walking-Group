@@ -74,7 +74,9 @@ public class ManageMonitoring extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ManageMonitoring.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManageMonitoring.this, ManageMessagesActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -161,7 +163,6 @@ public class ManageMonitoring extends AppCompatActivity {
                 return true;
             }
         });
-
     }
 
     private void deleteMonitoringUser(Long monitoringUserID) {
