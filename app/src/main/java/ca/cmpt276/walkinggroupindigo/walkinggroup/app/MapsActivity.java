@@ -134,9 +134,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Click listener for action bar
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.parentDashboard:
-                Toast.makeText(MapsActivity.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
+                intent = new Intent(MapsActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
@@ -144,7 +146,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
 
             case R.id.accountInfoButton:
-                Intent intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
+                intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
                 startActivity(intent);
                 return true;
 
@@ -272,7 +274,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-
     }
 
     @SuppressLint("MissingPermission")

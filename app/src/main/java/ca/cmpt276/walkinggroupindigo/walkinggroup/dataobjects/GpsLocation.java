@@ -53,7 +53,7 @@ public class GpsLocation {
     public void setCurrentTimestamp() {
         Date currDate = new Date();
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat ft = new SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat ft = new SimpleDateFormat("MM/dd/YYYY'T'h:mm");
         ft.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         this.timestamp = ft.format(currDate);
     }
