@@ -75,10 +75,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-               /* Intent intent = UserInfoActivity.makeIntent(GroupDetailsActivity.this);
-                intent.putExtra(GROUP_ID_EXTRA, groupId);
-                startActivity(intent);*/
-               generateParentList(groupId);
+                generateParentList(groupId);
             }
         });
         if (leader) {
@@ -87,7 +84,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void generateParentList(Long userID) {
-        Log.i("GroupID: " , userID + "");
         Call<List<User>> parents = proxy.getMonitoredByUsers(userID);
         ProxyBuilder.callProxy(GroupDetailsActivity.this,
                 parents,
