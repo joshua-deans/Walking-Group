@@ -71,7 +71,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     }
 
     private void findMonitorMarkers(List<User> monitorsUsers) {
-        Toast.makeText(ParentDashboardActivity.this, monitorsUsers.toString(), Toast.LENGTH_SHORT).show();
         for (User users : monitorsUsers) {
             Call<User> caller = proxy.getUserById(users.getId());
             ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, returnedUser -> getUserGPSInfo(returnedUser));
@@ -85,7 +84,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
 
 
     private void placeUserMarker(GpsLocation lastGpsLocation, User returnedUser) {
-        Toast.makeText(ParentDashboardActivity.this, lastGpsLocation.toString(), Toast.LENGTH_SHORT).show();
         if (lastGpsLocation != null) {
             mMap.addMarker(new MarkerOptions().position(new LatLng
                     (lastGpsLocation.getLat(), lastGpsLocation.getLng()))

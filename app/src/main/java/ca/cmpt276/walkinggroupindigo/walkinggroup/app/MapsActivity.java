@@ -211,7 +211,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .title(group.getGroupDescription()));
                 currentMarker.setTag(group.getId());
                 if (mUser.getMemberOfGroups().contains(group) || mUser.getLeadsGroups().contains(group)) {
-                    currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 } else {
                     inGroupMarkers.add(currentMarker);
                 }
