@@ -101,4 +101,5 @@
     <string name="add_user_monitor_you">Add User to Monitor You</string>
     <string name="user_to_monitor">Add User to Monitor</string>
     <string name="leader_of_group">Leader of the group is:</string>
+    <string name="parent_information">Parents:</string>
 </resources>

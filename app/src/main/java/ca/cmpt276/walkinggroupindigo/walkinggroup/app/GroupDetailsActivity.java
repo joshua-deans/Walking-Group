@@ -90,6 +90,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 returnedUsers->{
                     Log.i("Returned Users: ", returnedUsers.toString());
                     ArrayAdapter<User> parentAdapter = new MyParentsList(returnedUsers);
+                    TextView parentView = findViewById(R.id.parentView);
+                    parentView.setText(getString(R.string.parent_information));
                     ListView userListView = (ListView) findViewById(R.id.parentUserList);
                     userListView.setAdapter(parentAdapter);
                     new ArrayAdapter<>(this,
@@ -97,6 +99,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                             Long groupId = (Long) view.getTag();
                             Intent intent = UserInfoActivity.makeIntent(GroupDetailsActivity.this);
                             intent.putExtra(GROUP_ID_EXTRA, groupId);
