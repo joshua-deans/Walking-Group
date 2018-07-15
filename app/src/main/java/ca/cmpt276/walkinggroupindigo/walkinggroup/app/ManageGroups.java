@@ -267,6 +267,14 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private void exitFromGroupSuccess(Void returnNothing) {
+        Call<User> callerUser = proxy.getUserById(user.getId());
+        ProxyBuilder.callProxy(ManageGroups.this, callerUser, returnedUser -> onSuccess(returnedUser));
+
+    }
+
+    private void onSuccess(User returnedUser) {
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
         Toast.makeText(ManageGroups.this,
                 "You are removed from the group",
                 Toast.LENGTH_SHORT).show();

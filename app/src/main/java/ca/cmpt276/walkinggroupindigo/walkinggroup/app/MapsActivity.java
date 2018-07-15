@@ -195,6 +195,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addUser(List<User> user) {
+        Call<User> callerUser = proxy.getUserById(mUser.getId());
+        ProxyBuilder.callProxy(MapsActivity.this, callerUser, returnedUser -> onSuccess(returnedUser));
+    }
+
+    private void onSuccess(User returnedUser) {
+        mUser.setMemberOfGroups(returnedUser.getMemberOfGroups());
         Toast.makeText(MapsActivity.this, "Successfully added to group", Toast.LENGTH_SHORT).show();
     }
 
