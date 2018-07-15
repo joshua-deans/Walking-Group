@@ -102,4 +102,6 @@
     <string name="parent_information">Parents:</string>
     <string name="map">Map</string>
     <string name="title_activity_parent_maps">Map</string>
+    <string name="log_in">Log In</string>
+    <string name="walk">Walk</string>
 </resources>
