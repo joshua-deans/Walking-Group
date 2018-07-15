@@ -56,17 +56,22 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        findMonitorMarkers();
+        getMonitoredUsers();
+    }
+
+    private void getMonitoredUsers() {
+        Call<List<User>> caller = proxy.getMonitorsUsers(mUser.getId());
+        ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, returnedUsers -> findMonitorMarkers(returnedUsers));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        findMonitorMarkers();
+        getMonitoredUsers();
     }
 
-    private void findMonitorMarkers() {
-        List<User> monitorsUsers = mUser.getMonitorsUsers();
+    private void findMonitorMarkers(List<User> monitorsUsers) {
+        Toast.makeText(ParentDashboardActivity.this, monitorsUsers.toString(), Toast.LENGTH_SHORT).show();
         for (User users : monitorsUsers) {
             Call<User> caller = proxy.getUserById(users.getId());
             ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, returnedUser -> getUserGPSInfo(returnedUser));
