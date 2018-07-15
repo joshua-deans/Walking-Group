@@ -1,33 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="5dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/parentDetailsName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/groupDetailUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/groupLeaderTag"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:baselineAligned="false"
-            android:textSize="10sp" />
-
-    </LinearLayout>
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/groupDetailUserEmail"
+        android:id="@+id/parentDetailsEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp" />

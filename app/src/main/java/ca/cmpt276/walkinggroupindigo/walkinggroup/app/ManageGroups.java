@@ -51,6 +51,10 @@ public class ManageGroups extends AppCompatActivity {
     private User user;
     //private Group group;
 
+    public static Intent makeIntent(Context context) {
+        return new Intent (context, ManageGroups.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,7 +181,7 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+                Intent intent = GroupDetailsActivity.makeIntent(ManageGroups.this);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
@@ -303,7 +307,7 @@ public class ManageGroups extends AppCompatActivity {
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupsList;
 
-        MyGroupsList(List<Group> groupList) {
+        public MyGroupsList(List<Group> groupList) {
             super(ManageGroups.this, R.layout.group_layout
                     , groupList);
             mGroupsList = groupList;
@@ -341,6 +345,14 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
+                    TextView leaderText = itemView.findViewById(R.id.group_id);
+                    Call<User> current = proxy.getUserById(currentGroup.getLeader().getId());
+                    ProxyBuilder.callProxy(ManageGroups.this,
+                            current,
+                            returnedUser->{
+                                leaderText.setText(getString(R.string.leader_of_group)
+                                        + returnedUser.getName());
+                            });
 
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {

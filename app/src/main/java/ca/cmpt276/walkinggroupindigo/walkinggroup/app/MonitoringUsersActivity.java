@@ -37,7 +37,6 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     private WGServerProxy proxy;
     private User user;
     private static User addedOne;
-   // private List<User> monitorsUserGroupList = new ArrayList<>();
 
     public static Intent makeIntent (Context context, User user) {
         addedOne = user;
