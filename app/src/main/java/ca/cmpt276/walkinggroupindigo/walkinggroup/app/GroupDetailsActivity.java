@@ -67,8 +67,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Call<Group> groupCaller = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
         MenuInflater inflater = getMenuInflater();
         if (mUser.getId() == leaderId) {
+            leader = true;
             inflater.inflate(R.menu.action_bar_messages, menu);
             return true;
         }else {
@@ -77,10 +80,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
         }
     }
 
+    private void getGroupLeader(Group returnedGroup) {
+        leaderId = returnedGroup.getLeader().getId();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Click listener for action bar
         if (mUser.getId() == leaderId) {
+            leader = true;
             switch (item.getItemId()) {
                 case R.id.broadcast_message:
 
