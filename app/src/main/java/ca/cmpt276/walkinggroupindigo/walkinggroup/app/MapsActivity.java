@@ -118,7 +118,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MapsActivity.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MapsActivity.this, GroupedMessagesActivity.class);
+                startActivity(intent);
             }
         });
     }

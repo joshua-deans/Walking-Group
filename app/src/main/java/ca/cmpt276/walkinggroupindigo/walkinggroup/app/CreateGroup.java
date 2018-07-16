@@ -38,6 +38,8 @@ public class CreateGroup extends AppCompatActivity {
         setContentView(R.layout.activity_create_group);
         setActionBarText(getString(R.string.create_group_title));
         proxy = ProxyFunctions.setUpProxy(CreateGroup.this, getString(R.string.apikey));
+
+
         currentGroup = new Group();
         mUser = User.getInstance();
         setUpDestination();

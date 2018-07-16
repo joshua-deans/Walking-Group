@@ -159,7 +159,9 @@ public class ManageGroups extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ManageGroups.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManageGroups.this, GroupedMessagesActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
