@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".app.GroupedMessagesActivity">
 
+    <TextView
+        android:id="@+id/num_unread_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="67dp"
+        android:layout_marginEnd="67dp" />
+
     <include
         android:id="@+id/messagesToolbar"
         layout="@layout/toolbar_navigation"

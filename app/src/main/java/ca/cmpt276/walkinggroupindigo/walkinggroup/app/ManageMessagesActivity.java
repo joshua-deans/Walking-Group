@@ -11,6 +11,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -22,14 +24,17 @@ import retrofit2.Call;
 
 public class ManageMessagesActivity extends AppCompatActivity {
 
+    Long messageId;
     private WGServerProxy proxy;
     private User mUser;
+    private Message mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_messages);
         setActionBarText(getString(R.string.manage_messages));
+        mMessage = new Message();
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageMessagesActivity.this, getString(R.string.apikey));
         populateMessages();
@@ -71,6 +76,17 @@ public class ManageMessagesActivity extends AppCompatActivity {
                 return true;
             }
         });
+        markMessagesRead();
+    }
+
+    private void markMessagesRead() {
+        messageId = mMessage.getId();
+        Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
+        ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+    }
+
+    private void markedAsRead(Message returnNothing) {
+        Toast.makeText(this, "Messages are read", Toast.LENGTH_SHORT).show();
     }
 
     private class MyListOfMessages extends ArrayAdapter<Message> {

@@ -13,13 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -42,12 +42,8 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
         populateGroups();
+        setUpUnreadMessagesTextView();
         updateUI();
-        if (mGroupId == -1) {
-            errorMessage();
-        } else {
-            getGroupMessages(mGroupId);
-        }
     }
 
     @Override
@@ -88,18 +84,6 @@ public class GroupedMessagesActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    private void getGroupId() {
-        mGroupId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
-    }
-
-    private void errorMessage() {
-        Toast.makeText(GroupedMessagesActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
-        finish();
-    }
-
-    private void getGroupMessages(long groupId) {
     }
 
     private void populateGroups() {
@@ -143,7 +127,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         List<Group> groupInformation = new ArrayList<>();
         for(Group aGroup : returnedGroups) {
             if (aGroup.getLeader().getId().equals(mUser.getId())) {
-                groupInformation.add(aGroup);
+//                if (aGroup.itHasMessages()) {
+                    groupInformation.add(aGroup);
+//                }
             }
         }
         return groupInformation;
@@ -154,11 +140,29 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         List<Group> userGroups = mUser.getMemberOfGroups();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
-                if (u.getId().equals(aGroup.getId()))
-                    groupInformation.add(aGroup);
+                if (u.getId().equals(aGroup.getId())) {
+//                    if (u.itHasMessages()) {
+                        groupInformation.add(aGroup);
+//                    }
+                }
             }
         }
         return groupInformation;
+    }
+
+
+    private void setUpUnreadMessagesTextView() {
+        int number = 0;
+        TextView numUnreadMessages = findViewById(R.id.num_unread_messages);
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
+        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getNumUnreadMessages(returnedMessages, number));
+        numUnreadMessages.setText("" + number + " unread messages!");
+    }
+
+    private void getNumUnreadMessages(List<Message> returnedMessages, int i) {
+        for (Message aMessage : returnedMessages) {
+            i++;
+        }
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {

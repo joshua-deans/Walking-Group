@@ -39,6 +39,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
+    private Group messagedGroup;
     private Message mMessage;
     private long leaderId;
     private boolean leader = false;
@@ -56,6 +57,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         mMessage = new Message();
         mUser = User.getInstance();
         leaderUser = new User();
+//        messagedGroup = new Group();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
         if (mGroupId == -1) {
@@ -185,7 +187,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void onSendSuccess(List<Message> message) {
+        Call<Group> messagedGroupCaller = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, messagedGroupCaller, returnedGroup -> setIsMessaged(returnedGroup));
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setIsMessaged(Group returnedGroup) {
+        messagedGroup = returnedGroup;
+        messagedGroup.setHasMessages(true);
     }
 
     private void getGroupUsers(long groupId) {
