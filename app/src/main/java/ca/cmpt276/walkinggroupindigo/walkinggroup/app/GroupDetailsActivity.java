@@ -88,7 +88,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Click listener for action bar
+        Call<Group> groupCaller = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
         if (mUser.getId() == leaderId) {
             leader = true;
             switch (item.getItemId()) {
