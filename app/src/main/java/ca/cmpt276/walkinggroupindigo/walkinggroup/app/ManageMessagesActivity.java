@@ -58,6 +58,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
     }
 
     private void populateMessagesListView(List<Message> returnedMessages) {
+        markMessagesRead(returnedMessages);
         ArrayAdapter<Message> adapter = new MyListOfMessages(returnedMessages);
         ListView messagesListView = findViewById(R.id.messages_listview);
         messagesListView.setAdapter(adapter);
@@ -76,13 +77,14 @@ public class ManageMessagesActivity extends AppCompatActivity {
                 return true;
             }
         });
-        markMessagesRead();
     }
 
-    private void markMessagesRead() {
-        messageId = mMessage.getId();
-        Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
-        ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+    private void markMessagesRead(List<Message> returnedMessages) {
+        for (Message aMessage : returnedMessages) {
+            messageId = aMessage.getId();
+            Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
+            ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+        }
     }
 
     private void markedAsRead(Message returnNothing) {
