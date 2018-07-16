@@ -105,4 +105,7 @@
     <string name="user_to_monitor">Add User to Monitor</string>
     <string name="map">Map</string>
     <string name="new_message">New Message</string>
+    <string name="broadcast_message">Broadcast Message</string>
+    <string name="parents_message">Monitoring Message</string>
+    <string name="group_message">Group Message</string>
 </resources>

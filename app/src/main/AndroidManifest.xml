@@ -5,7 +5,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -19,6 +18,7 @@
         <service
             android:name=".GPSJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -46,6 +46,7 @@
         <activity android:name=".app.UserInfoActivity" />
         <activity android:name=".app.MonitoredUserActivity" />
         <activity android:name=".app.ManageMessagesActivity" />
+        <activity android:name=".app.GroupedMessagesActivity"></activity>
     </application>
 
 </manifest>

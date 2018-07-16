@@ -115,7 +115,7 @@ public class ManageGroups extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ManageGroups.this, ManageMessagesActivity.class);
+                Intent intent = new Intent(ManageGroups.this, GroupedMessagesActivity.class);
                 startActivity(intent);
                 finish();
             }

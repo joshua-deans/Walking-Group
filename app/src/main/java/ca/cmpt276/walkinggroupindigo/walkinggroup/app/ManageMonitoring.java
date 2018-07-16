@@ -74,7 +74,7 @@ public class ManageMonitoring extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ManageMonitoring.this, ManageMessagesActivity.class);
+                Intent intent = new Intent(ManageMonitoring.this, GroupedMessagesActivity.class);
                 startActivity(intent);
                 finish();
             }

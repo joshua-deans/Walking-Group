@@ -105,7 +105,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this, ManageMessagesActivity.class);
+                Intent intent = new Intent(MapsActivity.this, GroupedMessagesActivity.class);
                 startActivity(intent);
             }
         });
