@@ -103,13 +103,19 @@ public class CreateGroup extends AppCompatActivity {
                     currentGroup.setDestLatitude(destLatLng.latitude);
                     currentGroup.setDestLongitude(destLatLng.longitude);
                     Call<Group> caller = proxy.createGroup(currentGroup);
-                    ProxyBuilder.callProxy(CreateGroup.this, caller, group -> onSuccess(group));
+                    ProxyBuilder.callProxy(CreateGroup.this, caller, group -> updateCurrentUser(group));
                 }
             }
         });
     }
 
-    private void onSuccess(Group groupList) {
+    private void updateCurrentUser(Group groupList) {
+        Call<User> callerUser = proxy.getUserById(mUser.getId());
+        ProxyBuilder.callProxy(CreateGroup.this, callerUser, returnedUser -> onSuccess(returnedUser));
+    }
+
+    private void onSuccess(User returnedUser) {
+        mUser.setLeadsGroups(returnedUser.getLeadsGroups());
         Toast.makeText(CreateGroup.this, "Group successfully added", Toast.LENGTH_SHORT).show();
         finish();
     }

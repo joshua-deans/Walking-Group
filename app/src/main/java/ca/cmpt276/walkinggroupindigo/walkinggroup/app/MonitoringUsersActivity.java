@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +38,6 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     private WGServerProxy proxy;
     private User user;
     private static User addedOne;
-   // private List<User> monitorsUserGroupList = new ArrayList<>();
 
     public static Intent makeIntent (Context context, User user) {
         addedOne = user;
@@ -232,6 +232,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
             }
 
             Group currentGroup;
+            Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
+
             if (mGroupList.isEmpty()) {
                 currentGroup = new Group();
             } else {
@@ -246,6 +248,8 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                     Log.e("Error", e + ":" + mGroupList.toString());
                 }
             }
+            toggleWalkSwitch.setClickable(false);
+            toggleWalkSwitch.setVisibility(View.INVISIBLE);
             return itemView;
         }
     }

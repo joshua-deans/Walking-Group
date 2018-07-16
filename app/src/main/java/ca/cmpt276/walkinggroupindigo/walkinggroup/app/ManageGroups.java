@@ -1,7 +1,9 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,6 +36,10 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_TOKEN;
+
 public class ManageGroups extends AppCompatActivity {
 
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
@@ -44,6 +50,10 @@ public class ManageGroups extends AppCompatActivity {
     private WGServerProxy proxy;
     private User user;
     //private Group group;
+
+    public static Intent makeIntent(Context context) {
+        return new Intent (context, ManageGroups.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +70,11 @@ public class ManageGroups extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateUI();
+    }
+
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 
     private void updateUI() {
@@ -86,10 +101,36 @@ public class ManageGroups extends AppCompatActivity {
                 intent = new Intent(ManageGroups.this, CreateGroup.class);
                 startActivity(intent);
                 return true;
+            case R.id.parentDashboard:
+                Toast.makeText(ManageGroups.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.accountInfoButton:
+                intent = new Intent(ManageGroups.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                Toast.makeText(ManageGroups.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                logUserOut();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void logUserOut() {
+        Context context = ManageGroups.this;
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                LOG_IN_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(LOG_IN_SAVE_KEY, "");
+        editor.putString(LOG_IN_SAVE_TOKEN, "");
+        editor.apply();
+
+        Intent intent = new Intent(ManageGroups.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void setUpToolBar() {
@@ -98,10 +139,12 @@ public class ManageGroups extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         groupsLink.setClickable(false);
+        groupsLink.setAlpha(1f);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         monitoringLink.setOnClickListener(new View.OnClickListener() {
@@ -109,6 +152,7 @@ public class ManageGroups extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageGroups.this, ManageMonitoring.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -139,7 +183,7 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(ManageGroups.this, GroupDetailsActivity.class);
+                Intent intent = GroupDetailsActivity.makeIntent(ManageGroups.this);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
@@ -225,6 +269,14 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private void exitFromGroupSuccess(Void returnNothing) {
+        Call<User> callerUser = proxy.getUserById(user.getId());
+        ProxyBuilder.callProxy(ManageGroups.this, callerUser, returnedUser -> onSuccess(returnedUser));
+
+    }
+
+    private void onSuccess(User returnedUser) {
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
         Toast.makeText(ManageGroups.this,
                 "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
@@ -236,14 +288,24 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Intent intent = new Intent(ManageGroups.this, GPSJobService.class);
+                // Prevents user from walking with multiple groups
                 if (isChecked) {
-                    user.setCurrentWalkingGroup(currentGroup);
-                    intent.putExtra(GPS_JOB_ID, user.getId());
-                    intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
-                    intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
-                    startService(intent);
+                    if (user.getCurrentWalkingGroup() == null) {
+                        user.setCurrentWalkingGroup(currentGroup);
+                        intent.putExtra(GPS_JOB_ID, user.getId());
+                        intent.putExtra(GPS_DEST_LAT, currentGroup.getDestLatitude());
+                        intent.putExtra(GPS_DEST_LONG, currentGroup.getDestLongitude());
+                        // Start tracking GPS
+                        startService(intent);
+                        Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        buttonView.setChecked(!isChecked);
+                        Toast.makeText(ManageGroups.this, "You are currently walking with another group", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     user.setCurrentWalkingGroup(null);
+                    // Stop tracking GPS
                     stopService(intent);
                     Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
                             Toast.LENGTH_SHORT).show();
@@ -255,7 +317,7 @@ public class ManageGroups extends AppCompatActivity {
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupsList;
 
-        MyGroupsList(List<Group> groupList) {
+        public MyGroupsList(List<Group> groupList) {
             super(ManageGroups.this, R.layout.group_layout
                     , groupList);
             mGroupsList = groupList;
@@ -293,6 +355,14 @@ public class ManageGroups extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.group_name);
                     nameText.setText(currentGroup.getGroupDescription());
+                    TextView leaderText = itemView.findViewById(R.id.group_id);
+                    Call<User> current = proxy.getUserById(currentGroup.getLeader().getId());
+                    ProxyBuilder.callProxy(ManageGroups.this,
+                            current,
+                            returnedUser->{
+                                leaderText.setText(getString(R.string.leader_of_group)
+                                        + returnedUser.getName());
+                            });
 
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
@@ -301,6 +371,8 @@ public class ManageGroups extends AppCompatActivity {
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
                 if (groupWalkingWith != null && currentGroup.getId().equals(groupWalkingWith.getId())) {
                     toggleWalkSwitch.setChecked(true);
+                } else {
+                    toggleWalkSwitch.setChecked(false);
                 }
             }
         }

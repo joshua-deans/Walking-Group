@@ -6,4 +6,13 @@
         android:id="@+id/create_group"
         android:title="Create Group"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/parentDashboard"
+        android:title="Parent Dashboard" />
+    <item
+        android:id="@+id/accountInfoButton"
+        android:title="@string/account_info" />
+    <item
+        android:id="@+id/logOutButton"
+        android:title="@string/log_out" />
 </menu>

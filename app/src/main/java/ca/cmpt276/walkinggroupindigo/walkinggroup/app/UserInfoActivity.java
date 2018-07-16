@@ -1,5 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
@@ -83,5 +85,9 @@ public class UserInfoActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             getSupportActionBar().setTitle(title);
         }
+    }
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, UserInfoActivity.class);
     }
 }

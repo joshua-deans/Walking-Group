@@ -9,17 +9,42 @@
         android:id="@+id/groupNameDetail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
+        android:layout_marginStart="43dp"
         android:textSize="18sp" />
 
-    <ListView
-        android:id="@+id/groupUserList"
+    <TextView
+        android:id="@+id/parentView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/groupNameDetail"
-        android:padding="5dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="66dp"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/groupUserList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/groupNameDetail"
+            android:layout_weight="1"
+            android:padding="25dp" />
+
+        <ListView
+            android:id="@+id/parentUserList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/groupNameDetail"
+            android:layout_weight="1"
+            android:padding="25dp" />
+    </LinearLayout>
 
 </RelativeLayout>

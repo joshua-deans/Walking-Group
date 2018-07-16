@@ -28,12 +28,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
+    private List<Marker> inGroupMarkers;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, MapsActivity.class);
@@ -72,6 +75,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
+        inGroupMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setActionBarText(getString(R.string.map));
         setUpToolBar();
@@ -82,17 +86,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         findGroupMarkers();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        findGroupMarkers();
+    }
+
     private void setUpToolBar() {
         Button mapLink = findViewById(R.id.mapLink);
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         mapLink.setClickable(false);
+        mapLink.setAlpha(1f);
         monitoringLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ManageMonitoring.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         groupsLink.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +112,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, ManageGroups.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         messagesLink.setOnClickListener(new View.OnClickListener() {
@@ -122,14 +135,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Click listener for action bar
+        Intent intent;
         switch (item.getItemId()) {
+            case R.id.parentDashboard:
+                intent = new Intent(MapsActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 logUserOut();
                 return true;
 
             case R.id.accountInfoButton:
-                Intent intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
+                intent = new Intent(MapsActivity.this, AccountInfoActivity.class);
                 startActivity(intent);
                 return true;
 
@@ -150,11 +168,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         editor.apply();
 
         Intent intent = new Intent(MapsActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
 
-    private void createAlertDialog(Marker marker) {
+    private void createAddAlertDialog(Marker marker) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
         builder.setMessage("Would you like to join this group?")
                 .setTitle(marker.getTitle());
@@ -177,6 +196,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addUser(List<User> user) {
+        Call<User> callerUser = proxy.getUserById(mUser.getId());
+        ProxyBuilder.callProxy(MapsActivity.this, callerUser, returnedUser -> onSuccess(returnedUser));
+    }
+
+    private void onSuccess(User returnedUser) {
+        mUser.setMemberOfGroups(returnedUser.getMemberOfGroups());
         Toast.makeText(MapsActivity.this, "Successfully added to group", Toast.LENGTH_SHORT).show();
     }
 
@@ -192,6 +217,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         (group.getDestLatitude(), group.getDestLongitude()))
                         .title(group.getGroupDescription()));
                 currentMarker.setTag(group.getId());
+                if (mUser.getMemberOfGroups().contains(group) || mUser.getLeadsGroups().contains(group)) {
+                    currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                } else {
+                    inGroupMarkers.add(currentMarker);
+                }
             }
         }
     }
@@ -216,7 +246,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                createAlertDialog(marker);
+                if (inGroupMarkers.contains(marker)) {
+                    createAddAlertDialog(marker);
+                }
                 return false;
             }
         });
@@ -249,7 +281,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         }
-
     }
 
     @SuppressLint("MissingPermission")

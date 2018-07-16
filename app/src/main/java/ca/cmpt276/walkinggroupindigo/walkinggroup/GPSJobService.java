@@ -8,9 +8,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
@@ -38,6 +41,8 @@ public class GPSJobService extends Service {
     private double destLat;
     private double destLng;
     private boolean atDestination = false;
+    private Intent requestIntent;
+    private User mUser;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -51,6 +56,7 @@ public class GPSJobService extends Service {
         currUserId = intent.getLongExtra(GPS_JOB_ID, 0);
         destLat = intent.getDoubleExtra(GPS_DEST_LAT, 0);
         destLng = intent.getDoubleExtra(GPS_DEST_LONG, 0);
+        requestIntent = intent;
         return START_STICKY;
     }
 
@@ -58,6 +64,7 @@ public class GPSJobService extends Service {
     public void onCreate() {
         Log.e(TAG, "onCreate");
         proxy = ProxyFunctions.setUpProxy(GPSJobService.this, getString(R.string.apikey));
+        mUser = User.getInstance();
         initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
@@ -79,6 +86,15 @@ public class GPSJobService extends Service {
         }
     }
 
+    private void getUserInfo() {
+        Call<User> userCaller = proxy.getUserById(currUserId);
+        ProxyBuilder.callProxy(userCaller, returnedUser -> updateUserInfo(returnedUser));
+    }
+
+    private void updateUserInfo(User returnedUser) {
+        mUser = returnedUser;
+    }
+
     @Override
     public void onDestroy() {
         Log.e(TAG, "onDestroy");
@@ -92,6 +108,7 @@ public class GPSJobService extends Service {
                 }
             }
         }
+        mUser.setCurrentWalkingGroup(null);
     }
 
     private void initializeLocationManager() {
@@ -102,6 +119,19 @@ public class GPSJobService extends Service {
     }
 
     private void successfulLocationUpdate(GpsLocation gpsLocation) {
+    }
+
+    private void lastTenMinutes(Intent requestIntent) {
+        // Schedules the current service to stop after ten minutes
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                stopService(requestIntent);
+            }
+        };
+        // Scheduled for 10 minutes from now
+        timer.schedule(timerTask, 600000);
     }
 
     private class LocationListener implements android.location.LocationListener {
@@ -117,9 +147,11 @@ public class GPSJobService extends Service {
             destLoc.setLatitude(destLat);
             destLoc.setLongitude(destLng);
             mLastLocation.set(location);
-            // Shows distance
-            if (location.distanceTo(destLoc) <= 75f) {
-                Toast.makeText(getApplicationContext(), "Close to destination", Toast.LENGTH_SHORT).show();
+            // Shows distance within 75 meters
+            if (!atDestination && location.distanceTo(destLoc) <= 75f) {
+                atDestination = true;
+                // This function called when user is at the location.
+                lastTenMinutes(requestIntent);
             }
             GpsLocation currGPS = new GpsLocation();
             currGPS.setCurrentTimestamp();
