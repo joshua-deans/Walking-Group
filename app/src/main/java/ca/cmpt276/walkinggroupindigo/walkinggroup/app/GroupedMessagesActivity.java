@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grouped_messages);
         setActionBarText(getString(R.string.manage_messages));
+        setUpToolBar();
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
         populateGroups();
@@ -56,6 +58,36 @@ public class GroupedMessagesActivity extends AppCompatActivity {
 
     private void updateUI() {
 
+    }
+
+    private void setUpToolBar() {
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        messagesLink.setClickable(false);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void getGroupId() {
