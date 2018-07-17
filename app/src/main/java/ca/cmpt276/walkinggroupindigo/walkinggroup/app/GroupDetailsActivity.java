@@ -35,7 +35,8 @@ import retrofit2.Call;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class GroupDetailsActivity extends AppCompatActivity {
-    long mGroupId;
+    Long mGroupId;
+    Long mMessageId;
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
@@ -45,6 +46,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private boolean leader = false;
 
     EditText inputMessage;
+
     public static Intent makeIntent(Context context) {
         return new Intent(context, GroupDetailsActivity.class);
     }
@@ -57,7 +59,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         mMessage = new Message();
         mUser = User.getInstance();
         leaderUser = new User();
-//        messagedGroup = new Group();
+        messagedGroup = new Group();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
         if (mGroupId == -1) {
@@ -69,11 +71,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Call<Group> groupCaller = proxy.getGroupById(mGroupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
+        Call<Group> groupCall = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCall, returnedGroups -> getGroupLeader(returnedGroups));
         MenuInflater inflater = getMenuInflater();
         if (mUser.getId() == leaderId) {
-            leader = true;
             inflater.inflate(R.menu.action_bar_messages, menu);
             return true;
         }else {
@@ -90,7 +91,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Call<Group> groupCaller = proxy.getGroupById(mGroupId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
-        if (mUser.getId() == leaderId) {
             leader = true;
             switch (item.getItemId()) {
                 case R.id.broadcast_message:
@@ -143,12 +143,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     dialogParents.show();
                     return true;
 
-                default:
-
-                    return super.onOptionsItemSelected(item);
-            }
-        }else {
-            switch (item.getItemId()) {
                 case R.id.group_message:
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
@@ -169,15 +163,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                     });
-                    AlertDialog dialogBroadCast = builder.create();
-                    dialogBroadCast.show();
+                    AlertDialog dialogGroupMessage = builder.create();
+                    dialogGroupMessage.show();
                     return true;
 
                 default:
 
                     return super.onOptionsItemSelected(item);
             }
-        }
     }
 
     private void getParents(List<User> returnedUsers) {
@@ -188,14 +181,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
     private void onSendSuccess(List<Message> message) {
-        Call<Group> messagedGroupCaller = proxy.getGroupById(mGroupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, messagedGroupCaller, returnedGroup -> setIsMessaged(returnedGroup));
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void setIsMessaged(Group returnedGroup) {
-        messagedGroup = returnedGroup;
-        messagedGroup.setHasMessages(true);
     }
 
     private void getGroupUsers(long groupId) {
