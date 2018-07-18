@@ -47,7 +47,8 @@
         <activity android:name=".app.UserInfoActivity" />
         <activity android:name=".app.MonitoredUserActivity" />
         <activity android:name=".app.ManageMessagesActivity" />
-        <activity android:name=".app.GroupedMessagesActivity"></activity>
+        <activity android:name=".app.ParentDashboardActivity" />
+        <activity android:name=".app.GroupedMessagesActivity" />
     </application>
 
 </manifest>

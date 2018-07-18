@@ -67,7 +67,6 @@ public class User extends IdItemBase{
             ourInstance = new User();
             ourInstance.setCurrentWalkingGroup(null);
         }
-
         return ourInstance;
     }
 
