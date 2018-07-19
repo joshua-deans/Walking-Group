@@ -35,6 +35,7 @@ import retrofit2.Call;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class GroupDetailsActivity extends AppCompatActivity {
+
     private Long mGroupId;
     private Long mMessageId;
     private WGServerProxy proxy;
@@ -89,7 +90,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
         }
     }
 
-
     private void getGroupLeader(Group returnedGroup) {
         leaderId = returnedGroup.getLeader().getId();
     }
@@ -114,7 +114,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mMessage.setText(inputMessage.getText().toString());
                             Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> markAsUnread(message));
                             Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
                             ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
                         }
@@ -170,7 +170,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mMessage.setText(inputMessage.getText().toString());
                             Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> markAsUnread(message));
                         }
                     });
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -195,13 +195,21 @@ public class GroupDetailsActivity extends AppCompatActivity {
             Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
             ProxyBuilder.callProxy(GroupDetailsActivity.this,
                     messageCaller,
-                    message -> onSendSuccess(message));
+                    message -> markAsUnread(message));
         }
     }
 
-    private void onSendSuccess(List<Message> message) {
+    private void markAsUnread(List<Message> message) {
+        for(Message aMessage : message) {
+            Call<Message> messageCaller = proxy.markMessageAsRead(aMessage.getId(), false);
+            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, returnNothing -> onSendSuccess(returnNothing));
+        }
+    }
+
+    private void onSendSuccess(Message returnNothing) {
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
+
 
     private void getGroupUsers(long groupId) {
         Call<List<User>> groupCaller = proxy.getGroupMembers(groupId);

@@ -38,11 +38,11 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grouped_messages);
         setActionBarText(getString(R.string.manage_messages));
-        setUpToolBar();
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
+        setUpToolBar();
         populateGroups();
-        setUpUnreadMessagesTextView();
+//        setUpUnreadMessagesTextView();
         updateUI();
     }
 
@@ -61,6 +61,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        String numUnreadMessages = getNumUnreadMessages();
+        unreadMessages.setText("" + numUnreadMessages);
         messagesLink.setClickable(false);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,19 +153,18 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         return groupInformation;
     }
 
-
-    private void setUpUnreadMessagesTextView() {
+    private String getNumUnreadMessages() {
         int number = 0;
-        TextView numUnreadMessages = findViewById(R.id.num_unread_messages);
         Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
-        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getNumUnreadMessages(returnedMessages, number));
-        numUnreadMessages.setText("" + number + " unread messages!");
+        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, number));
+        return String.valueOf(number);
     }
 
-    private void getNumUnreadMessages(List<Message> returnedMessages, int i) {
+    private void getInNumber(List<Message> returnedMessages, int number) {
         for (Message aMessage : returnedMessages) {
-            i++;
+            number += 1;
         }
+//        return number;
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
