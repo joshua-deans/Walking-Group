@@ -109,4 +109,6 @@
     <string name="parents_message">Monitoring Message</string>
     <string name="group_message">Group Message</string>
     <string name="title_activity_parent_maps">Map</string>
+    <string name="monitoring_title">Monitoring: %s</string>
+    <string name="edit_info">Edit Info</string>
 </resources>
