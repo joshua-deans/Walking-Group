@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,6 +42,7 @@ import java.util.Objects;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -59,11 +61,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     // Default location if permission is not granted
     private final LatLng mDefaultLocation = new LatLng(49.2827, -123.1207);
+    private Message mMessage;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
     private List<Marker> inGroupMarkers;
+
+    EditText inputMessage;
 
     public static Intent makeIntent (Context context){
         return new Intent (context, MapsActivity.class);
@@ -74,6 +79,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mUser = User.getInstance();
+        mMessage = new Message();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         inGroupMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -137,6 +143,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Click listener for action bar
         Intent intent;
         switch (item.getItemId()) {
+            case R.id.emergency_message:
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MapsActivity.this);
+                builder1.setMessage("Send emergency message:");
+                inputMessage = new EditText(this);
+                builder1.setView(inputMessage);
+                builder1.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mMessage.setText(inputMessage.getText().toString());
+//                        Call<List<Message>> emergancyMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
+//                        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+//                        Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
+//                        ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
+                    }
+                });
+                builder1.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialogBroadCast = builder1.create();
+                dialogBroadCast.show();
+                return true;
+
             case R.id.parentDashboard:
                 intent = new Intent(MapsActivity.this, ParentDashboardActivity.class);
                 startActivity(intent);
@@ -156,6 +187,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void getParents(List<User> returnedUsers) {
+        for (User aUser : returnedUsers) {
+            Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
+            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
+        }
+    }
+
+    private void onSendSuccess(List<Message> message) {
+        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
 
     private void logUserOut() {

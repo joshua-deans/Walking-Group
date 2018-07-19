@@ -110,4 +110,6 @@
     <string name="group_message">Group Message</string>
     <string name="title_activity_parent_maps">Map</string>
     <string name="emergency_message">Emergency Message</string>
+    <string name="parentDashboard">Parent Dashboard</string>
+    <string name="emergency_button">Panic Button</string>
 </resources>
