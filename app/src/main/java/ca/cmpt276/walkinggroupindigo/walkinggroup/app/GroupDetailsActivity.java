@@ -9,10 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -34,9 +39,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
+    private Message mMessage;
     private long leaderId;
     private boolean leader = false;
 
+    EditText inputMessage;
     public static Intent makeIntent(Context context) {
         return new Intent(context, GroupDetailsActivity.class);
     }
@@ -46,6 +53,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_details);
         setActionBarText("");
+        mMessage = new Message();
         mUser = User.getInstance();
         leaderUser = new User();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
@@ -55,6 +63,121 @@ public class GroupDetailsActivity extends AppCompatActivity {
         } else {
             getGroupDetails(mGroupId);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        if (mUser.getId() == leaderId) {
+            inflater.inflate(R.menu.action_bar_messages, menu);
+            return true;
+        }else {
+            inflater.inflate(R.menu.action_bar_message_child, menu);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Click listener for action bar
+        if (mUser.getId() == leaderId) {
+            switch (item.getItemId()) {
+                case R.id.broadcast_message:
+
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(GroupDetailsActivity.this);
+                    builder1.setMessage("Send broadcast message:");
+                    inputMessage = new EditText(this);
+                    builder1.setView(inputMessage);
+                    builder1.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mMessage.setText(inputMessage.getText().toString());
+                            Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                            Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
+                        }
+                    });
+                    builder1.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialogBroadCast = builder1.create();
+                    dialogBroadCast.show();
+                    return true;
+
+                case R.id.parents_message:
+
+                    AlertDialog.Builder builder2 = new AlertDialog.Builder(GroupDetailsActivity.this);
+                    builder2.setMessage("Send message to parents:");
+                    inputMessage = new EditText(this);
+                    builder2.setView(inputMessage);
+                    builder2.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mMessage.setText(inputMessage.getText().toString());
+                            Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
+                        }
+                    });
+                    builder2.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialogParents = builder2.create();
+                    dialogParents.show();
+                    return true;
+
+                default:
+
+                    return super.onOptionsItemSelected(item);
+            }
+        }else {
+            switch (item.getItemId()) {
+                case R.id.group_message:
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
+                    builder.setMessage("Send message to group:");
+                    inputMessage = new EditText(this);
+                    builder.setView(inputMessage);
+                    builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mMessage.setText(inputMessage.getText().toString());
+                            Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                        }
+                    });
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialogBroadCast = builder.create();
+                    dialogBroadCast.show();
+                    return true;
+
+                default:
+
+                    return super.onOptionsItemSelected(item);
+            }
+        }
+    }
+
+    private void getParents(List<User> returnedUsers) {
+        for (User aUser : returnedUsers) {
+            Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
+            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
+        }
+    }
+
+    private void onSendSuccess(List<Message> message) {
+        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
 
     private void getGroupUsers(long groupId) {

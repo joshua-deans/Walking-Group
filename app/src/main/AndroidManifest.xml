@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -44,6 +45,9 @@
         <activity
             android:name=".app.ParentDashboardActivity"
             android:label="@string/title_activity_parent_maps"></activity>
+        <activity android:name=".app.MonitoredUserActivity" />
+        <activity android:name=".app.ManageMessagesActivity" />
+        <activity android:name=".app.GroupedMessagesActivity" />
     </application>
 
 </manifest>

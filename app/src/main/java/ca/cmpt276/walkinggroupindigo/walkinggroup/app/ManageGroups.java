@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.GPSJobService;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -69,6 +70,7 @@ public class ManageGroups extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        user = User.getInstance();
         updateUI();
     }
 
@@ -159,7 +161,9 @@ public class ManageGroups extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ManageGroups.this, "Messages is not yet implemented", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManageGroups.this, GroupedMessagesActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -267,6 +271,14 @@ public class ManageGroups extends AppCompatActivity {
 
 
     private void exitFromGroupSuccess(Void returnNothing) {
+        Call<User> callerUser = proxy.getUserById(user.getId());
+        ProxyBuilder.callProxy(ManageGroups.this, callerUser, returnedUser -> onSuccess(returnedUser));
+
+    }
+
+    private void onSuccess(User returnedUser) {
+        user.setMemberOfGroups(returnedUser.getMemberOfGroups());
+        user.setLeadsGroups(returnedUser.getLeadsGroups());
         Toast.makeText(ManageGroups.this,
                 "You are removed from the group",
                 Toast.LENGTH_SHORT).show();
@@ -290,15 +302,18 @@ public class ManageGroups extends AppCompatActivity {
                         Toast.makeText(ManageGroups.this, "Started walking with " + currentGroup.getGroupDescription(),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        buttonView.setChecked(!isChecked);
-                        Toast.makeText(ManageGroups.this, "You are currently walking with another group", Toast.LENGTH_SHORT).show();
+                        if (!Objects.equals(user.getCurrentWalkingGroup().getId(), currentGroup.getId())) {
+                            toggleWalkSwitch.setChecked(false);
+                        }
                     }
                 } else {
-                    user.setCurrentWalkingGroup(null);
-                    // Stop tracking GPS
-                    stopService(intent);
-                    Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
-                            Toast.LENGTH_SHORT).show();
+                    if (Objects.equals(user.getCurrentWalkingGroup().getId(), currentGroup.getId())) {
+                        user.setCurrentWalkingGroup(null);
+                        // Stop tracking GPS
+                        stopService(intent);
+                        Toast.makeText(ManageGroups.this, "Stopped walking with " + currentGroup.getGroupDescription(),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -324,7 +339,6 @@ public class ManageGroups extends AppCompatActivity {
                         false);
             }
 
-            Group currentGroup;
             Group groupWalkingWith = user.getCurrentWalkingGroup();
             Switch toggleWalkSwitch = itemView.findViewById(R.id.toggleWalk);
 
@@ -350,20 +364,17 @@ public class ManageGroups extends AppCompatActivity {
                     ProxyBuilder.callProxy(ManageGroups.this,
                             current,
                             returnedUser->{
-                                leaderText.setText(getString(R.string.leader_of_group)
-                                        + returnedUser.getName());
+                                leaderText.setText(String.format("%s %s", getString(R.string.leader_of_group), returnedUser.getName()));
                             });
 
                     //TODO: DISPLAY GROUP LEADER AS WELL, or some new and surprising idea!!
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupsList.toString());
                 }
-                toggleSwitchListener(currentGroup, toggleWalkSwitch);
                 if (groupWalkingWith != null && currentGroup.getId().equals(groupWalkingWith.getId())) {
                     toggleWalkSwitch.setChecked(true);
-                } else {
-                    toggleWalkSwitch.setChecked(false);
                 }
+                toggleSwitchListener(currentGroup, toggleWalkSwitch);
             }
         }
     }
