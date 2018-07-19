@@ -109,4 +109,5 @@
     <string name="parents_message">Monitoring Message</string>
     <string name="group_message">Group Message</string>
     <string name="title_activity_parent_maps">Map</string>
+    <string name="emergency_message">Emergency Message</string>
 </resources>
