@@ -111,4 +111,6 @@
     <string name="title_activity_parent_maps">Map</string>
     <string name="log_in">Log In</string>
     <string name="walk">Walk</string>
+    <string name="monitoring_title">Monitoring: %s</string>
+    <string name="edit_info">Edit Info</string>
 </resources>
