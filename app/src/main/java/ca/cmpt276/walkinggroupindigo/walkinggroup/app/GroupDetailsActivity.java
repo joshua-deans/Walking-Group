@@ -132,29 +132,29 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     dialogParents.show();
                     return true;
 
-                case R.id.emergency_message:
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
-                    builder.setMessage("Send emergency message:");
-                    inputMessage = new EditText(this);
-                    builder.setView(inputMessage);
-                    builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mMessage.setText(inputMessage.getText().toString());
-                            Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
-                        }
-                    });
-                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialogCast = builder.create();
-                    dialogCast.show();
-                    return true;
+//                case R.id.emergency_message:
+//
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
+//                    builder.setMessage("Send emergency message:");
+//                    inputMessage = new EditText(this);
+//                    builder.setView(inputMessage);
+//                    builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            mMessage.setText(inputMessage.getText().toString());
+//                            Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
+//                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+//                        }
+//                    });
+//                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//                    AlertDialog dialogCast = builder.create();
+//                    dialogCast.show();
+//                    return true;
 
                 default:
 
