@@ -35,14 +35,14 @@ import retrofit2.Call;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class GroupDetailsActivity extends AppCompatActivity {
-    Long mGroupId;
-    Long mMessageId;
+    private Long mGroupId;
+    private Long mMessageId;
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
     private Group messagedGroup;
     private Message mMessage;
-    private long leaderId;
+    private Long leaderId;
     private boolean leader = false;
 
     EditText inputMessage;
@@ -74,7 +74,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
         Call<Group> groupCall = proxy.getGroupById(mGroupId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this,
                 groupCall,
-                returnedGroups -> getGroupLeader(returnedGroups));
+                returnedGroups ->
+                        getGroupLeader(returnedGroups));
         MenuInflater inflater = getMenuInflater();
         if (mUser.getId().equals(leaderId)) {
             inflater.inflate(R.menu.action_bar_messages, menu);
@@ -93,7 +94,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Call<Group> groupCaller = proxy.getGroupById(mGroupId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
-        if (mUser.getId() == leaderId) {
+        if (mUser.getId().equals(leaderId)) {
             leader = true;
             switch (item.getItemId()) {
                 case R.id.broadcast_message:
@@ -186,7 +187,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void getParents(List<User> returnedUsers) {
         for (User aUser : returnedUsers) {
             Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
-            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
+            ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                    messageCaller,
+                    message -> onSendSuccess(message));
         }
     }
 
@@ -297,7 +300,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getLeaderData(User returnedLeader) {
         leaderUser = returnedLeader;
-        if (mUser.getId() == leaderId) {
+        if (mUser.getId().equals(leaderId)) {
             leader = true;
             Toast.makeText(GroupDetailsActivity.this, R.string.you_are_leader, Toast.LENGTH_SHORT).show();
         }
