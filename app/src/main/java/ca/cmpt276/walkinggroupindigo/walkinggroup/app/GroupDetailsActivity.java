@@ -91,6 +91,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Call<Group> groupCaller = proxy.getGroupById(mGroupId);
         ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
+        if (mUser.getId() == leaderId) {
             leader = true;
             switch (item.getItemId()) {
                 case R.id.broadcast_message:
@@ -143,6 +144,12 @@ public class GroupDetailsActivity extends AppCompatActivity {
                     dialogParents.show();
                     return true;
 
+                default:
+
+                    return super.onOptionsItemSelected(item);
+            }
+        } else{
+            switch (item.getItemId()) {
                 case R.id.group_message:
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(GroupDetailsActivity.this);
@@ -171,6 +178,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
                     return super.onOptionsItemSelected(item);
             }
+        }
     }
 
     private void getParents(List<User> returnedUsers) {
