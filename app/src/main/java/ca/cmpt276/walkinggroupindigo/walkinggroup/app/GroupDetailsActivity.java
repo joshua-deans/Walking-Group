@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuInflater;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,17 +35,17 @@ import retrofit2.Call;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class GroupDetailsActivity extends AppCompatActivity {
-    Long mGroupId;
-    Long mMessageId;
+    private Long mGroupId;
+    private Long mMessageId;
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
     private Group messagedGroup;
     private Message mMessage;
-    private long leaderId;
+    private Long leaderId;
     private boolean leader = false;
 
-    EditText inputMessage;
+    private EditText inputMessage;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, GroupDetailsActivity.class);
@@ -71,17 +71,24 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Call<Group> groupCall = proxy.getGroupById(mGroupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCall, returnedGroups -> getGroupLeader(returnedGroups));
+        // Creates action bar buttons
         MenuInflater inflater = getMenuInflater();
-        if (mUser.getId().equals(leaderId) ) {
+        Call<Group> groupCall = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCall,
+                returnedGroups ->
+                    getUserInformation(returnedGroups, inflater, menu));
+        return true;
+    }
+
+    private void getUserInformation(Group returnedGroups, MenuInflater inflater, Menu menu) {
+        if (mUser.getId().equals(returnedGroups.getLeader().getId())) {
             inflater.inflate(R.menu.action_bar_messages, menu);
-            return true;
-        }else {
+        } else {
             inflater.inflate(R.menu.action_bar_message_child, menu);
-            return true;
         }
     }
+
 
     private void getGroupLeader(Group returnedGroup) {
         leaderId = returnedGroup.getLeader().getId();
@@ -90,7 +97,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Call<Group> groupCaller = proxy.getGroupById(mGroupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> getGroupLeader(returnedGroup));
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCaller,
+                returnedGroup -> getGroupLeader(returnedGroup));
         if (mUser.getId().equals(leaderId)) {
             leader = true;
             switch (item.getItemId()) {
@@ -184,7 +193,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void getParents(List<User> returnedUsers) {
         for (User aUser : returnedUsers) {
             Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
-            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
+            ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                    messageCaller,
+                    message -> onSendSuccess(message));
         }
     }
 
@@ -281,7 +292,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupDetails(long groupId) {
         Call<Group> groupCaller = proxy.getGroupById(groupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> extractGroupData(returnedGroup));
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCaller,
+                returnedGroup -> extractGroupData(returnedGroup));
     }
 
     private void extractGroupData(Group returnedGroup) {
@@ -295,7 +308,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getLeaderData(User returnedLeader) {
         leaderUser = returnedLeader;
-        if (mUser.getId() == leaderId) {
+        if (mUser.getId().equals(leaderId)) {
             leader = true;
             Toast.makeText(GroupDetailsActivity.this, R.string.you_are_leader, Toast.LENGTH_SHORT).show();
         }
