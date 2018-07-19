@@ -152,10 +152,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mMessage.setText(inputMessage.getText().toString());
-//                        Call<List<Message>> emergancyMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-//                        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
-//                        Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
-//                        ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
+                        Call<List<Message>> emergencyParentCaller = proxy.newMessageToParentsOf(mUser.getId(),mMessage);
+                        ProxyBuilder.callProxy(MapsActivity.this, emergencyParentCaller, message -> onSendSuccess(message));
+                        List<Group> userGroups = mUser.getMemberOfGroups();
+                        List<User> groupLeaders = getUserGroupLeaders(userGroups);
                     }
                 });
                 builder1.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -189,11 +189,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void getParents(List<User> returnedUsers) {
-        for (User aUser : returnedUsers) {
-            Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
-            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
-        }
+    private List<User> getUserGroupLeaders(List<Group> returnedGroups) {
+        List<User> userGroupLeaders = new ArrayList<>();
+            for (Group u : returnedGroups) {
+                userGroupLeaders.add(u.getLeader());
+            }
+        return userGroupLeaders;
     }
 
     private void onSendSuccess(List<Message> message) {
