@@ -138,7 +138,8 @@ public class ManageMonitoring extends AppCompatActivity {
         Intent intent;
         switch (item.getItemId()) {
             case R.id.parentDashboard:
-                Toast.makeText(ManageMonitoring.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
+                intent = new Intent(ManageMonitoring.this, ParentDashboardActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageMonitoring.this, AccountInfoActivity.class);
