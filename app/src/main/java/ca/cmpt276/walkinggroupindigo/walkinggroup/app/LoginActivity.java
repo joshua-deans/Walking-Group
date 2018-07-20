@@ -1,10 +1,13 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,7 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.UpdateMessages;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -25,8 +31,11 @@ public class LoginActivity extends AppCompatActivity {
     public static final String LOG_IN_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity";
     public static final String LOG_IN_SAVE_KEY = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Key";
     public static final String LOG_IN_SAVE_TOKEN = "ca.cmpt276.walkinggroupindigo.walkinggroup - LoginActivity Save Token";
+    public static final String MESSAGE_JOB_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity - Message Job ID";
     private WGServerProxy proxy;
     private User user = User.getInstance();
+    AlarmManager alarmMgr;
+    PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +44,30 @@ public class LoginActivity extends AppCompatActivity {
 
         proxy = ProxyFunctions.setUpProxy(LoginActivity.this, getString(R.string.apikey));
         setActionBarText(getString(R.string.login));
+        cancelAlarm(LoginActivity.this);
         checkIfUserIsLoggedIn();
         setUpLoginButton();
+    }
+
+    private void cancelAlarm(Context context) {
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent updateServiceIntent = new Intent(context, UpdateMessages.class);
+        PendingIntent alarmIntent = PendingIntent.getService(context, 0, updateServiceIntent, 0);
+
+        if (alarmMgr != null) {
+            try {
+                alarmMgr.cancel(alarmIntent);
+            } catch (Exception e) {
+                Log.e(TAG, "AlarmManager update was not canceled. " + e.toString());
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cancelAlarm(LoginActivity.this);
     }
 
     private void checkIfUserIsLoggedIn() {
@@ -153,10 +184,23 @@ public class LoginActivity extends AppCompatActivity {
         if (saveInfo) {
             saveLogIn(user.toString());
         }
+        startMessageService(user.getId());
         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void startMessageService(Long id) {
+        Calendar calendar = Calendar.getInstance();
+        alarmMgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(LoginActivity.this, UpdateMessages.class);
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        intent.putExtra(MESSAGE_JOB_ID, id);
+        // Start tracking GPS
+        assert alarmMgr != null;
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                1000 * 60, alarmIntent);
     }
 
     private void setUserParams(User returnedUser) {
