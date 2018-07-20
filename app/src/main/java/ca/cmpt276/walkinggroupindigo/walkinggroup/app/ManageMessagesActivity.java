@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -110,9 +111,11 @@ public class ManageMessagesActivity extends AppCompatActivity {
 
     private void markMessagesRead(List<Message> returnedMessages) {
         for (Message aMessage : returnedMessages) {
-            messageId = aMessage.getId();
-            Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
-            ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+            if (!aMessage.isRead()) {
+                messageId = aMessage.getId();
+                Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
+                ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+            }
         }
     }
 

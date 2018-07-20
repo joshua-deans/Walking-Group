@@ -62,9 +62,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
-        String numUnreadMessages = getNumUnreadMessages();
-        unreadMessages.setText("" + numUnreadMessages);
+        getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
+        messagesLink.setAlpha(1f);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,18 +153,13 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         return groupInformation;
     }
 
-    private String getNumUnreadMessages() {
-        int number = 0;
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
         Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
-        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, number));
-        return String.valueOf(number);
+        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
     }
 
-    private void getInNumber(List<Message> returnedMessages, int number) {
-        for (Message aMessage : returnedMessages) {
-            number += 1;
-        }
-//        return number;
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
