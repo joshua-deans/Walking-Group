@@ -28,6 +28,6 @@
         android:layout_centerVertical="true"
         android:focusable="false"
         android:padding="5dp"
-        android:text="Start walking  " />
+        android:text="@string/walk" />
 
 </RelativeLayout>

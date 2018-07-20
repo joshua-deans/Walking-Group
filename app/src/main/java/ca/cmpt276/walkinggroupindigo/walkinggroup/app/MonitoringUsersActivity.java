@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,6 +38,7 @@ import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_
 
 public class MonitoringUsersActivity extends AppCompatActivity {
 
+    public static final String MONITORED_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app.MonitoringUsersActivity - Monitored ID";
     private WGServerProxy proxy;
     private User user;
     private static User addedOne;
@@ -49,6 +53,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitoring_users);
         user = User.getInstance();
+        setActionBarText(String.format(getString(R.string.monitoring_title), addedOne.getName()));
         proxy = ProxyFunctions.setUpProxy(MonitoringUsersActivity.this, getString(R.string.apikey));
         setUpAddGroupButton();
         populateMonitorsUserGroups();
@@ -59,6 +64,28 @@ public class MonitoringUsersActivity extends AppCompatActivity {
         super.onResume();
         populateMonitorsUserGroups();
         updateUI();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_monitoring, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.edit_info:
+                intent = new Intent(MonitoringUsersActivity.this, MonitoringInfoActivity.class);
+                intent.putExtra(MONITORED_ID, addedOne.getId());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void updateUI() {
@@ -251,6 +278,15 @@ public class MonitoringUsersActivity extends AppCompatActivity {
             toggleWalkSwitch.setClickable(false);
             toggleWalkSwitch.setVisibility(View.INVISIBLE);
             return itemView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }

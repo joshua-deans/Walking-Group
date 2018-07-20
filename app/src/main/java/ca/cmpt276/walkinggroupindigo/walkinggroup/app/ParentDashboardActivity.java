@@ -2,6 +2,8 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -22,10 +24,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -45,13 +49,15 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
 
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, ParentDashboardActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_maps);
-        mUser = User.getInstance();
-        proxy = ProxyFunctions.setUpProxy(ParentDashboardActivity.this, getString(R.string.apikey));
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        initServerUser();
         setActionBarText("Parent Dashboard");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -59,9 +65,36 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         getMonitoredUsers();
     }
 
+    private void initServerUser() {
+        mUser = User.getInstance();
+        proxy = ProxyFunctions.setUpProxy(ParentDashboardActivity.this, getString(R.string.apikey));
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+    }
+
+
     private void getMonitoredUsers() {
         Call<List<User>> caller = proxy.getMonitorsUsers(mUser.getId());
-        ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, returnedUsers -> findMonitorMarkers(returnedUsers));
+        ProxyBuilder.callProxy(ParentDashboardActivity.this,
+                caller,
+                returnedUsers -> findMonitorMarkers(returnedUsers));
+        List<Group> groupsList = mUser.getMemberOfGroups();
+        getGroupLeaders(groupsList);
+    }
+
+    private void getGroupLeaders(List<Group> groupsList) {
+        Call<List<Group>> groups = proxy.getGroups();
+        ProxyBuilder.callProxy(ParentDashboardActivity.this,
+                groups,
+                returnedGroups -> {
+                    List<User> allLeader = new ArrayList<>();
+                    for (Group g : returnedGroups) {
+                        User u = g.getLeader();
+                        if (!allLeader.contains(u) && (!u.getId().equals(mUser.getId()))) {
+                            allLeader.add(u);
+                        }
+                    }
+                    findMonitorMarkers(allLeader);
+                });
     }
 
     @Override
@@ -73,18 +106,22 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     private void findMonitorMarkers(List<User> monitorsUsers) {
         for (User users : monitorsUsers) {
             Call<User> caller = proxy.getUserById(users.getId());
-            ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, returnedUser -> getUserGPSInfo(returnedUser));
+            ProxyBuilder.callProxy(ParentDashboardActivity.this,
+                    caller, returnedUser ->
+                            getUserGPSInfo(returnedUser));
         }
     }
 
     private void getUserGPSInfo(User returnedUser) {
         Call<GpsLocation> caller = proxy.getLastGpsLocation(returnedUser.getId());
-        ProxyBuilder.callProxy(ParentDashboardActivity.this, caller, gpsLocation -> placeUserMarker(gpsLocation, returnedUser));
+        ProxyBuilder.callProxy(ParentDashboardActivity.this,
+                caller, gpsLocation ->
+                        placeUserMarker(gpsLocation, returnedUser));
     }
 
 
     private void placeUserMarker(GpsLocation lastGpsLocation, User returnedUser) {
-        if (lastGpsLocation != null) {
+        if (lastGpsLocation.getLng() != null && lastGpsLocation.getLat() != null) {
             mMap.addMarker(new MarkerOptions().position(new LatLng
                     (lastGpsLocation.getLat(), lastGpsLocation.getLng()))
                     .title(returnedUser.getName())
