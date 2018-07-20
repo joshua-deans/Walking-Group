@@ -175,11 +175,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         mMessage.setText(inputMessage.getText().toString());
                         mMessage.setEmergency(true);
                         Call<List<Message>> emergencyParentCaller = proxy.newMessageToParentsOf(mUser.getId(),mMessage);
-                        ProxyBuilder.callProxy(MapsActivity.this, emergencyParentCaller, message -> markAsUnread(message));
-//                        Call<List<Message>> emergencyGroupCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-//                        ProxyBuilder.callProxy(MapsActivity.this, emergencyGroupCaller, message -> markAsUnread(message));
-                        List<Group> userGroups = mUser.getMemberOfGroups();
-                        List<User> groupLeaders = getUserGroupLeaders(userGroups);
+                        ProxyBuilder.callProxy(MapsActivity.this,
+                                emergencyParentCaller,
+                                message -> markAsUnread(message));
+                       // List<Group> userGroups = mUser.getMemberOfGroups();
+                       // List<User> groupLeaders = getUserGroupLeaders(userGroups);
+                        Group currentGroup = mUser.getCurrentWalkingGroup();
+                        // if current group is moving
+                        if(currentGroup != null){
+                            Long myLeaderId = currentGroup.getLeader().getId();
+                            Call<User> myLeader = proxy.getUserById(myLeaderId);
+                            ProxyBuilder.callProxy(MapsActivity.this,
+                                    myLeader,
+                                    returnedUser->createTemporaryGroups(returnedUser, inputMessage.getText().toString()));
+                        }
                     }
                 });
                 builder1.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -208,13 +217,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    // create a temporary group
+    private void createTemporaryGroups(User groupLeader, String newMessage) {
+        Group currentGroup = new Group();
+        int tempLocation = -1;
+        int tempDestination = 0;
+        currentGroup.setGroupDescription("temporary group");
+        currentGroup.setLeader(mUser);
+        currentGroup.setStartLatitude(tempLocation);
+        currentGroup.setStartLongitude(tempLocation);
+        currentGroup.setDestLatitude(tempDestination);
+        currentGroup.setDestLongitude(tempDestination);
+        Call<Group> caller = proxy.createGroup(currentGroup);
+        ProxyBuilder.callProxy(MapsActivity.this,
+                caller, group -> addUsersToGroup(group, groupLeader, newMessage));
+    }
+
+    // add all the leaders to the group
+    private void addUsersToGroup(Group group, User groupLeader, String newMessage) {
+        Call<List<User>> monitorsUserGroupCaller = proxy.addGroupMember(group.getId(), groupLeader);
+        ProxyBuilder.callProxy(MapsActivity.this,
+                monitorsUserGroupCaller,
+                returnMonitorsUserGroup -> {
+                    Message tempMessage = new Message();
+                    tempMessage.setText(newMessage);
+                    Call<List<Message>> sendMessage = proxy.newMessageToGroup(group.getId(), tempMessage);
+                    ProxyBuilder.callProxy(MapsActivity.this,
+                            sendMessage,
+                            returnedMessage->deleteTheGroup(group));
+                });
+    }
+
+    private void deleteTheGroup(Group group) {
+        Call<Void> deleteGroup = proxy.deleteGroup(group.getId());
+        ProxyBuilder.callProxy(MapsActivity.this,
+                deleteGroup,
+                returned->{}
+                );
+    }
+
     private void markAsUnread(List<Message> message) {
         for(Message aMessage : message) {
             aMessage.setIsRead(false);
             aMessage.setEmergency(true);
             mEmergencyMessageId = aMessage.getId();
             Call<Message> messageCaller = proxy.markMessageAsRead(aMessage.getId(), false);
-            ProxyBuilder.callProxy(MapsActivity.this, messageCaller, returnNothing -> onSendSuccess(returnNothing));
+            ProxyBuilder.callProxy(MapsActivity.this,
+                    messageCaller,
+                    returnNothing -> onSendSuccess(returnNothing));
         }
     }
 
