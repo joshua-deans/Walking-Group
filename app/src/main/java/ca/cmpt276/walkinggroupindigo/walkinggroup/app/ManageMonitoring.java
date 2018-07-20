@@ -25,6 +25,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -49,11 +50,11 @@ public class ManageMonitoring extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_monitoring);
         setActionBarText(getString(R.string.manage_monitoring));
-        setUpToolBar();
         user = User.getInstance();
+        proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
+        setUpToolBar();
         setUpAddMonitoringButton();
         setUpAddMonitoredButton();
-        proxy = ProxyFunctions.setUpProxy(ManageMonitoring.this, getString(R.string.apikey));
         populateMonitorsUser();
         populateMonitoredByUsers();
     }
@@ -71,6 +72,8 @@ public class ManageMonitoring extends AppCompatActivity {
         Button messagesLink = findViewById(R.id.messagesLink);
         monitoringLink.setClickable(false);
         monitoringLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -372,6 +375,15 @@ public class ManageMonitoring extends AppCompatActivity {
 
             return itemView;
         }
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(user.getId(), null);
+        ProxyBuilder.callProxy(ManageMonitoring.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {

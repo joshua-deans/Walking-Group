@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -105,6 +106,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button messagesLink = findViewById(R.id.messagesLink);
         mapLink.setClickable(false);
         mapLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         monitoringLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,6 +359,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         updateMapLocation();
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
+        ProxyBuilder.callProxy(MapsActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {

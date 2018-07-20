@@ -43,17 +43,12 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         setUpToolBar();
         populateGroups();
 //        setUpUnreadMessagesTextView();
-        updateUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
-    }
-
-    private void updateUI() {
-
+        populateGroups();
     }
 
     private void setUpToolBar() {
@@ -65,6 +60,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
         messagesLink.setAlpha(1f);
+        unreadMessages.setAlpha(1f);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,7 +150,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     }
 
     private void getNumUnreadMessages(TextView unreadMessagesText) {
-        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
         ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
     }
 

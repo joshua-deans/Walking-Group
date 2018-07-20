@@ -31,6 +31,7 @@ import java.util.Objects;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.GPSJobService;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -60,10 +61,10 @@ public class ManageGroups extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
-        setUpToolBar();
-        setActionBarText(getString(R.string.manage_groups));
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
+        setUpToolBar();
+        setActionBarText(getString(R.string.manage_groups));
         updateUI();
     }
 
@@ -142,6 +143,8 @@ public class ManageGroups extends AppCompatActivity {
         Button messagesLink = findViewById(R.id.messagesLink);
         groupsLink.setClickable(false);
         groupsLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -377,6 +380,15 @@ public class ManageGroups extends AppCompatActivity {
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
             }
         }
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(user.getId(), null);
+        ProxyBuilder.callProxy(ManageGroups.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {
