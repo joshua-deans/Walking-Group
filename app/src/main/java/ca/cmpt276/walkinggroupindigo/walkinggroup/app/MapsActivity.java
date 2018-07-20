@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -193,7 +194,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
-                logUserOut();
+                Helper.logUserOut(MapsActivity.this);
                 return true;
 
             case R.id.accountInfoButton:

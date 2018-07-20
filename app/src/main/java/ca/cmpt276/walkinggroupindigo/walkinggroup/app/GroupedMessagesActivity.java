@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,8 +16,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -53,6 +60,31 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         populateGroups();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.accountInfoButton:
+                intent = new Intent(GroupedMessagesActivity.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                Toast.makeText(GroupedMessagesActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                Helper.logUserOut(GroupedMessagesActivity.this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void setUpToolBar() {

@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -161,7 +162,7 @@ public class ManageMonitoring extends AppCompatActivity {
                 return true;
             case R.id.logOutButton:
                 Toast.makeText(ManageMonitoring.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
-                logUserOut();
+                Helper.logUserOut(ManageMonitoring.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
