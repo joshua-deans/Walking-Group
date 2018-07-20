@@ -13,10 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -26,9 +24,12 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
+import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.MapsActivity.EMERGENCY_ID;
+
 public class GroupedMessagesActivity extends AppCompatActivity {
 
-    long mGroupId;
+    Long mGroupId;
+    Long mEmergencyMessageId;
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
     private WGServerProxy proxy;
     private User mUser;
@@ -41,6 +42,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
         setUpToolBar();
+        getEmergencyMessageId();
         populateGroups();
 //        setUpUnreadMessagesTextView();
     }
@@ -171,6 +173,10 @@ public class GroupedMessagesActivity extends AppCompatActivity {
 
     private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
         unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
+    }
+
+    public void getEmergencyMessageId() {
+        mEmergencyMessageId = getIntent().getLongExtra(EMERGENCY_ID, -1);
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
