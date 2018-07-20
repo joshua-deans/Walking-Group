@@ -11,6 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
@@ -78,6 +82,30 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ParentDashboardActivity.this, getString(R.string.apikey));
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_manage_groups, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.accountInfoButton:
+                intent = new Intent(ParentDashboardActivity.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                Toast.makeText(ParentDashboardActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                Helper.logUserOut(ParentDashboardActivity.this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void setUpToolBar() {
