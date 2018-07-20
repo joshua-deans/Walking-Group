@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -100,6 +101,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         findGroupMarkers();
     }
 
@@ -108,8 +111,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         mapLink.setClickable(false);
         mapLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         monitoringLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +138,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent = new Intent(MapsActivity.this, GroupedMessagesActivity.class);
                 intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
     }
@@ -174,11 +189,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
                 AlertDialog dialogBroadCast = builder1.create();
                 dialogBroadCast.show();
-                return true;
-
-            case R.id.parentDashboard:
-                intent = new Intent(MapsActivity.this, ParentDashboardActivity.class);
-                startActivity(intent);
                 return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
@@ -375,6 +385,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         updateMapLocation();
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
+        ProxyBuilder.callProxy(MapsActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {

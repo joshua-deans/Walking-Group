@@ -31,6 +31,7 @@ import java.util.Objects;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.GPSJobService;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -60,10 +61,10 @@ public class ManageGroups extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_group);
-        setUpToolBar();
-        setActionBarText(getString(R.string.manage_groups));
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
+        setUpToolBar();
+        setActionBarText(getString(R.string.manage_groups));
         updateUI();
     }
 
@@ -71,6 +72,8 @@ public class ManageGroups extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         user = User.getInstance();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         updateUI();
     }
 
@@ -102,9 +105,6 @@ public class ManageGroups extends AppCompatActivity {
             case R.id.create_group:
                 intent = new Intent(ManageGroups.this, CreateGroup.class);
                 startActivity(intent);
-                return true;
-            case R.id.parentDashboard:
-                Toast.makeText(ManageGroups.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageGroups.this, AccountInfoActivity.class);
@@ -140,8 +140,11 @@ public class ManageGroups extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         groupsLink.setClickable(false);
         groupsLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +166,16 @@ public class ManageGroups extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageGroups.this, GroupedMessagesActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageGroups.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -377,6 +390,15 @@ public class ManageGroups extends AppCompatActivity {
                 toggleSwitchListener(currentGroup, toggleWalkSwitch);
             }
         }
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(user.getId(), null);
+        ProxyBuilder.callProxy(ManageGroups.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {
