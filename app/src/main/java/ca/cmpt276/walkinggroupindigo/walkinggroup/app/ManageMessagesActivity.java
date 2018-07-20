@@ -1,8 +1,10 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -22,14 +26,17 @@ import retrofit2.Call;
 
 public class ManageMessagesActivity extends AppCompatActivity {
 
+    Long messageId;
     private WGServerProxy proxy;
     private User mUser;
+    private Message mMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_messages);
         setActionBarText(getString(R.string.manage_messages));
+        mMessage = new Message();
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageMessagesActivity.this, getString(R.string.apikey));
         populateMessages();
@@ -43,7 +50,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-
+        populateMessages();
     }
 
     private void populateMessages() {
@@ -53,6 +60,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
     }
 
     private void populateMessagesListView(List<Message> returnedMessages) {
+        markMessagesRead(returnedMessages);
         ArrayAdapter<Message> adapter = new MyListOfMessages(returnedMessages);
         ListView messagesListView = findViewById(R.id.messages_listview);
         messagesListView.setAdapter(adapter);
@@ -61,16 +69,55 @@ public class ManageMessagesActivity extends AppCompatActivity {
         messagesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                //Does nothing for now, no particular user stories.
             }
         });
 
         messagesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ManageMessagesActivity.this);
+                builder.setMessage("Would you like to delete this message?");
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+//                        Long monitoringUserID = (Long) view.getTag();
+                        Long messageId = (Long) view.getTag();
+                        deleteMessage(messageId);
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             }
         });
+    }
+
+    private void deleteMessage(Long messageId) {
+        Call<Void> messageCall = proxy.deleteMessage(messageId);
+        ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> onDeleteSuccess(returnNothing));
+    }
+
+    private void onDeleteSuccess(Void returnNothing) {
+        Toast.makeText(this, "Message deleted", Toast.LENGTH_SHORT).show();
+        updateUI();
+    }
+
+
+    private void markMessagesRead(List<Message> returnedMessages) {
+        for (Message aMessage : returnedMessages) {
+            messageId = aMessage.getId();
+            Call<Message> messageCall = proxy.markMessageAsRead(messageId, true);
+            ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnNothing -> markedAsRead(returnNothing));
+        }
+    }
+
+    private void markedAsRead(Message returnNothing) {
+        Toast.makeText(this, "Messages are read", Toast.LENGTH_SHORT).show();
     }
 
     private class MyListOfMessages extends ArrayAdapter<Message> {

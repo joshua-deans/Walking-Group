@@ -113,4 +113,8 @@
     <string name="walk">Walk</string>
     <string name="monitoring_title">Monitoring: %s</string>
     <string name="edit_info">Edit Info</string>
+    <string name="emergency_message">Emergency Message</string>
+    <string name="parentDashboard">Parent Dashboard</string>
+    <string name="emergency_button">Panic Button</string>
+    <string name="gradel">.</string>
 </resources>

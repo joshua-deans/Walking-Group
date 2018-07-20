@@ -13,20 +13,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
 
-public class GroupedMessagesActivity extends AppCompatActivity {
+public class EmergencyMessagesActivity extends AppCompatActivity {
 
     long mGroupId;
     public static final String GROUP_ID_EXTRA = "ca.cmpt276.walkinggroupindigo.walkinggroup - ManageGroups groupID";
@@ -36,14 +36,18 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grouped_messages);
+        setContentView(R.layout.activity_emergency_messages);
         setActionBarText(getString(R.string.manage_messages));
-        mUser = User.getInstance();
-        proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
         setUpToolBar();
-        populateGroups();
-//        setUpUnreadMessagesTextView();
+        mUser = User.getInstance();
+        proxy = ProxyFunctions.setUpProxy(EmergencyMessagesActivity.this, getString(R.string.apikey));
+        populateEmergency();
         updateUI();
+        if (mGroupId == -1) {
+            errorMessage();
+        } else {
+            getEmergencyMessages(mGroupId);
+        }
     }
 
     @Override
@@ -61,9 +65,6 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
-        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
-        String numUnreadMessages = getNumUnreadMessages();
-        unreadMessages.setText("" + numUnreadMessages);
         messagesLink.setClickable(false);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +75,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         monitoringLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
+                Intent intent = new Intent(EmergencyMessagesActivity.this, ManageMonitoring.class);
                 startActivity(intent);
                 finish();
             }
@@ -82,31 +83,43 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         groupsLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
+                Intent intent = new Intent(EmergencyMessagesActivity.this, ManageGroups.class);
                 startActivity(intent);
                 finish();
             }
         });
     }
 
-    private void populateGroups() {
-        Call<List<Group>> groupCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(GroupedMessagesActivity.this, groupCaller,
-                returnedGroups -> populateGroupsListView(returnedGroups));
+    private void getGroupId() {
+        mGroupId = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
     }
 
-    private void populateGroupsListView(List<Group> returnedGroups) {
+    private void errorMessage() {
+        Toast.makeText(EmergencyMessagesActivity.this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    private void getEmergencyMessages(long groupId) {
+    }
+
+    private void populateEmergency() {
+        Call<List<Group>> groupCaller = proxy.getGroups();
+        ProxyBuilder.callProxy(EmergencyMessagesActivity.this, groupCaller,
+                returnedGroups -> populateEmergencyListView(returnedGroups));
+    }
+
+    private void populateEmergencyListView(List<Group> returnedGroups) {
         List<Group> userInGroups = getAllGroups(returnedGroups);
         ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
-        ListView groupsList = findViewById(R.id.grouped_messages_listview);
+        ListView groupsList = findViewById(R.id.emer_messages_listview);
         groupsList.setAdapter(adapter);
         new ArrayAdapter<>(this,
-                R.layout.grouped_messages_layout);
+                R.layout.emergency_messages_layout);
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMessagesActivity.class);
+                Intent intent = new Intent(EmergencyMessagesActivity.this, ManageMessagesActivity.class);
                 intent.putExtra(GROUP_ID_EXTRA, groupId);
                 startActivity(intent);
             }
@@ -130,9 +143,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         List<Group> groupInformation = new ArrayList<>();
         for(Group aGroup : returnedGroups) {
             if (aGroup.getLeader().getId().equals(mUser.getId())) {
-//                if (aGroup.itHasMessages()) {
-                    groupInformation.add(aGroup);
-//                }
+                groupInformation.add(aGroup);
             }
         }
         return groupInformation;
@@ -143,35 +154,18 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         List<Group> userGroups = mUser.getMemberOfGroups();
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
-                if (u.getId().equals(aGroup.getId())) {
-//                    if (u.itHasMessages()) {
-                        groupInformation.add(aGroup);
-//                    }
-                }
+                if (u.getId().equals(aGroup.getId()))
+                    groupInformation.add(aGroup);
             }
         }
         return groupInformation;
-    }
-
-    private String getNumUnreadMessages() {
-        int number = 0;
-        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
-        ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, number));
-        return String.valueOf(number);
-    }
-
-    private void getInNumber(List<Message> returnedMessages, int number) {
-        for (Message aMessage : returnedMessages) {
-            number += 1;
-        }
-//        return number;
     }
 
     private class MyGroupsList extends ArrayAdapter<Group> {
         List<Group> mGroupList;
 
         MyGroupsList(List<Group> groupList) {
-            super(GroupedMessagesActivity.this, R.layout.grouped_messages_layout
+            super(EmergencyMessagesActivity.this, R.layout.emergency_messages_layout
                     , groupList);
             mGroupList = groupList;
         }
@@ -181,7 +175,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             View itemView= convertView;
             if (convertView == null) {
-                itemView = getLayoutInflater().inflate(R.layout.grouped_messages_layout,
+                itemView = getLayoutInflater().inflate(R.layout.emergency_messages_layout,
                         parent,
                         false);
             }
@@ -196,7 +190,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             }
             if (currentGroup.getGroupDescription() != null) {
                 try {
-                    TextView nameText = itemView.findViewById(R.id.group_message_name);
+                    TextView nameText = itemView.findViewById(R.id.emergency_message_name);
                     nameText.setText(currentGroup.getGroupDescription());
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mGroupList.toString());

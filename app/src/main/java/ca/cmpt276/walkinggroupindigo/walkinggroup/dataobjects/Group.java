@@ -8,6 +8,7 @@ import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Group extends IdItemBase{
+    private Boolean hasMessages;
     private String groupDescription;
     private String locationName;
     // The latitude of the starting location
@@ -102,6 +103,14 @@ public class Group extends IdItemBase{
 
     public void setCustomJson(String customJson) {
         this.customJson = customJson;
+    }
+
+    public Boolean itHasMessages() {
+        return hasMessages;
+    }
+
+    public void setHasMessages(Boolean hasMessages) {
+        this.hasMessages = hasMessages;
     }
 
     @Override

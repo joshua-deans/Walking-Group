@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuInflater;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,15 +35,19 @@ import retrofit2.Call;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.ManageGroups.GROUP_ID_EXTRA;
 
 public class GroupDetailsActivity extends AppCompatActivity {
-    long mGroupId;
+
+    private Long mGroupId;
+    private Long mMessageId;
     private WGServerProxy proxy;
     private User mUser;
     private User leaderUser;
+    private Group messagedGroup;
     private Message mMessage;
-    private long leaderId;
+    private Long leaderId;
     private boolean leader = false;
 
-    EditText inputMessage;
+    private EditText inputMessage;
+
     public static Intent makeIntent(Context context) {
         return new Intent(context, GroupDetailsActivity.class);
     }
@@ -56,6 +60,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         mMessage = new Message();
         mUser = User.getInstance();
         leaderUser = new User();
+        messagedGroup = new Group();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));
         getGroupId();
         if (mGroupId == -1) {
@@ -67,20 +72,36 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Creates action bar buttons
         MenuInflater inflater = getMenuInflater();
-        if (mUser.getId() == leaderId) {
+        Call<Group> groupCall = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCall,
+                returnedGroups ->
+                    getUserInformation(returnedGroups, inflater, menu));
+        return true;
+    }
+
+    private void getUserInformation(Group returnedGroups, MenuInflater inflater, Menu menu) {
+        if (mUser.getId().equals(returnedGroups.getLeader().getId())) {
             inflater.inflate(R.menu.action_bar_messages, menu);
-            return true;
-        }else {
+        } else {
             inflater.inflate(R.menu.action_bar_message_child, menu);
-            return true;
         }
+    }
+
+    private void getGroupLeader(Group returnedGroup) {
+        leaderId = returnedGroup.getLeader().getId();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Click listener for action bar
-        if (mUser.getId() == leaderId) {
+        Call<Group> groupCaller = proxy.getGroupById(mGroupId);
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCaller,
+                returnedGroup -> getGroupLeader(returnedGroup));
+        if (mUser.getId().equals(leaderId)) {
+            leader = true;
             switch (item.getItemId()) {
                 case R.id.broadcast_message:
 
@@ -93,7 +114,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mMessage.setText(inputMessage.getText().toString());
                             Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> markAsUnread(message));
                             Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
                             ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
                         }
@@ -136,7 +157,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
                     return super.onOptionsItemSelected(item);
             }
-        }else {
+        } else{
             switch (item.getItemId()) {
                 case R.id.group_message:
 
@@ -149,7 +170,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mMessage.setText(inputMessage.getText().toString());
                             Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
-                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> onSendSuccess(message));
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> markAsUnread(message));
                         }
                     });
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -158,8 +179,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
                     });
-                    AlertDialog dialogBroadCast = builder.create();
-                    dialogBroadCast.show();
+                    AlertDialog dialogGroupMessage = builder.create();
+                    dialogGroupMessage.show();
                     return true;
 
                 default:
@@ -172,13 +193,23 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void getParents(List<User> returnedUsers) {
         for (User aUser : returnedUsers) {
             Call<List<Message>> messageCaller = proxy.newMessageToParentsOf(aUser.getId(), mMessage);
-            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, message -> onSendSuccess(message));
+            ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                    messageCaller,
+                    message -> markAsUnread(message));
         }
     }
 
-    private void onSendSuccess(List<Message> message) {
+    private void markAsUnread(List<Message> message) {
+        for(Message aMessage : message) {
+            Call<Message> messageCaller = proxy.markMessageAsRead(aMessage.getId(), false);
+            ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, returnNothing -> onSendSuccess(returnNothing));
+        }
+    }
+
+    private void onSendSuccess(Message returnNothing) {
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
+
 
     private void getGroupUsers(long groupId) {
         Call<List<User>> groupCaller = proxy.getGroupMembers(groupId);
@@ -269,7 +300,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getGroupDetails(long groupId) {
         Call<Group> groupCaller = proxy.getGroupById(groupId);
-        ProxyBuilder.callProxy(GroupDetailsActivity.this, groupCaller, returnedGroup -> extractGroupData(returnedGroup));
+        ProxyBuilder.callProxy(GroupDetailsActivity.this,
+                groupCaller,
+                returnedGroup -> extractGroupData(returnedGroup));
     }
 
     private void extractGroupData(Group returnedGroup) {
@@ -283,7 +316,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void getLeaderData(User returnedLeader) {
         leaderUser = returnedLeader;
-        if (mUser.getId() == leaderId) {
+        if (mUser.getId().equals(leaderId)) {
             leader = true;
             Toast.makeText(GroupDetailsActivity.this, R.string.you_are_leader, Toast.LENGTH_SHORT).show();
         }
