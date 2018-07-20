@@ -166,6 +166,9 @@ public class ManageMessagesActivity extends AppCompatActivity {
                         statusText.setText("read");
                     }else {
                         statusText.setText("unread");
+                        if (newMessage.isEmergency()) {
+                            statusText.setText("EMERGENCY");
+                        }
                     }
                 } catch (NullPointerException e) {
                     Log.e("Error", e + mMessageList.toString());
