@@ -175,9 +175,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         List<Group> groupInformation = new ArrayList<>();
         for(Group aGroup : returnedGroups) {
             if (aGroup.getLeader().getId().equals(mUser.getId())) {
-//                if (aGroup.itHasMessages()) {
-                    groupInformation.add(aGroup);
-//                }
+                groupInformation.add(aGroup);
             }
         }
         return groupInformation;
@@ -189,9 +187,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         for(Group aGroup : returnedGroups) {
             for (Group u: userGroups) {
                 if (u.getId().equals(aGroup.getId())) {
-//                    if (u.itHasMessages()) {
-                        groupInformation.add(aGroup);
-//                    }
+                    groupInformation.add(aGroup);
                 }
             }
         }
