@@ -117,4 +117,5 @@
     <string name="parentDashboard">Parent Dashboard</string>
     <string name="emergency_button">Panic Button</string>
     <string name="gradel">.</string>
+    <string name="parent_dashboard">Parent Dashboard</string>
 </resources>

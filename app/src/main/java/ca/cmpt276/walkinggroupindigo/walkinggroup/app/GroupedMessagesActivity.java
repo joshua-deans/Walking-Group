@@ -43,17 +43,14 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         setUpToolBar();
         populateGroups();
 //        setUpUnreadMessagesTextView();
-        updateUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
-    }
-
-    private void updateUI() {
-
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
+        populateGroups();
     }
 
     private void setUpToolBar() {
@@ -61,14 +58,17 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
         messagesLink.setAlpha(1f);
+        unreadMessages.setAlpha(1f);
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         monitoringLink.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +76,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -84,6 +85,16 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupedMessagesActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -154,7 +165,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     }
 
     private void getNumUnreadMessages(TextView unreadMessagesText) {
-        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), false);
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
         ProxyBuilder.callProxy(GroupedMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
     }
 
