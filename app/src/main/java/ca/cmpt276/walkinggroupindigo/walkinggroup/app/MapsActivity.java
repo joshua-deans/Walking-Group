@@ -103,6 +103,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onResume();
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
+        ActivityCompat.invalidateOptionsMenu(MapsActivity.this);
         findGroupMarkers();
     }
 
@@ -156,6 +157,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Creates action bar buttons
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_dashboard, menu);
+        MenuItem item = menu.findItem(R.id.emergency_message);
+        if (mUser.getCurrentWalkingGroup() == null) {
+            item.setVisible(false);
+        } else {
+            item.setVisible(true);
+        }
         return true;
     }
 
@@ -172,22 +179,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 builder1.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mMessage.setText(inputMessage.getText().toString());
+                        String sentMessage = inputMessage.getText().toString();
+                        if (sentMessage.matches("")) {
+                            sentMessage = " ";
+                        }
+                        mMessage.setText(sentMessage);
+                        mMessage.setEmergency(true);
                         Call<List<Message>> emergencyParentCaller = proxy.newMessageToParentsOf(mUser.getId(),mMessage);
                         ProxyBuilder.callProxy(MapsActivity.this,
                                 emergencyParentCaller,
                                 message -> markAsUnread(message));
-                       // List<Group> userGroups = mUser.getMemberOfGroups();
-                       // List<User> groupLeaders = getUserGroupLeaders(userGroups);
-                        Group currentGroup = mUser.getCurrentWalkingGroup();
-                        // if current group is moving
-                        if(currentGroup != null){
-                            Long myLeaderId = currentGroup.getLeader().getId();
-                            Call<User> myLeader = proxy.getUserById(myLeaderId);
-                            ProxyBuilder.callProxy(MapsActivity.this,
-                                    myLeader,
-                                    returnedUser->createTemporaryGroups(returnedUser, inputMessage.getText().toString()));
-                        }
+                        sendMessageToGroup(sentMessage);
                     }
                 });
                 builder1.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -216,20 +218,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void sendMessageToGroup(String sentMessage) {
+        Group currentGroup = mUser.getCurrentWalkingGroup();
+        // if current group is moving
+        if (currentGroup != null) {
+            Long myLeaderId = currentGroup.getLeader().getId();
+            List<User> parents = mUser.getMonitoredByUsers();
+            Call<User> myLeader = proxy.getUserById(myLeaderId);
+            ProxyBuilder.callProxy(MapsActivity.this,
+                    myLeader,
+                    returnedUser -> createTemporaryGroups(returnedUser, sentMessage, parents));
+        }
+    }
+
     // create a temporary group
-    private void createTemporaryGroups(User groupLeader, String newMessage) {
-        Group currentGroup = new Group();
-        int tempLocation = -1;
-        int tempDestination = 0;
-        currentGroup.setGroupDescription("temporary group");
-        currentGroup.setLeader(mUser);
-        currentGroup.setStartLatitude(tempLocation);
-        currentGroup.setStartLongitude(tempLocation);
-        currentGroup.setDestLatitude(tempDestination);
-        currentGroup.setDestLongitude(tempDestination);
-        Call<Group> caller = proxy.createGroup(currentGroup);
-        ProxyBuilder.callProxy(MapsActivity.this,
-                caller, group -> addUsersToGroup(group, groupLeader, newMessage));
+    private void createTemporaryGroups(User groupLeader, String newMessage, List<User> parents) {
+        if (!parents.contains(groupLeader)) {
+            Group currentGroup = new Group();
+            int tempLocation = -1;
+            int tempDestination = 0;
+            currentGroup.setGroupDescription("temporary group");
+            currentGroup.setLeader(mUser);
+            currentGroup.setStartLatitude(tempLocation);
+            currentGroup.setStartLongitude(tempLocation);
+            currentGroup.setDestLatitude(tempDestination);
+            currentGroup.setDestLongitude(tempDestination);
+            Call<Group> caller = proxy.createGroup(currentGroup);
+            ProxyBuilder.callProxy(MapsActivity.this,
+                    caller, group -> addUsersToGroup(group, groupLeader, newMessage));
+        }
     }
 
     // add all the leaders to the group
@@ -240,10 +257,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 returnMonitorsUserGroup -> {
                     Message tempMessage = new Message();
                     tempMessage.setText(newMessage);
+                    tempMessage.setEmergency(true);
                     Call<List<Message>> sendMessage = proxy.newMessageToGroup(group.getId(), tempMessage);
                     ProxyBuilder.callProxy(MapsActivity.this,
                             sendMessage,
-                            returnedMessage->deleteTheGroup(group));
+                            returnedMessage -> deleteTheGroup(group), errorMessage -> deleteTheGroup(group));
                 });
     }
 
