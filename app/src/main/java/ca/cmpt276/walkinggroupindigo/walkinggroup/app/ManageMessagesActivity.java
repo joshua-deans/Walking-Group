@@ -157,6 +157,13 @@ public class ManageMessagesActivity extends AppCompatActivity {
 
                     TextView nameText = itemView.findViewById(R.id.message_header);
                     nameText.setText(newUser.getName());
+
+                    TextView statusText = itemView.findViewById(R.id.message_status);
+                    if (newMessage.isRead()) {
+                        statusText.setText("read");
+                    }else {
+                        statusText.setText("unread");
+                    }
                 } catch (NullPointerException e) {
                     Log.e("Error", e + mMessageList.toString());
                 }
