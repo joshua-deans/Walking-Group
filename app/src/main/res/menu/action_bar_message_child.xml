@@ -5,7 +5,4 @@
     <item
         android:id="@+id/group_message"
         android:title="@string/group_message" />
-    <item
-        android:title="@string/emergency_message"
-        android:id="@+id/emergency_message"/>
 </menu>
