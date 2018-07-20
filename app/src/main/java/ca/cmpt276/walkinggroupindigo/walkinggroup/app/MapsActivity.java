@@ -166,13 +166,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.emergency_message:
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(MapsActivity.this);
-                builder1.setMessage("Send emergency message:");
+                builder1.setMessage("Send emergency message (optional):");
                 inputMessage = new EditText(this);
                 builder1.setView(inputMessage);
                 builder1.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mMessage.setText(inputMessage.getText().toString());
+                        mMessage.setEmergency(true);
                         Call<List<Message>> emergencyParentCaller = proxy.newMessageToParentsOf(mUser.getId(),mMessage);
                         ProxyBuilder.callProxy(MapsActivity.this, emergencyParentCaller, message -> markAsUnread(message));
 //                        Call<List<Message>> emergencyGroupCaller = proxy.newMessageToGroup(mGroupId, mMessage);

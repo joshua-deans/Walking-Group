@@ -22,7 +22,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,6 +54,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
+    private List<Long> markersPlaced;
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, ParentDashboardActivity.class);
@@ -61,6 +64,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_maps);
+        markersPlaced = new ArrayList<>();
         initServerUser();
         setUpToolBar();
         setActionBarText(getString(R.string.parent_dashboard));
@@ -127,7 +131,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         Call<List<User>> caller = proxy.getMonitorsUsers(mUser.getId());
         ProxyBuilder.callProxy(ParentDashboardActivity.this,
                 caller,
-                returnedUsers -> findMonitorMarkers(returnedUsers));
+                returnedUsers -> findMonitorMarkers(returnedUsers, false));
         List<Group> groupsList = mUser.getMemberOfGroups();
         getGroupLeaders(groupsList);
     }
@@ -140,11 +144,12 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
                     List<User> allLeader = new ArrayList<>();
                     for (Group g : returnedGroups) {
                         User u = g.getLeader();
-                        if (!allLeader.contains(u) && (!u.getId().equals(mUser.getId()))) {
+                        if (!allLeader.contains(u) && (!u.getId().equals(mUser.getId()))
+                                && groupsList.contains(g)) {
                             allLeader.add(u);
                         }
                     }
-                    findMonitorMarkers(allLeader);
+                    findMonitorMarkers(allLeader, true);
                 });
     }
 
@@ -154,29 +159,35 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         getMonitoredUsers();
     }
 
-    private void findMonitorMarkers(List<User> monitorsUsers) {
+    private void findMonitorMarkers(List<User> monitorsUsers, boolean leader) {
         for (User users : monitorsUsers) {
             Call<User> caller = proxy.getUserById(users.getId());
             ProxyBuilder.callProxy(ParentDashboardActivity.this,
                     caller, returnedUser ->
-                            getUserGPSInfo(returnedUser));
+                            getUserGPSInfo(returnedUser, leader));
         }
     }
 
-    private void getUserGPSInfo(User returnedUser) {
+    private void getUserGPSInfo(User returnedUser, boolean leader) {
         Call<GpsLocation> caller = proxy.getLastGpsLocation(returnedUser.getId());
         ProxyBuilder.callProxy(ParentDashboardActivity.this,
                 caller, gpsLocation ->
-                        placeUserMarker(gpsLocation, returnedUser));
+                        placeUserMarker(gpsLocation, returnedUser, leader));
     }
 
 
-    private void placeUserMarker(GpsLocation lastGpsLocation, User returnedUser) {
-        if (lastGpsLocation.getLng() != null && lastGpsLocation.getLat() != null) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng
+    private void placeUserMarker(GpsLocation lastGpsLocation, User returnedUser, boolean leader) {
+        if (lastGpsLocation.getLng() != null && lastGpsLocation.getLat() != null
+                && !markersPlaced.contains(returnedUser.getId())) {
+            Marker currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng
                     (lastGpsLocation.getLat(), lastGpsLocation.getLng()))
                     .title(returnedUser.getName())
                     .snippet(editTimeStamp(lastGpsLocation.getTimestamp())));
+            if (leader) {
+                currentMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                currentMarker.setTitle("Leader: " + currentMarker.getTitle());
+            }
+            markersPlaced.add(returnedUser.getId());
         }
     }
 
