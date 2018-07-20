@@ -170,6 +170,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
                             statusText.setText("EMERGENCY");
                         }
                     }
+
                 } catch (NullPointerException e) {
                     Log.e("Error", e + mMessageList.toString());
                 }
