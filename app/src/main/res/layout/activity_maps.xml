@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/mapsLinkToolbar"
+        android:id="@+id/parentLinkToolbar"
         layout="@layout/toolbar_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -16,7 +16,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/mapsLinkToolbar"
+        android:layout_below="@+id/parentLinkToolbar"
         tools:context=".app.MapsActivity" />
 
 </RelativeLayout>

@@ -11,6 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -30,6 +33,7 @@ import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -58,7 +62,8 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent_maps);
         initServerUser();
-        setActionBarText("Parent Dashboard");
+        setUpToolBar();
+        setActionBarText(getString(R.string.parent_dashboard));
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -71,6 +76,52 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
+    private void setUpToolBar() {
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
+        parentsLink.setClickable(false);
+        parentsLink.setAlpha(1f);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(0, 0); //0 for no animation
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ParentDashboardActivity.this, ManageGroups.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        messagesLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ParentDashboardActivity.this, GroupedMessagesActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ParentDashboardActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+    }
 
     private void getMonitoredUsers() {
         Call<List<User>> caller = proxy.getMonitorsUsers(mUser.getId());
@@ -206,6 +257,15 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
             }
         }
         updateMapLocation();
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
+        ProxyBuilder.callProxy(ParentDashboardActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
     private void setActionBarText(String title) {
