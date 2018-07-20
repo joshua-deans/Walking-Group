@@ -6,10 +6,6 @@
         android:title="@string/emergency_button"
         app:showAsAction="always" />
     <item
-        android:id="@+id/parentDashboard"
-        android:title="@string/parentDashboard"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/accountInfoButton"
         android:title="@string/account_info" />
     <item

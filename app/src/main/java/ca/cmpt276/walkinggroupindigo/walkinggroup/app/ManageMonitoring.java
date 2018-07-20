@@ -64,12 +64,23 @@ public class ManageMonitoring extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        user = User.getInstance();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
+        populateMonitorsUser();
+        populateMonitoredByUsers();
+    }
+
     private void setUpToolBar() {
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.linkToolbar);
         Button mapLink = findViewById(R.id.mapLink);
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         monitoringLink.setClickable(false);
         monitoringLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -95,15 +106,19 @@ public class ManageMonitoring extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageMonitoring.this, GroupedMessagesActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
-    }
-
-    protected void onResume() {
-        super.onResume();
-        populateMonitorsUser();
-        populateMonitoredByUsers();
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMonitoring.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
     }
 
     private void setUpAddMonitoringButton() {
@@ -140,10 +155,6 @@ public class ManageMonitoring extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case R.id.parentDashboard:
-                intent = new Intent(ManageMonitoring.this, ParentDashboardActivity.class);
-                startActivity(intent);
-                return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageMonitoring.this, AccountInfoActivity.class);
                 startActivity(intent);

@@ -10,10 +10,6 @@
         app:showAsAction="always"
         tools:icon="@drawable/mr_button_light" />
     <item
-        android:id="@+id/parentDashboard"
-        android:title="Parent Dashboard"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/accountInfoButton"
         android:title="@string/account_info" />
     <item

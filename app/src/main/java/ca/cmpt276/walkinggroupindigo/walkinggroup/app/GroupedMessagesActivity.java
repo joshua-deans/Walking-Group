@@ -48,6 +48,8 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         populateGroups();
     }
 
@@ -56,6 +58,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
@@ -65,6 +68,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         monitoringLink.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +76,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
@@ -80,6 +85,16 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupedMessagesActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });

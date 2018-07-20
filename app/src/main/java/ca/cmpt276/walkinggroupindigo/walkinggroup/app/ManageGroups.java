@@ -72,6 +72,8 @@ public class ManageGroups extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         user = User.getInstance();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         updateUI();
     }
 
@@ -103,9 +105,6 @@ public class ManageGroups extends AppCompatActivity {
             case R.id.create_group:
                 intent = new Intent(ManageGroups.this, CreateGroup.class);
                 startActivity(intent);
-                return true;
-            case R.id.parentDashboard:
-                Toast.makeText(ManageGroups.this, "Parent Dashboard not yet implemented", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ManageGroups.this, AccountInfoActivity.class);
@@ -141,6 +140,7 @@ public class ManageGroups extends AppCompatActivity {
         Button groupsLink = findViewById(R.id.groupsLink);
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
         groupsLink.setClickable(false);
         groupsLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -166,6 +166,16 @@ public class ManageGroups extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ManageGroups.this, GroupedMessagesActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageGroups.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
                 finish();
             }
         });
