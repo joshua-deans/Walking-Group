@@ -171,6 +171,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
                             mMessage.setText(inputMessage.getText().toString());
                             Call<List<Message>> groupMessageCaller = proxy.newMessageToGroup(mGroupId, mMessage);
                             ProxyBuilder.callProxy(GroupDetailsActivity.this, groupMessageCaller, message -> markAsUnread(message));
+                            Call<List<User>> userCaller = proxy.getGroupMembers(mGroupId);
+                            ProxyBuilder.callProxy(GroupDetailsActivity.this, userCaller, returnedUsers -> getParents(returnedUsers));
                         }
                     });
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -201,6 +203,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     private void markAsUnread(List<Message> message) {
         for(Message aMessage : message) {
+            aMessage.setIsRead(false);
             Call<Message> messageCaller = proxy.markMessageAsRead(aMessage.getId(), false);
             ProxyBuilder.callProxy(GroupDetailsActivity.this, messageCaller, returnNothing -> onSendSuccess(returnNothing));
         }
@@ -209,7 +212,6 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private void onSendSuccess(Message returnNothing) {
         Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
-
 
     private void getGroupUsers(long groupId) {
         Call<List<User>> groupCaller = proxy.getGroupMembers(groupId);

@@ -56,6 +56,11 @@ import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_I
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final int DEFAULT_ZOOM = 15;
+    public static final String EMERGENCY_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app_mEmergencyMessageId";
+    public static final String EMERGENCY_GROUP_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app_mEmergencyGroupId";
+
+    Long mEmergencyMessageId;
+    Long mEmergencyGroupId;
     private GoogleMap mMap;
     private User mUser;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -125,6 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MapsActivity.this, GroupedMessagesActivity.class);
+                intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
                 startActivity(intent);
             }
         });
@@ -153,7 +159,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onClick(DialogInterface dialog, int which) {
                         mMessage.setText(inputMessage.getText().toString());
                         Call<List<Message>> emergencyParentCaller = proxy.newMessageToParentsOf(mUser.getId(),mMessage);
-                        ProxyBuilder.callProxy(MapsActivity.this, emergencyParentCaller, message -> onSendSuccess(message));
+                        ProxyBuilder.callProxy(MapsActivity.this, emergencyParentCaller, message -> markAsUnread(message));
+//                        Call<List<Message>> emergencyGroupCaller = proxy.newMessageToGroup(mGroupId, mMessage);
+//                        ProxyBuilder.callProxy(MapsActivity.this, emergencyGroupCaller, message -> markAsUnread(message));
                         List<Group> userGroups = mUser.getMemberOfGroups();
                         List<User> groupLeaders = getUserGroupLeaders(userGroups);
                     }
@@ -189,16 +197,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void markAsUnread(List<Message> message) {
+        for(Message aMessage : message) {
+            aMessage.setIsRead(false);
+            aMessage.setEmergency(true);
+            mEmergencyMessageId = aMessage.getId();
+            Call<Message> messageCaller = proxy.markMessageAsRead(aMessage.getId(), false);
+            ProxyBuilder.callProxy(MapsActivity.this, messageCaller, returnNothing -> onSendSuccess(returnNothing));
+        }
+    }
+
+    private void onSendSuccess(Message returnNothing) {
+        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
+    }
+
+
     private List<User> getUserGroupLeaders(List<Group> returnedGroups) {
         List<User> userGroupLeaders = new ArrayList<>();
             for (Group u : returnedGroups) {
                 userGroupLeaders.add(u.getLeader());
             }
         return userGroupLeaders;
-    }
-
-    private void onSendSuccess(List<Message> message) {
-        Toast.makeText(this, "Message Sent!", Toast.LENGTH_SHORT).show();
     }
 
     private void logUserOut() {
