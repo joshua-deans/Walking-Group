@@ -96,8 +96,8 @@
     <string name="dashboard">Dashboard</string>
     <string name="sign_up">Sign Up</string>
     <string name="create_group_title">Create group</string>
-    <string name="manage_monitoring">Manage Monitoring</string>
-    <string name="manage_groups">Manage Groups</string>
+    <string name="manage_monitoring">Monitoring</string>
+    <string name="manage_groups">Groups</string>
     <string name="manage_messages">Messages</string>
     <string name="add_user_monitor_you">Add User to Monitor You</string>
     <string name="user_to_monitor">Add User to Monitor</string>
@@ -109,4 +109,11 @@
     <string name="parents_message">Monitoring Message</string>
     <string name="group_message">Group Message</string>
     <string name="title_activity_parent_maps">Map</string>
+    <string name="log_in">Log In</string>
+    <string name="walk">Walk</string>
+    <string name="monitoring_title">Monitoring: %s</string>
+    <string name="edit_info">Edit Info</string>
+    <string name="emergency_message">Emergency Message</string>
+    <string name="parentDashboard">Parent Dashboard</string>
+    <string name="emergency_button">Panic Button</string>
 </resources>
