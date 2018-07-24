@@ -143,4 +143,13 @@ public class PermissionRequest extends IdItemBase {
             this.whoApprovedOrDenied = whoApprovedOrDenied;
         }
     }
+
+    // For different request status
+    public enum RequestStatus{
+        LEAD_GROUP,
+        JOIN_GROUP,
+        LEAVE_GROUP,
+        MONITORED_BY_OTHER,
+        STOP_MONITORED_BY_OTHER
+    };
 }

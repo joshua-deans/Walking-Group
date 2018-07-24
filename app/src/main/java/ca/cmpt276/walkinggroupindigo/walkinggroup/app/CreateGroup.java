@@ -3,6 +3,7 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,8 +15,14 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequesManager;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -107,9 +114,29 @@ public class CreateGroup extends AppCompatActivity {
                     Call<Group> caller = proxy.createGroup(currentGroup);
                     ProxyBuilder.callProxy(CreateGroup.this,
                             caller, group -> updateCurrentUser(group));
+                    // requesting a permission from parent.
+                    requestPermissionFromParent();
                 }
             }
         });
+    }
+
+    private void requestPermissionFromParent() {
+        Call<List<User>> callParents = proxy.getMonitoredByUsers(mUser.getId());
+        ProxyBuilder.callProxy(CreateGroup.this,
+                callParents,
+                returnedParents-> sendRequestsToParents(returnedParents));
+    }
+
+    private void sendRequestsToParents(List<User> returnedParents) {
+        Set<User> users = new HashSet<User>(returnedParents);
+        PermissionRequest manager = PermissionRequesManager.getPermission(
+                PermissionRequest.RequestStatus.LEAD_GROUP,
+                users,
+                mUser, currentGroup, "Hello WORld!"
+                );
+        Call<PermissionRequest> myRequest = proxy.approveOrDenyPermissionRequest(manager.getId(),
+                WGServerProxy.PermissionStatus.PENDING);
     }
 
     private void updateCurrentUser(Group groupList) {
