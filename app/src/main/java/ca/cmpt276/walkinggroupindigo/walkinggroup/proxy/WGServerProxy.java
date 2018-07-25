@@ -162,6 +162,30 @@ public interface WGServerProxy {
             @Body PermissionStatus status
     );
 
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(@Query("userId") Long toUserId);
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("userId") Long toUserId,
+            @Query("statusForUser") PermissionStatus PENDING);
+
+    /*
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Path("groupId") Long groupId);
+            */
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("status") PermissionStatus DENIED);    // null for not filtering
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("status") PermissionStatus APPROVED,
+            @Query("groupId") Long groupId,
+            @Query("userId") Long userId);
+
     // -- Internal --
     @GET("/permissions/actions")
     Call<List<ActionInfo>> getPermissionActionInfo();

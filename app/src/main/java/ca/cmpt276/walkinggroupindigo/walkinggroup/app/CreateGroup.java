@@ -115,12 +115,13 @@ public class CreateGroup extends AppCompatActivity {
                     ProxyBuilder.callProxy(CreateGroup.this,
                             caller, group -> updateCurrentUser(group));
                     // requesting a permission from parent.
-                    requestPermissionFromParent();
+               //     requestPermissionFromParent();
                 }
             }
         });
     }
 
+    /*
     private void requestPermissionFromParent() {
         Call<List<User>> callParents = proxy.getMonitoredByUsers(mUser.getId());
         ProxyBuilder.callProxy(CreateGroup.this,
@@ -138,7 +139,7 @@ public class CreateGroup extends AppCompatActivity {
         Call<PermissionRequest> myRequest = proxy.approveOrDenyPermissionRequest(manager.getId(),
                 WGServerProxy.PermissionStatus.PENDING);
     }
-
+    */
     private void updateCurrentUser(Group groupList) {
         Call<User> callerUser = proxy.getUserById(mUser.getId());
         ProxyBuilder.callProxy(CreateGroup.this, callerUser, returnedUser -> onSuccess(returnedUser));
