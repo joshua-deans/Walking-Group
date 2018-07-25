@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
@@ -20,6 +21,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import retrofit2.Call;
 
 public class CreateGroup extends AppCompatActivity {
@@ -99,7 +101,6 @@ public class CreateGroup extends AppCompatActivity {
                     Toast.makeText(CreateGroup.this, "No destination selected", Toast.LENGTH_SHORT).show();
                 } else {
                     currentGroup.setGroupDescription(groupDescription);
-                    currentGroup.setLeader(mUser);
                     currentGroup.setStartLatitude(startLatLng.latitude);
                     currentGroup.setStartLongitude(startLatLng.longitude);
                     currentGroup.setDestLatitude(destLatLng.latitude);
@@ -108,9 +109,31 @@ public class CreateGroup extends AppCompatActivity {
                     ProxyBuilder.callProxy(CreateGroup.this,
                             caller,
                             group -> updateCurrentUser(group));
+                    // needs permission from the parents
+                    requestForCreatingGroupAsLeader(currentGroup);
                 }
             }
         });
+    }
+
+    private void requestForCreatingGroupAsLeader(Group group) {
+        Call<List<PermissionRequest>> requestCall = proxy.getPermissions(group.getId());
+        ProxyBuilder.callProxy(CreateGroup.this,
+                requestCall,
+                returnedInformation->updateInformation(returnedInformation, group));
+    }
+
+    private void updateInformation(List<PermissionRequest> returnedInformation, Group group) {
+        for(PermissionRequest request: returnedInformation){
+            Long currentGroupId = request.getId();
+            if(currentGroupId.equals(group.getId())){
+                if(request.getStatus() == WGServerProxy.PermissionStatus.APPROVED){
+                    group.setLeader(mUser);
+                    return;
+                }
+            }
+        }
+        group.setLeader(null);
     }
 
     private void updateCurrentUser(Group groupList) {

@@ -222,7 +222,7 @@ public class ManageGroups extends AppCompatActivity {
     private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
         List<Group> groupInformation = new ArrayList<>();
         for(Group aGroup : returnedGroups) {
-            if (aGroup.getLeader().getId().equals(user.getId())) {
+            if (aGroup.getLeader() != null && aGroup.getLeader().getId().equals(user.getId())  ) {
                 groupInformation.add(aGroup);
             }
         }

@@ -1,6 +1,5 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.proxy;
 
-import android.webkit.PermissionRequest;
 
 import java.util.List;
 
@@ -8,6 +7,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
