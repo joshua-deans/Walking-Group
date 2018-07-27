@@ -214,6 +214,12 @@ public class PermissionActivity extends AppCompatActivity {
                     TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
                     emailText.setText(currentRequest.getMessage());
                     // should be getAction() for debugging I changed it to getMessage()
+                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED){
+                        Button accept = findViewById(R.id.btnAccept);
+                        Button decline = findViewById(R.id.btnDecline);
+                        accept.setVisibility(View.INVISIBLE);
+                        decline.setVisibility(View.INVISIBLE);
+                    }
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + permissionList.toString());
                 }
