@@ -214,7 +214,9 @@ public class PermissionActivity extends AppCompatActivity {
                     TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
                     emailText.setText(currentRequest.getMessage());
                     // should be getAction() for debugging I changed it to getMessage()
-                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED){
+                    // if user already accepted or declined the button
+                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
+                            currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
                         Button accept = findViewById(R.id.btnAccept);
                         Button decline = findViewById(R.id.btnDecline);
                         accept.setVisibility(View.INVISIBLE);
