@@ -168,21 +168,21 @@ public interface WGServerProxy {
     @GET("/permissions")
     Call<List<PermissionRequest>> getPermissions(
             @Query("userId") Long toUserId,
-            @Query("statusForUser") PermissionStatus PENDING);
+            @Query("statusForUser") PermissionStatus status);
 
-    /*
+
     @GET("/permissions")
-    Call<List<PermissionRequest>> getPermissions(
+    Call<List<PermissionRequest>> getPermissionsForGroup(
             @Path("groupId") Long groupId);
-            */
+
 
     @GET("/permissions")
     Call<List<PermissionRequest>> getPermissions(
-            @Query("status") PermissionStatus DENIED);    // null for not filtering
+            @Query("status") PermissionStatus status);    // null for not filtering
 
     @GET("/permissions")
     Call<List<PermissionRequest>> getPermissions(
-            @Query("status") PermissionStatus APPROVED,
+            @Query("status") PermissionStatus status,
             @Query("groupId") Long groupId,
             @Query("userId") Long userId);
 

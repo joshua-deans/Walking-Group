@@ -117,7 +117,7 @@ public class CreateGroup extends AppCompatActivity {
     }
 
     private void requestForCreatingGroupAsLeader(Group group) {
-        Call<List<PermissionRequest>> requestCall = proxy.getPermissions(group.getId());
+        Call<List<PermissionRequest>> requestCall = proxy.getPermissionsForGroup(group.getId());
         ProxyBuilder.callProxy(CreateGroup.this,
                 requestCall,
                 returnedInformation->updateInformation(returnedInformation, group));
