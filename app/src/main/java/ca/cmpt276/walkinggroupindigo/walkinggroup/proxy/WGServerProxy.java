@@ -163,7 +163,7 @@ public interface WGServerProxy {
     );
 
     @GET("/permissions")
-    Call<List<PermissionRequest>> getPermissions(@Query("userId") Long toUserId);
+    Call<List<PermissionRequest>> getPermissionsForUser(@Query("userId") Long toUserId);
 
     @GET("/permissions")
     Call<List<PermissionRequest>> getPermissions(

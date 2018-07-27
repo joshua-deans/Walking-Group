@@ -3,23 +3,33 @@ package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -30,9 +40,7 @@ public class PermissionActivity extends AppCompatActivity {
 
     public static final String EMERGENCY_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app_mEmergencyMessageId";
     private WGServerProxy proxy;
-    private User mUser;
-    private Long mEmergencyMessageId;
-    private Message mMessage;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +48,12 @@ public class PermissionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_permission);
         initializeServer();
         setUpToolBar();
+        updateUI();
     }
 
     private void initializeServer() {
-        mUser = User.getInstance();
-        mMessage = new Message();
+        setActionBarText(getString(R.string.permissions));
+        user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(PermissionActivity.this, getString(R.string.apikey));
     }
 
@@ -82,6 +91,7 @@ public class PermissionActivity extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Long mEmergencyMessageId = 1L;
                 Intent intent = new Intent(PermissionActivity.this, GroupedMessagesActivity.class);
                 intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
                 startActivity(intent);
@@ -107,7 +117,7 @@ public class PermissionActivity extends AppCompatActivity {
     }
 
     private void getNumUnreadMessages(TextView unreadMessagesText) {
-        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(user.getId(), null);
         ProxyBuilder.callProxy(PermissionActivity.this,
                 messageCall,
                 returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
@@ -117,13 +127,118 @@ public class PermissionActivity extends AppCompatActivity {
         unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
     }
 
+    private void updateUI() {
+        Call<List<PermissionRequest>> permissionCaller = proxy.getPermissionsForUser(user.getId());
+        ProxyBuilder.callProxy(
+                PermissionActivity.this,
+                permissionCaller,
+                returnedPermissions -> {
+                    populateListPermission(returnedPermissions);
+                });
+    }
+
+    private void populateListPermission(List<PermissionRequest> permissions) {
+        getAllUsers(permissions);
+  //      setGroupListItemClicker(groupsList);
+
+   //     setGroupListItemLongClicker(groupsList);
+    }
+
+    private void getAllUsers(List<PermissionRequest> permissions) {
+        Call<List<User>> usersCall = proxy.getUsers();
+        ProxyBuilder.callProxy(PermissionActivity.this,
+                usersCall,
+                returnedUsers->{
+                    List<User> results = new ArrayList<>();
+                    for(User u: returnedUsers){
+                        for(PermissionRequest r: permissions){
+                            if(r.getRequestingUser().getId().equals(u.getId())){
+                                results.add(u);
+                            }
+                        }
+                    }
+                    callAdapter(permissions, results);
+                });
+    }
+
+    private void callAdapter(List<PermissionRequest> permissions, List<User> results) {
+        ArrayAdapter<PermissionRequest> adapter = new MyPermissionList(permissions, results);
+        ListView groupsList = findViewById(R.id.permission_list_view);
+        groupsList.setAdapter(adapter);
+        new ArrayAdapter<>(this,
+                R.layout.permission_layout_details);
+    }
+
+    private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
+        List<PermissionRequest> permissionList;
+        List<User> userList;
+
+        public MyPermissionList(List<PermissionRequest> groupList, List<User> uList) {
+            super(PermissionActivity.this,
+                    R.layout.permission_layout_details
+                    , groupList);
+            permissionList = groupList;
+            userList = uList;
+        }
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if(convertView == null){
+                itemView = getLayoutInflater().inflate(
+                        R.layout.permission_layout_details,
+                        parent,
+                        false);
+            }
+
+            PermissionRequest currentRequest;
+            User currentUser;
+
+            // Find the current PermissionRequest
+            if (permissionList.isEmpty() || userList.isEmpty()) {
+                currentRequest = new PermissionRequest();
+                currentRequest.setUserA(new User());
+                currentUser = new User();
+                currentRequest.setMessage("No Message");
+            }
+            else {
+                currentRequest = permissionList.get(position);
+                currentUser = userList.get(position);
+                itemView.setTag(currentRequest.getId());
+            }
+            if (currentRequest.getAction()!= null && currentRequest.getMessage() != null) {
+                try {
+                    TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
+                    nameText.setText(currentUser.getName());
+
+                    TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
+                    emailText.setText(currentRequest.getMessage());
+                    // should be getAction() for debugging I changed it to getMessage()
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + permissionList.toString());
+                }
+            }
+
+            return itemView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Creates action bar buttons
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_dashboard, menu);
         MenuItem item = menu.findItem(R.id.emergency_message);
-        if (mUser.getCurrentWalkingGroup() == null) {
+        if (user.getCurrentWalkingGroup() == null) {
             item.setVisible(false);
         } else {
             item.setVisible(true);
@@ -151,5 +266,19 @@ public class PermissionActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        user = User.getInstance();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
+        updateUI();
+    }
+
+    public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 }
