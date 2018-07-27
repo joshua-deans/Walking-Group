@@ -173,7 +173,7 @@ public interface WGServerProxy {
 
     @GET("/permissions")
     Call<List<PermissionRequest>> getPermissionsForGroup(
-            @Path("groupId") Long groupId);
+            @Query("groupId") Long groupId);
 
 
     @GET("/permissions")

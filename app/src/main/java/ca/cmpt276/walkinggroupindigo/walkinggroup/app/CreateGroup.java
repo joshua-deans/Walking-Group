@@ -105,12 +105,23 @@ public class CreateGroup extends AppCompatActivity {
                     currentGroup.setStartLongitude(startLatLng.longitude);
                     currentGroup.setDestLatitude(destLatLng.latitude);
                     currentGroup.setDestLongitude(destLatLng.longitude);
+
+                    // Setting to different user for testing
+                    User u = new User();
+                   // u.setName("c");
+                    u.setId(77L);
+
+                    currentGroup.setLeader(u);
+
                     Call<Group> caller = proxy.createGroup(currentGroup);
                     ProxyBuilder.callProxy(CreateGroup.this,
                             caller,
-                            group -> updateCurrentUser(group));
-                    // needs permission from the parents
-                    requestForCreatingGroupAsLeader(currentGroup);
+                            group ->
+                            {
+                                updateCurrentUser(group);
+                                // needs permission from the parents
+                                //requestForCreatingGroupAsLeader(group);
+                            });
                 }
             }
         });
@@ -133,7 +144,7 @@ public class CreateGroup extends AppCompatActivity {
                 }
             }
         }
-        group.setLeader(null);
+       // group.setLeader(null);
     }
 
     private void updateCurrentUser(Group groupList) {
