@@ -14,10 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -139,7 +141,6 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void populateListPermission(List<PermissionRequest> permissions) {
         getAllUsers(permissions);
-  //      setGroupListItemClicker(groupsList);
 
    //     setGroupListItemLongClicker(groupsList);
     }
@@ -163,10 +164,19 @@ public class PermissionActivity extends AppCompatActivity {
 
     private void callAdapter(List<PermissionRequest> permissions, List<User> results) {
         ArrayAdapter<PermissionRequest> adapter = new MyPermissionList(permissions, results);
-        ListView groupsList = findViewById(R.id.permission_list_view);
-        groupsList.setAdapter(adapter);
+        ListView permissionList = findViewById(R.id.permission_list_view);
+        permissionList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.permission_layout_details);
+        permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(PermissionActivity.this,
+                        "I did press details", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // accept button is clicked
     }
 
     private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
@@ -215,12 +225,39 @@ public class PermissionActivity extends AppCompatActivity {
                     emailText.setText(currentRequest.getMessage());
                     // should be getAction() for debugging I changed it to getMessage()
                     // if user already accepted or declined the button
+                    Button accept = itemView.findViewById(R.id.btnAccept);
+                    Button decline = itemView.findViewById(R.id.btnDecline);
                     if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
                             currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
-                        Button accept = findViewById(R.id.btnAccept);
-                        Button decline = findViewById(R.id.btnDecline);
                         accept.setVisibility(View.INVISIBLE);
                         decline.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
+                                        currentRequest.getId(), WGServerProxy.PermissionStatus.APPROVED);
+                                ProxyBuilder.callProxy(PermissionActivity.this,
+                                        acceptCall,
+                                        returnedStatus->{
+                                    updateUI();
+                                        });
+                            }
+                        });
+
+                        decline.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
+                                        currentRequest.getId(), WGServerProxy.PermissionStatus.DENIED);
+                                ProxyBuilder.callProxy(PermissionActivity.this,
+                                        deniedCall,
+                                        returnedStatus->{
+                                            updateUI();
+                                        });
+                            }
+                        });
                     }
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + permissionList.toString());
