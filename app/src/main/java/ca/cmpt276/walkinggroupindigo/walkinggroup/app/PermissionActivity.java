@@ -147,9 +147,23 @@ public class PermissionActivity extends AppCompatActivity {
         permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Here we can give the full details about the Permission
+
+                // TODO: Here we can give the full details about the Permission.
+
                 Toast.makeText(PermissionActivity.this,
                         "I want to see more details!!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        permissionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //TODO: Delete request.
+
+                Toast.makeText(PermissionActivity.this,
+                        "I want to delete this permission", Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
     }

@@ -259,8 +259,8 @@ public class ManageGroups extends AppCompatActivity {
         Call<Group> getCurrentGroup = proxy.getGroupById(groupId);
         ProxyBuilder.callProxy(ManageGroups.this,
                 getCurrentGroup,
-                returnInformation ->
-                       removeMember(returnInformation, currentUserId));
+                returnedGroups ->
+                       removeMember(returnedGroups, currentUserId));
         }
 
     private void removeMember(Group group, Long currentUserId) {

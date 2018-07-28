@@ -73,11 +73,11 @@
         <Button
             android:id="@+id/permissionLink"
             style="@android:style/Widget.DeviceDefault.Button.Borderless"
-            android:layout_width="14dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Permissions"
-            android:textSize="13sp" />
+            android:textSize="10sp" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
