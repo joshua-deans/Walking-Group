@@ -93,6 +93,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
+        Button permissionLink = findViewById(R.id.permissionLink);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
@@ -127,6 +128,15 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(GroupedMessagesActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        permissionLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = PermissionActivity.makeIntent(GroupedMessagesActivity.this);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();

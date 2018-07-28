@@ -122,6 +122,7 @@ public class ManageGroups extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
+        Button permissionLink = findViewById(R.id.permissionLink);
         groupsLink.setClickable(false);
         groupsLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -155,6 +156,16 @@ public class ManageGroups extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ManageGroups.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+
+        permissionLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = PermissionActivity.makeIntent(ManageGroups.this);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
