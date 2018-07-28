@@ -29,10 +29,19 @@
 
     <TextView
         android:id="@+id/txtPermissionAction"
-        android:layout_width="match_parent"
+        android:layout_width="288dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/btnAccept"
         android:text="TextView"
         android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+    <TextView
+        android:id="@+id/txtPermissionStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnAccept"
+        android:layout_alignBottom="@+id/txtPermissionAction"
+        android:layout_alignParentEnd="true"
+        android:text="TextView" />
 </RelativeLayout>

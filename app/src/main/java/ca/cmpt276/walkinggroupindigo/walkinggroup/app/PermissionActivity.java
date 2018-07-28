@@ -149,7 +149,7 @@ public class PermissionActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // Here we can give the full details about the Permission
                 Toast.makeText(PermissionActivity.this,
-                        "I did press details", Toast.LENGTH_SHORT).show();
+                        "I want to see more details!!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -198,16 +198,23 @@ public class PermissionActivity extends AppCompatActivity {
                     TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
                     emailText.setText(currentRequest.getMessage());
                     // should be getAction() for debugging I changed it to getMessage()
+
+                    TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
+                    statusText.setText(currentRequest.getStatus().toString());
+
                     // if user already accepted or declined the button
-                    Button accept = itemView.findViewById(R.id.btnAccept);
-                    Button decline = itemView.findViewById(R.id.btnDecline);
-                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
-                            currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
-                        accept.setVisibility(View.INVISIBLE);
-                        decline.setVisibility(View.INVISIBLE);
+                    Button acceptRequest = itemView.findViewById(R.id.btnAccept);
+                    Button declineRequest = itemView.findViewById(R.id.btnDecline);
+//                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
+//                            currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
+                    if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
+                        acceptRequest.setVisibility(View.INVISIBLE);
+                        declineRequest.setVisibility(View.INVISIBLE);
                     }
                     else{
-                        accept.setOnClickListener(new View.OnClickListener() {
+                        acceptRequest.setVisibility(View.VISIBLE);
+                        declineRequest.setVisibility(View.VISIBLE);
+                        acceptRequest.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
@@ -220,7 +227,7 @@ public class PermissionActivity extends AppCompatActivity {
                             }
                         });
 
-                        decline.setOnClickListener(new View.OnClickListener() {
+                        declineRequest.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
