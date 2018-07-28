@@ -118,4 +118,5 @@
     <string name="emergency_button">Panic Button</string>
     <string name="parent_dashboard">Parent Dashboard</string>
     <string name="permissions"> Permissions</string>
+    <string name="request_from"> "Request From: "</string>
 </resources>

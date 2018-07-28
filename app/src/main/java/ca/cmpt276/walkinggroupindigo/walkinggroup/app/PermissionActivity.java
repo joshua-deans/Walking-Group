@@ -1,11 +1,9 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +24,6 @@ import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -140,30 +134,12 @@ public class PermissionActivity extends AppCompatActivity {
     }
 
     private void populateListPermission(List<PermissionRequest> permissions) {
-        getAllUsers(permissions);
-
-   //     setGroupListItemLongClicker(groupsList);
+        // get all the permissions from the child
+        callAdapter(permissions);
     }
 
-    private void getAllUsers(List<PermissionRequest> permissions) {
-        Call<List<User>> usersCall = proxy.getUsers();
-        ProxyBuilder.callProxy(PermissionActivity.this,
-                usersCall,
-                returnedUsers->{
-                    List<User> results = new ArrayList<>();
-                    for(User u: returnedUsers){
-                        for(PermissionRequest r: permissions){
-                            if(r.getRequestingUser().getId().equals(u.getId())){
-                                results.add(u);
-                            }
-                        }
-                    }
-                    callAdapter(permissions, results);
-                });
-    }
-
-    private void callAdapter(List<PermissionRequest> permissions, List<User> results) {
-        ArrayAdapter<PermissionRequest> adapter = new MyPermissionList(permissions, results);
+    private void callAdapter(List<PermissionRequest> permissions) {
+        ArrayAdapter<PermissionRequest> adapter = new MyPermissionList(permissions);
         ListView permissionList = findViewById(R.id.permission_list_view);
         permissionList.setAdapter(adapter);
         new ArrayAdapter<>(this,
@@ -171,24 +147,21 @@ public class PermissionActivity extends AppCompatActivity {
         permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // Here we can give the full details about the Permission
                 Toast.makeText(PermissionActivity.this,
                         "I did press details", Toast.LENGTH_SHORT).show();
             }
         });
-
-        // accept button is clicked
     }
 
     private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
         List<PermissionRequest> permissionList;
-        List<User> userList;
 
-        public MyPermissionList(List<PermissionRequest> groupList, List<User> uList) {
+        public MyPermissionList(List<PermissionRequest> groupList) {
             super(PermissionActivity.this,
                     R.layout.permission_layout_details
                     , groupList);
             permissionList = groupList;
-            userList = uList;
         }
         @NonNull
         @Override
@@ -202,25 +175,26 @@ public class PermissionActivity extends AppCompatActivity {
             }
 
             PermissionRequest currentRequest;
-            User currentUser;
 
             // Find the current PermissionRequest
-            if (permissionList.isEmpty() || userList.isEmpty()) {
+            if (permissionList.isEmpty()){
                 currentRequest = new PermissionRequest();
                 currentRequest.setUserA(new User());
-                currentUser = new User();
                 currentRequest.setMessage("No Message");
             }
             else {
                 currentRequest = permissionList.get(position);
-                currentUser = userList.get(position);
                 itemView.setTag(currentRequest.getId());
             }
             if (currentRequest.getAction()!= null && currentRequest.getMessage() != null) {
                 try {
                     TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
-                    nameText.setText(currentUser.getName());
-
+                    Call<User> userCall = proxy.getUserById(currentRequest.getRequestingUser().getId());
+                    ProxyBuilder.callProxy(PermissionActivity.this,
+                            userCall,
+                            returnedUser->{
+                                nameText.setText(getString(R.string.request_from) + returnedUser.getName());
+                            });
                     TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
                     emailText.setText(currentRequest.getMessage());
                     // should be getAction() for debugging I changed it to getMessage()

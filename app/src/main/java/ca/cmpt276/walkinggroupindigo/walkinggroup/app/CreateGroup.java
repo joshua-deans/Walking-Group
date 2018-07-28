@@ -105,46 +105,17 @@ public class CreateGroup extends AppCompatActivity {
                     currentGroup.setStartLongitude(startLatLng.longitude);
                     currentGroup.setDestLatitude(destLatLng.latitude);
                     currentGroup.setDestLongitude(destLatLng.longitude);
-
-                    // Setting to different user for testing
-                    User u = new User();
-                   // u.setName("c");
-                    u.setId(77L);
-
-                    currentGroup.setLeader(u);
-
+                    currentGroup.setLeader(mUser);
                     Call<Group> caller = proxy.createGroup(currentGroup);
                     ProxyBuilder.callProxy(CreateGroup.this,
                             caller,
                             group ->
                             {
                                 updateCurrentUser(group);
-                                // needs permission from the parents
-                                //requestForCreatingGroupAsLeader(group);
                             });
                 }
             }
         });
-    }
-
-    private void requestForCreatingGroupAsLeader(Group group) {
-        Call<List<PermissionRequest>> requestCall = proxy.getPermissionsForGroup(group.getId());
-        ProxyBuilder.callProxy(CreateGroup.this,
-                requestCall,
-                returnedInformation->updateInformation(returnedInformation, group));
-    }
-
-    private void updateInformation(List<PermissionRequest> returnedInformation, Group group) {
-        for(PermissionRequest request: returnedInformation){
-            Long currentGroupId = request.getId();
-            if(currentGroupId.equals(group.getId())){
-                if(request.getStatus() == WGServerProxy.PermissionStatus.APPROVED){
-                    group.setLeader(mUser);
-                    return;
-                }
-            }
-        }
-       // group.setLeader(null);
     }
 
     private void updateCurrentUser(Group groupList) {
