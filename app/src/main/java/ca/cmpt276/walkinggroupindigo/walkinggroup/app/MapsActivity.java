@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
@@ -311,8 +312,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 long groupId = Long.valueOf(Objects.requireNonNull(marker.getTag()).toString());
-                Call<List<User>> caller = proxy.addGroupMember(groupId, mUser);
-                ProxyBuilder.callProxy(MapsActivity.this, caller, user -> addUser(user));
+                Call<Group> getGroupCaller = proxy.getGroupById(groupId);
+                ProxyBuilder.callProxy(MapsActivity.this, getGroupCaller, group -> checkGroup(group));
+
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -323,6 +325,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void checkGroup(Group group) {
+        if (group.getLeader() != null) {
+            Call<List<User>> caller = proxy.addGroupMember(group.getId(), mUser);
+            ProxyBuilder.callProxy(MapsActivity.this, caller, user -> addUser(user));
+        } else if(group.getLeader() == null) {
+            Toast.makeText(MapsActivity.this,
+                    "You cannot be added to this group, since it has no leader", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void addUser(List<User> user) {
