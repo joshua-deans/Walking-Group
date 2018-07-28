@@ -1,6 +1,5 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.proxy;
 
-import android.webkit.PermissionRequest;
 
 import java.util.List;
 
@@ -8,6 +7,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.GpsLocation;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -161,6 +161,30 @@ public interface WGServerProxy {
             @Path("id") long permissionId,
             @Body PermissionStatus status
     );
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissionsForUser(@Query("userId") Long toUserId);
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("userId") Long toUserId,
+            @Query("statusForUser") PermissionStatus status);
+
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissionsForGroup(
+            @Query("groupId") Long groupId);
+
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("status") PermissionStatus status);    // null for not filtering
+
+    @GET("/permissions")
+    Call<List<PermissionRequest>> getPermissions(
+            @Query("status") PermissionStatus status,
+            @Query("groupId") Long groupId,
+            @Query("userId") Long userId);
 
     // -- Internal --
     @GET("/permissions/actions")

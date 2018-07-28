@@ -185,6 +185,7 @@ public class ProxyBuilder {
             this.token = token;
         }
 
+
         @Override
         public Response intercept(Interceptor.Chain chain) throws IOException {
             Request originalRequest = chain.request();
@@ -198,6 +199,8 @@ public class ProxyBuilder {
             if (token != null) {
                 builder.header("Authorization", token);
             }
+            // Adding the permission to the header
+            builder.header("permissions-enabled", "true");
             Request modifiedRequest = builder.build();
 
             return chain.proceed(modifiedRequest);

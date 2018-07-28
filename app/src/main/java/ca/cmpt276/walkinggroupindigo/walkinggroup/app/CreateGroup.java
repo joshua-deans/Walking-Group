@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
@@ -20,6 +21,7 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import retrofit2.Call;
 
 public class CreateGroup extends AppCompatActivity {
@@ -99,14 +101,18 @@ public class CreateGroup extends AppCompatActivity {
                     Toast.makeText(CreateGroup.this, "No destination selected", Toast.LENGTH_SHORT).show();
                 } else {
                     currentGroup.setGroupDescription(groupDescription);
-                    currentGroup.setLeader(mUser);
                     currentGroup.setStartLatitude(startLatLng.latitude);
                     currentGroup.setStartLongitude(startLatLng.longitude);
                     currentGroup.setDestLatitude(destLatLng.latitude);
                     currentGroup.setDestLongitude(destLatLng.longitude);
+                    currentGroup.setLeader(mUser);
                     Call<Group> caller = proxy.createGroup(currentGroup);
                     ProxyBuilder.callProxy(CreateGroup.this,
-                            caller, group -> updateCurrentUser(group));
+                            caller,
+                            group ->
+                            {
+                                updateCurrentUser(group);
+                            });
                 }
             }
         });
@@ -114,12 +120,16 @@ public class CreateGroup extends AppCompatActivity {
 
     private void updateCurrentUser(Group groupList) {
         Call<User> callerUser = proxy.getUserById(mUser.getId());
-        ProxyBuilder.callProxy(CreateGroup.this, callerUser, returnedUser -> onSuccess(returnedUser));
+        ProxyBuilder.callProxy(CreateGroup.this,
+                callerUser,
+                returnedUser -> onSuccess(returnedUser));
     }
 
     private void onSuccess(User returnedUser) {
         mUser.setLeadsGroups(returnedUser.getLeadsGroups());
-        Toast.makeText(CreateGroup.this, "Group successfully added", Toast.LENGTH_SHORT).show();
+        Toast.makeText(CreateGroup.this,
+                "Group successfully added",
+                Toast.LENGTH_SHORT).show();
         finish();
     }
 

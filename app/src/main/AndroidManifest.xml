@@ -48,6 +48,7 @@
         <activity android:name=".app.ManageMessagesActivity" />
         <activity android:name=".app.GroupedMessagesActivity" />
         <activity android:name=".app.MonitoringInfoActivity" />
+        <activity android:name=".app.PermissionActivity"></activity>
     </application>
 
 </manifest>
