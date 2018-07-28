@@ -66,6 +66,8 @@ public class User extends IdItemBase{
         if (ourInstance == null) {
             ourInstance = new User();
             ourInstance.setCurrentWalkingGroup(null);
+            ourInstance.setTotalPointsEarned(0);
+            ourInstance.setCurrentPoints(0);
         }
         return ourInstance;
     }
