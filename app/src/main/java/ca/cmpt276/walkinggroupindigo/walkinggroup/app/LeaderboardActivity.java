@@ -1,7 +1,13 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,9 +45,9 @@ public class LeaderboardActivity extends AppCompatActivity {
             @Override
             public int compare(User o1, User o2) {
                 if (o1.getTotalPointsEarned() < o2.getTotalPointsEarned()) {
-                    return -1;
-                } else if (o1.getTotalPointsEarned() > o2.getTotalPointsEarned()) {
                     return 1;
+                } else if (o1.getTotalPointsEarned() > o2.getTotalPointsEarned()) {
+                    return -1;
                 } else {
                     return 0;
                 }
@@ -53,10 +59,60 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     private void populateListView(List<User> userList) {
         ListView leaderboardList = findViewById(R.id.leaderboard_list);
+        ArrayAdapter<User> adapter = new MyLeaderboardList(userList);
+        leaderboardList.setAdapter(adapter);
+        new ArrayAdapter<>(this,
+                R.layout.leaderboard_layout);
     }
 
     private void updateUserScore() {
         TextView scoreString = findViewById(R.id.your_score);
         scoreString.setText(String.format(getString(R.string.total_score_display), mUser.getTotalPointsEarned()));
+    }
+
+    private class MyLeaderboardList extends ArrayAdapter<User> {
+        List<User> mUserList;
+
+        MyLeaderboardList(List<User> userList) {
+            super(LeaderboardActivity.this, R.layout.leaderboard_layout
+                    , userList);
+            mUserList = userList;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+
+            if (convertView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.leaderboard_layout,
+                        parent,
+                        false);
+            }
+
+            manageUserView(position, itemView);
+
+            return itemView;
+        }
+
+        private void manageUserView(int position, View itemView) {
+            User currentUser;
+            if (mUserList.isEmpty()) {
+                currentUser = new User();
+            } else {
+                currentUser = mUserList.get(position);
+                itemView.setTag(currentUser.getId());
+            }
+            if (currentUser.getTotalPointsEarned() != null) {
+                try {
+                    TextView nameText = itemView.findViewById(R.id.userNameLeaderboard);
+                    nameText.setText(currentUser.getName());
+                    TextView scoreText = itemView.findViewById(R.id.scoreLeaderboard);
+                    scoreText.setText("Score: " + String.valueOf(currentUser.getTotalPointsEarned()));
+                } catch (NullPointerException e) {
+                    Log.e("Error", e + ":" + mUserList.toString());
+                }
+            }
+        }
     }
 }
