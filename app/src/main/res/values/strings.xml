@@ -119,4 +119,10 @@
     <string name="parent_dashboard">Parent Dashboard</string>
     <string name="permissions"> Permissions</string>
     <string name="request_from"> "Request From: "</string>
+    <string name="rewards_shop">Rewards Shop</string>
+    <string name="reward">reward</string>
+    <string name="price">price</string>
+    <string name="buy">buy</string>
+    <string name="points">%1$d Points</string>
+    <string name="reward_types">%1$s: %2$s</string>
 </resources>

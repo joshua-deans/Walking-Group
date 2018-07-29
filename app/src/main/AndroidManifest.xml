@@ -25,7 +25,7 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".app.MapsActivity" />
-        <activity android:name=".app.LoginActivity">
+        <activity android:name=".app.RewardShopActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
