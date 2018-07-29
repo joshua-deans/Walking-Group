@@ -219,6 +219,8 @@ public class LoginActivity extends AppCompatActivity {
         user.setHomePhone(returnedUser.getHomePhone());
         user.setAddress(returnedUser.getAddress());
         user.setGrade(returnedUser.getGrade());
+        user.setCurrentPoints(returnedUser.getCurrentPoints());
+        user.setTotalPointsEarned(returnedUser.getTotalPointsEarned());
     }
 
     private void setActionBarText(String title) {

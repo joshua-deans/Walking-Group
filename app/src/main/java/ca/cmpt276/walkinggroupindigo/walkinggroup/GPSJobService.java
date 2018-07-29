@@ -88,11 +88,17 @@ public class GPSJobService extends Service {
 
     private void getUserInfo() {
         Call<User> userCaller = proxy.getUserById(currUserId);
-        ProxyBuilder.callProxy(userCaller, returnedUser -> updateUserInfo(returnedUser));
+        ProxyBuilder.callProxy(userCaller, returnedUser -> updateUserScores(returnedUser));
     }
 
-    private void updateUserInfo(User returnedUser) {
-        mUser = returnedUser;
+    private void updateUserScores(User returnedUser) {
+        // So far, we are just adding one point for each successful walk
+        returnedUser.setCurrentPoints(returnedUser.getCurrentPoints() + 1);
+        returnedUser.setTotalPointsEarned(returnedUser.getTotalPointsEarned() + 1);
+        Call<User> userCaller = proxy.editUser(currUserId, returnedUser);
+        ProxyBuilder.callProxy(userCaller, updatedUser -> {
+            Log.i(TAG, "Users score is updated!");
+        });
     }
 
     @Override
@@ -134,6 +140,10 @@ public class GPSJobService extends Service {
         timer.schedule(timerTask, 600000);
     }
 
+    private void updateUserScore(Long currUserId) {
+
+    }
+
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
@@ -150,7 +160,7 @@ public class GPSJobService extends Service {
             // Shows distance within 75 meters
             if (!atDestination && location.distanceTo(destLoc) <= 75f) {
                 atDestination = true;
-                // This function called when user is at the location.
+                getUserInfo();
                 lastTenMinutes(requestIntent);
             }
             GpsLocation currGPS = new GpsLocation();
