@@ -9,6 +9,9 @@
         android:id="@+id/accountInfoButton"
         android:title="@string/account_info" />
     <item
+        android:id="@+id/leaderboard_button"
+        android:title="Leaderboard" />
+    <item
         android:id="@+id/logOutButton"
         android:title="@string/log_out" />
 </menu>

@@ -21,8 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/leaderboard"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:text="Your Score: 0" />
+        android:layout_marginBottom="10dp" />
 
     <ListView
         android:id="@+id/leaderboard_list"

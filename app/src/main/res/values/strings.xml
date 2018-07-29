@@ -119,4 +119,5 @@
     <string name="parent_dashboard">Parent Dashboard</string>
     <string name="permissions"> Permissions</string>
     <string name="request_from"> "Request From: "</string>
+    <string name="total_score_display">Your total score is: %d</string>
 </resources>

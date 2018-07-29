@@ -123,6 +123,8 @@ public class SignUpActivity extends AppCompatActivity {
             user.setGrade(grade);
             user.setTeacherName(teacher);
             user.setEmergencyContactInfo(emergencyContactInfo);
+            user.setTotalPointsEarned(0);
+            user.setCurrentPoints(0);
             insertIntoServer(user);
         }
     }
