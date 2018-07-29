@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,8 +40,15 @@ public class RewardShopActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rewards_shop);
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(RewardShopActivity.this, getString(R.string.apikey));
+        setActionBarText("Rewards Shop");
+        displayCurrentPoints();
         populateRewards();
         generateRewards();
+    }
+
+    private void displayCurrentPoints() {
+        TextView currPoints = findViewById(R.id.current_points);
+        currPoints.setText(String.format(getString(R.string.current_points), String.valueOf(user.getCurrentPoints())));
     }
 
 
@@ -100,6 +106,15 @@ public class RewardShopActivity extends AppCompatActivity {
             });
 
             return convertView;
+        }
+    }
+
+    private void setActionBarText(String title) {
+        try {
+            getActionBar().setTitle(title);
+            getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e) {
+            getSupportActionBar().setTitle(title);
         }
     }
 }

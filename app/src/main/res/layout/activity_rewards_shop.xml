@@ -8,25 +8,26 @@
 
 
     <TextView
-        android:id="@+id/reward_title"
+        android:id="@+id/current_points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/rewards_shop"
-        android:textSize="26sp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:text=""
+        android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/reward_list"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/reward_list"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reward_title"
+        app:layout_constraintTop_toBottomOf="@+id/current_points"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 

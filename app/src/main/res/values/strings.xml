@@ -125,4 +125,5 @@
     <string name="buy">buy</string>
     <string name="points">%1$d Points</string>
     <string name="reward_types">%1$s: %2$s</string>
+    <string name="current_points">Your current points: %s</string>
 </resources>
