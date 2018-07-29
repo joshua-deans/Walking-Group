@@ -1,22 +1,26 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.List;
-
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -40,6 +44,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
         mMessage = new Message();
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageMessagesActivity.this, getString(R.string.apikey));
+        setUpToolBar();
         populateMessages();
         updateUI();
     }
@@ -47,12 +52,108 @@ public class ManageMessagesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
         updateUI();
     }
 
     private void updateUI() {
         populateMessages();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.accountInfoButton:
+                intent = new Intent(ManageMessagesActivity.this, AccountInfoActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logOutButton:
+                Toast.makeText(ManageMessagesActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+                Helper.logUserOut(ManageMessagesActivity.this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void setUpToolBar() {
+        Button mapLink = findViewById(R.id.mapLink);
+        Button groupsLink = findViewById(R.id.groupsLink);
+        Button monitoringLink = findViewById(R.id.monitoringLink);
+        Button messagesLink = findViewById(R.id.messagesLink);
+        Button parentsLink = findViewById(R.id.parentsLink);
+        Button permissionLink = findViewById(R.id.permissionLink);
+        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+        getNumUnreadMessages(unreadMessages);
+        messagesLink.setClickable(false);
+        messagesLink.setAlpha(1f);
+        unreadMessages.setAlpha(1f);
+
+        mapLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(0, 0); //0 for no animation
+            }
+        });
+        monitoringLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMessagesActivity.this, ManageMonitoring.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        groupsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMessagesActivity.this, ManageGroups.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        parentsLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ManageMessagesActivity.this, ParentDashboardActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+        permissionLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = PermissionActivity.makeIntent(ManageMessagesActivity.this);
+                startActivity(intent);
+                overridePendingTransition(0, 0); //0 for no animation
+                finish();
+            }
+        });
+    }
+
+    private void getNumUnreadMessages(TextView unreadMessagesText) {
+        Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);
+        ProxyBuilder.callProxy(ManageMessagesActivity.this, messageCall, returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
+    }
+
+    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
+        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
+    }
+
+
 
     private void populateMessages() {
         Call<List<Message>> messageCaller = proxy.getMessages(mUser.getId());

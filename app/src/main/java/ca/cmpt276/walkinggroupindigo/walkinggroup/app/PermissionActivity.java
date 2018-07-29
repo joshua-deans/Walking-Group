@@ -88,7 +88,7 @@ public class PermissionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Long mEmergencyMessageId = 1L;
-                Intent intent = new Intent(PermissionActivity.this, GroupedMessagesActivity.class);
+                Intent intent = new Intent(PermissionActivity.this, ManageMessagesActivity.class);
                 intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
