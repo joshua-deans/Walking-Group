@@ -1,9 +1,11 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -74,6 +77,7 @@ public class PermissionActivity extends AppCompatActivity {
                 Intent intent = new Intent(PermissionActivity.this, ManageMonitoring.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
+                finish();
             }
         });
         groupsLink.setOnClickListener(new View.OnClickListener() {
@@ -82,16 +86,18 @@ public class PermissionActivity extends AppCompatActivity {
                 Intent intent = new Intent(PermissionActivity.this, ManageGroups.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
+                finish();
             }
         });
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Long mEmergencyMessageId = 1L;
-                Intent intent = new Intent(PermissionActivity.this, GroupedMessagesActivity.class);
+                Intent intent = new Intent(PermissionActivity.this, ManageMessagesActivity.class);
                 intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
+                finish();
             }
         });
         parentsLink.setOnClickListener(new View.OnClickListener() {
@@ -100,14 +106,16 @@ public class PermissionActivity extends AppCompatActivity {
                 Intent intent = new Intent(PermissionActivity.this, ParentDashboardActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
+                finish();
             }
         });
         mapLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MapsActivity.makeIntent(PermissionActivity.this);
+                Intent intent = new Intent( PermissionActivity.this, MapsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
+                finish();
             }
         });
     }
@@ -158,24 +166,44 @@ public class PermissionActivity extends AppCompatActivity {
         permissionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                //TODO: Delete request.
-
-                Toast.makeText(PermissionActivity.this,
-                        "I want to delete this permission", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(PermissionActivity.this);
+                builder.setMessage("Would you like to delete this request?");
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Long requestId = (Long) view.getTag();
+                        Call<PermissionRequest> requestCall = proxy.getPermissionById(requestId);
+                        ProxyBuilder.callProxy(PermissionActivity.this, requestCall, returnedRequest -> setInvisible(returnedRequest));
+                        updateUI();
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 return true;
             }
         });
     }
 
+    private void setInvisible(PermissionRequest returnedRequest) {
+        boolean show = false;
+        returnedRequest.setVisibility(show);
+        Toast.makeText(PermissionActivity.this, "Request deleted", Toast.LENGTH_SHORT).show();
+    }
+
     private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
         List<PermissionRequest> permissionList;
 
-        public MyPermissionList(List<PermissionRequest> groupList) {
+        public MyPermissionList(List<PermissionRequest> permList) {
             super(PermissionActivity.this,
                     R.layout.permission_layout_details
-                    , groupList);
-            permissionList = groupList;
+                    , permList);
+            permissionList = permList;
         }
         @NonNull
         @Override
@@ -201,64 +229,64 @@ public class PermissionActivity extends AppCompatActivity {
                 itemView.setTag(currentRequest.getId());
             }
             if (currentRequest.getAction()!= null && currentRequest.getMessage() != null) {
-                try {
-                    TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
-                    Call<User> userCall = proxy.getUserById(currentRequest.getRequestingUser().getId());
-                    ProxyBuilder.callProxy(PermissionActivity.this,
-                            userCall,
-                            returnedUser->{
-                                nameText.setText(getString(R.string.request_from) + returnedUser.getName());
-                            });
-                    TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
-                    emailText.setText(currentRequest.getMessage());
-                    // should be getAction() for debugging I changed it to getMessage()
+                if (currentRequest.isVisible()) {
+                    try {
+                        TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
+                        Call<User> userCall = proxy.getUserById(currentRequest.getRequestingUser().getId());
+                        ProxyBuilder.callProxy(PermissionActivity.this,
+                                userCall,
+                                returnedUser -> {
+                                    nameText.setText(getString(R.string.request_from) + returnedUser.getName());
+                                });
+                        TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
+                        emailText.setText(currentRequest.getMessage());
+                        // should be getAction() for debugging I changed it to getMessage()
 
-                    TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
-                    statusText.setText(currentRequest.getStatus().toString());
+                        TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
+                        statusText.setText(currentRequest.getStatus().toString());
 
-                    // if user already accepted or declined the button
-                    Button acceptRequest = itemView.findViewById(R.id.btnAccept);
-                    Button declineRequest = itemView.findViewById(R.id.btnDecline);
+                        // if user already accepted or declined the button
+                        Button acceptRequest = itemView.findViewById(R.id.btnAccept);
+                        Button declineRequest = itemView.findViewById(R.id.btnDecline);
 //                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
 //                            currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
-                    if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
-                        acceptRequest.setVisibility(View.INVISIBLE);
-                        declineRequest.setVisibility(View.INVISIBLE);
-                    }
-                    else{
-                        acceptRequest.setVisibility(View.VISIBLE);
-                        declineRequest.setVisibility(View.VISIBLE);
-                        acceptRequest.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
-                                        currentRequest.getId(), WGServerProxy.PermissionStatus.APPROVED);
-                                ProxyBuilder.callProxy(PermissionActivity.this,
-                                        acceptCall,
-                                        returnedStatus->{
-                                    updateUI();
-                                        });
-                            }
-                        });
+                        if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
+                            acceptRequest.setVisibility(View.INVISIBLE);
+                            declineRequest.setVisibility(View.INVISIBLE);
+                        } else {
+                            acceptRequest.setVisibility(View.VISIBLE);
+                            declineRequest.setVisibility(View.VISIBLE);
+                            acceptRequest.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
+                                            currentRequest.getId(), WGServerProxy.PermissionStatus.APPROVED);
+                                    ProxyBuilder.callProxy(PermissionActivity.this,
+                                            acceptCall,
+                                            returnedStatus -> {
+                                                updateUI();
+                                            });
+                                }
+                            });
 
-                        declineRequest.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
-                                        currentRequest.getId(), WGServerProxy.PermissionStatus.DENIED);
-                                ProxyBuilder.callProxy(PermissionActivity.this,
-                                        deniedCall,
-                                        returnedStatus->{
-                                            updateUI();
-                                        });
-                            }
-                        });
+                            declineRequest.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
+                                            currentRequest.getId(), WGServerProxy.PermissionStatus.DENIED);
+                                    ProxyBuilder.callProxy(PermissionActivity.this,
+                                            deniedCall,
+                                            returnedStatus -> {
+                                                updateUI();
+                                            });
+                                }
+                            });
+                        }
+                    } catch (NullPointerException e) {
+                        Log.e("Error", e + ":" + permissionList.toString());
                     }
-                } catch (NullPointerException e) {
-                    Log.e("Error", e + ":" + permissionList.toString());
                 }
             }
-
             return itemView;
         }
     }

@@ -22,6 +22,7 @@ public class PermissionRequest extends IdItemBase {
     private User requestingUser;
     private Set<Authorizor> authorizors;
     private String message;
+    private boolean visible = true;
 
 
     public String getAction() {
@@ -103,6 +104,14 @@ public class PermissionRequest extends IdItemBase {
                 ", hasFullData=" + hasFullData +
                 ", href='" + href + '\'' +
                 '}';
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisibility(boolean show) {
+        visible = show;
     }
 
     public static class Authorizor {

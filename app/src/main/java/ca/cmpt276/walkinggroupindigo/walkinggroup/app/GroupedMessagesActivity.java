@@ -17,10 +17,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
@@ -48,9 +46,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         setActionBarText(getString(R.string.manage_messages));
         mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(GroupedMessagesActivity.this, getString(R.string.apikey));
-        setUpToolBar();
+//        setUpToolBar();
         getEmergencyMessageId();
-        populateGroups();
+//        populateGroups();
 //        setUpUnreadMessagesTextView();
     }
 
@@ -59,7 +57,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         super.onResume();
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
-        populateGroups();
+//        populateGroups();
     }
 
     @Override
@@ -87,122 +85,122 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         }
     }
 
-    private void setUpToolBar() {
-        Button mapLink = findViewById(R.id.mapLink);
-        Button groupsLink = findViewById(R.id.groupsLink);
-        Button monitoringLink = findViewById(R.id.monitoringLink);
-        Button messagesLink = findViewById(R.id.messagesLink);
-        Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
-        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
-        getNumUnreadMessages(unreadMessages);
-        messagesLink.setClickable(false);
-        messagesLink.setAlpha(1f);
-        unreadMessages.setAlpha(1f);
-        mapLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                overridePendingTransition(0, 0); //0 for no animation
-            }
-        });
-        monitoringLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        groupsLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        parentsLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, ParentDashboardActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        permissionLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(GroupedMessagesActivity.this);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-    }
+//    private void setUpToolBar() {
+//        Button mapLink = findViewById(R.id.mapLink);
+//        Button groupsLink = findViewById(R.id.groupsLink);
+//        Button monitoringLink = findViewById(R.id.monitoringLink);
+//        Button messagesLink = findViewById(R.id.messagesLink);
+//        Button parentsLink = findViewById(R.id.parentsLink);
+//        Button permissionLink = findViewById(R.id.permissionLink);
+//        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
+//        getNumUnreadMessages(unreadMessages);
+//        messagesLink.setClickable(false);
+//        messagesLink.setAlpha(1f);
+//        unreadMessages.setAlpha(1f);
+//        mapLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//                overridePendingTransition(0, 0); //0 for no animation
+//            }
+//        });
+//        monitoringLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMonitoring.class);
+//                startActivity(intent);
+//                overridePendingTransition(0, 0); //0 for no animation
+//                finish();
+//            }
+//        });
+//        groupsLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(GroupedMessagesActivity.this, ManageGroups.class);
+//                startActivity(intent);
+//                overridePendingTransition(0, 0); //0 for no animation
+//                finish();
+//            }
+//        });
+//        parentsLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(GroupedMessagesActivity.this, ParentDashboardActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(0, 0); //0 for no animation
+//                finish();
+//            }
+//        });
+//        permissionLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = PermissionActivity.makeIntent(GroupedMessagesActivity.this);
+//                startActivity(intent);
+//                overridePendingTransition(0, 0); //0 for no animation
+//                finish();
+//            }
+//        });
+//    }
 
-    private void populateGroups() {
-        Call<List<Group>> groupCaller = proxy.getGroups();
-        ProxyBuilder.callProxy(GroupedMessagesActivity.this, groupCaller,
-                returnedGroups -> populateGroupsListView(returnedGroups));
-    }
-
-    private void populateGroupsListView(List<Group> returnedGroups) {
-        List<Group> userInGroups = getAllGroups(returnedGroups);
-        ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
-        ListView groupsList = findViewById(R.id.grouped_messages_listview);
-        groupsList.setAdapter(adapter);
-        new ArrayAdapter<>(this,
-                R.layout.grouped_messages_layout);
-        groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Long groupId = (Long) view.getTag();
-                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMessagesActivity.class);
-                intent.putExtra(GROUP_ID_EXTRA, groupId);
-                startActivity(intent);
-            }
-        });
-
-        groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                return true;
-            }
-        });
-    }
-
-    private List<Group> getAllGroups(List<Group> returnedGroups) {
-        List<Group> userIn = getGroupsUserIn (returnedGroups);
-        userIn.addAll(getGroupsUserLead(returnedGroups));
-        return userIn;
-    }
-
-    private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
-        List<Group> groupInformation = new ArrayList<>();
-        for(Group aGroup : returnedGroups) {
-            if (aGroup.getLeader() != null && aGroup.getLeader().getId().equals(mUser.getId())) {
-                groupInformation.add(aGroup);
-            }
-        }
-        return groupInformation;
-    }
-
-    private List<Group> getGroupsUserIn(List<Group> returnedGroups) {
-        List<Group> groupInformation = new ArrayList<>();
-        List<Group> userGroups = mUser.getMemberOfGroups();
-        for(Group aGroup : returnedGroups) {
-            for (Group u: userGroups) {
-                if (u.getId().equals(aGroup.getId())) {
-                    groupInformation.add(aGroup);
-                }
-            }
-        }
-        return groupInformation;
-    }
+//    private void populateGroups() {
+//        Call<List<Group>> groupCaller = proxy.getGroups();
+//        ProxyBuilder.callProxy(GroupedMessagesActivity.this, groupCaller,
+//                returnedGroups -> populateGroupsListView(returnedGroups));
+//    }
+//
+//    private void populateGroupsListView(List<Group> returnedGroups) {
+//        List<Group> userInGroups = getAllGroups(returnedGroups);
+//        ArrayAdapter<Group> adapter = new MyGroupsList(userInGroups);
+//        ListView groupsList = findViewById(R.id.grouped_messages_listview);
+//        groupsList.setAdapter(adapter);
+//        new ArrayAdapter<>(this,
+//                R.layout.grouped_messages_layout);
+//        groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Long groupId = (Long) view.getTag();
+//                Intent intent = new Intent(GroupedMessagesActivity.this, ManageMessagesActivity.class);
+//                intent.putExtra(GROUP_ID_EXTRA, groupId);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                return true;
+//            }
+//        });
+//    }
+//
+//    private List<Group> getAllGroups(List<Group> returnedGroups) {
+//        List<Group> userIn = getGroupsUserIn (returnedGroups);
+//        userIn.addAll(getGroupsUserLead(returnedGroups));
+//        return userIn;
+//    }
+//
+//    private List<Group> getGroupsUserLead(List<Group> returnedGroups) {
+//        List<Group> groupInformation = new ArrayList<>();
+//        for(Group aGroup : returnedGroups) {
+//            if (aGroup.getLeader() != null && aGroup.getLeader().getId().equals(mUser.getId())) {
+//                groupInformation.add(aGroup);
+//            }
+//        }
+//        return groupInformation;
+//    }
+//
+//    private List<Group> getGroupsUserIn(List<Group> returnedGroups) {
+//        List<Group> groupInformation = new ArrayList<>();
+//        List<Group> userGroups = mUser.getMemberOfGroups();
+//        for(Group aGroup : returnedGroups) {
+//            for (Group u: userGroups) {
+//                if (u.getId().equals(aGroup.getId())) {
+//                    groupInformation.add(aGroup);
+//                }
+//            }
+//        }
+//        return groupInformation;
+//    }
 
     private void getNumUnreadMessages(TextView unreadMessagesText) {
         Call<List<Message>> messageCall = proxy.getUnreadMessages(mUser.getId(), null);

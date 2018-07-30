@@ -101,7 +101,7 @@ public class ManageMonitoring extends AppCompatActivity {
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ManageMonitoring.this, GroupedMessagesActivity.class);
+                Intent intent = new Intent(ManageMonitoring.this, ManageMessagesActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
@@ -119,7 +119,7 @@ public class ManageMonitoring extends AppCompatActivity {
         permissionLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(ManageMonitoring.this);
+                Intent intent = new Intent(ManageMonitoring.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();

@@ -139,7 +139,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         messagesLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ParentDashboardActivity.this, GroupedMessagesActivity.class);
+                Intent intent = new Intent(ParentDashboardActivity.this, ManageMessagesActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
@@ -157,7 +157,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         permissionLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(ParentDashboardActivity.this);
+                Intent intent = new Intent (ParentDashboardActivity.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
