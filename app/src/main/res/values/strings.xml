@@ -130,4 +130,5 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="apply">Apply</string>
     <string name="applied">Applied</string>
+    <string name="not_enough_points">You do not have enough points. Keep walking!</string>
 </resources>

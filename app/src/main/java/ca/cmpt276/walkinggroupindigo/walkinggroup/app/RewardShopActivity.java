@@ -100,7 +100,13 @@ public class RewardShopActivity extends AppCompatActivity {
             String currentReward = rewards.get(position);
             rewardName.setText(getString(R.string.reward_types, "Title", currentReward));
 
-            if (currentUserRewards.getListOfTitlesOwned().contains(currentReward)) {
+            if (currentReward.equals(currentUserRewards.getTitle())) {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                showPrice.setVisibility(View.INVISIBLE);
+                Button applyItem = convertView.findViewById(R.id.buy);
+                applyItem.setClickable(false);
+                applyItem.setText(R.string.applied);
+            } else if (currentUserRewards.getListOfTitlesOwned().contains(currentReward)) {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
                 showPrice.setVisibility(View.INVISIBLE);
                 Button applyItem = convertView.findViewById(R.id.buy);
@@ -111,12 +117,6 @@ public class RewardShopActivity extends AppCompatActivity {
                         applyReward(currentReward, currentUserRewards);
                     }
                 });
-            } else if (currentUserRewards.getTitle().equals(currentReward.toLowerCase())) {
-                TextView showPrice = convertView.findViewById(R.id.reward_price);
-                showPrice.setVisibility(View.INVISIBLE);
-                Button applyItem = convertView.findViewById(R.id.buy);
-                applyItem.setClickable(false);
-                applyItem.setText(R.string.applied);
             } else {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
                 final Integer itemPrice = prices.get(position);
@@ -145,7 +145,7 @@ public class RewardShopActivity extends AppCompatActivity {
 
         private void purchaseItem(String currentReward, Integer itemPrice, EarnedRewards usersRewards) {
             if (user.getCurrentPoints() < itemPrice) {
-                Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RewardShopActivity.this, R.string.not_enough_points, Toast.LENGTH_SHORT).show();
             } else {
                 user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
                 usersRewards.addListOfTitlesOwned(currentReward);
