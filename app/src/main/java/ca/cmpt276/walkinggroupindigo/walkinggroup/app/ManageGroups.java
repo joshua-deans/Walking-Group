@@ -165,7 +165,7 @@ public class ManageGroups extends AppCompatActivity {
         permissionLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(ManageGroups.this);
+                Intent intent = new Intent (ManageGroups.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();

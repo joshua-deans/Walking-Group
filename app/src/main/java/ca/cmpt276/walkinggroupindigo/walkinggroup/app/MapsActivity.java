@@ -150,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         permissionLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(MapsActivity.this);
+                Intent intent = new Intent( MapsActivity.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
             }
