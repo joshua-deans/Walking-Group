@@ -10,7 +10,10 @@
         android:title="@string/account_info" />
     <item
         android:id="@+id/leaderboard_button"
-        android:title="Leaderboard" />
+        android:title="@string/leaderboard" />
+    <item
+        android:id="@+id/rewards_shop"
+        android:title="@string/rewards_shop" />
     <item
         android:id="@+id/logOutButton"
         android:title="@string/log_out" />

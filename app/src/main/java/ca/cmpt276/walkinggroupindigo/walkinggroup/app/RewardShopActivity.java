@@ -63,8 +63,8 @@ public class RewardShopActivity extends AppCompatActivity {
     }
 
     private void registerOnClickCallback() {
-        ListView userList = findViewById(R.id.reward_list);
-        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ListView rewardList = findViewById(R.id.reward_list);
+        rewardList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             }
@@ -105,19 +105,24 @@ public class RewardShopActivity extends AppCompatActivity {
             buyItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (user.getCurrentPoints() < itemPrice) {
-                        Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
-                        Call<User> userCall = proxy.editUser(user.getId(), user);
-                        ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
-                                returnedUser -> {
-                                });
-                    }
+                    purchaseItem(itemPrice);
                 }
             });
 
             return convertView;
+        }
+
+        private void purchaseItem(Integer itemPrice) {
+            if (user.getCurrentPoints() < itemPrice) {
+                Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
+            } else {
+                user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
+                Call<User> userCall = proxy.editUser(user.getId(), user);
+                ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
+                        returnedUser -> {
+                            displayCurrentPoints();
+                        });
+            }
         }
     }
 

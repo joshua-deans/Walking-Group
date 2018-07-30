@@ -26,6 +26,9 @@
 
         <activity android:name=".app.MapsActivity" />
         <activity android:name=".app.RewardShopActivity">
+
+        </activity>
+        <activity android:name=".app.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,7 +52,7 @@
         <activity android:name=".app.GroupedMessagesActivity" />
         <activity android:name=".app.MonitoringInfoActivity" />
         <activity android:name=".app.PermissionActivity" />
-        <activity android:name=".app.LeaderboardActivity"></activity>
+        <activity android:name=".app.LeaderboardActivity" />
     </application>
 
 </manifest>
