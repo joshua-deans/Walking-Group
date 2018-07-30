@@ -210,6 +210,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 intent = new Intent(MapsActivity.this, LeaderboardActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.rewards_shop:
+                intent = new Intent(MapsActivity.this, RewardShopActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 Helper.logUserOut(MapsActivity.this);

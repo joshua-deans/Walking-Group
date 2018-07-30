@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="glorious_title_prices">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>50</item>
+    </integer-array>
+
+    <string-array name="glorious_titles">
+        <item>Dark Knight</item>
+        <item>God Slayer</item>
+        <item>Four Eyes</item>
+        <item>Rock Head</item>
+        <item>Brian Fraser</item>
+    </string-array>
+
+</resources>
