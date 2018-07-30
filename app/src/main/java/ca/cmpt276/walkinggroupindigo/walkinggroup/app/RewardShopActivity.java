@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +20,10 @@ import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
+import retrofit2.Call;
 
 
 public class RewardShopActivity extends AppCompatActivity {
@@ -95,13 +98,22 @@ public class RewardShopActivity extends AppCompatActivity {
             makeText.setText(getString(R.string.reward_types, "Title", rewards.get(position)));
 
             TextView showPrice = convertView.findViewById(R.id.reward_price);
-            showPrice.setText(getString(R.string.points, prices.get(position)));
+            final Integer itemPrice = prices.get(position);
+            showPrice.setText(getString(R.string.points, itemPrice));
 
             Button buyItem = convertView.findViewById(R.id.buy);
             buyItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //not implemented yet
+                    if (user.getCurrentPoints() < itemPrice) {
+                        Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
+                        Call<User> userCall = proxy.editUser(user.getId(), user);
+                        ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
+                                returnedUser -> {
+                                });
+                    }
                 }
             });
 
