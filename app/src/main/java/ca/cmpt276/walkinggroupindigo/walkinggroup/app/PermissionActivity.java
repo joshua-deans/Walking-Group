@@ -239,7 +239,7 @@ public class PermissionActivity extends AppCompatActivity {
                                     nameText.setText(getString(R.string.request_from) + returnedUser.getName());
                                 });
                         TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
-                        emailText.setText(currentRequest.getAction());
+                        emailText.setText(currentRequest.getMessage());
                         // should be getAction() for debugging I changed it to getMessage()
 
                         TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
