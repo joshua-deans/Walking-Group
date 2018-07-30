@@ -221,6 +221,7 @@ public class LoginActivity extends AppCompatActivity {
         user.setGrade(returnedUser.getGrade());
         user.setCurrentPoints(returnedUser.getCurrentPoints());
         user.setTotalPointsEarned(returnedUser.getTotalPointsEarned());
+        user.setRewards(returnedUser.getRewards());
     }
 
     private void setActionBarText(String title) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -94,33 +95,61 @@ public class RewardShopActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.activity_reward, parent, false);
             }
 
-            TextView makeText = convertView.findViewById(R.id.reward_name);
-            makeText.setText(getString(R.string.reward_types, "Title", rewards.get(position)));
+            EarnedRewards usersRewards = user.getRewards();
 
-            TextView showPrice = convertView.findViewById(R.id.reward_price);
-            final Integer itemPrice = prices.get(position);
-            showPrice.setText(getString(R.string.points, itemPrice));
+            TextView rewardName = convertView.findViewById(R.id.reward_name);
+            String currentReward = rewards.get(position);
+            Log.i(TAG, currentReward);
+            Log.i(TAG, usersRewards.getListOfTitlesOwned().toString());
+            rewardName.setText(getString(R.string.reward_types, "Title", currentReward));
 
-            Button buyItem = convertView.findViewById(R.id.buy);
-            buyItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    purchaseItem(itemPrice);
-                }
-            });
+            if (userRewards.getListOfTitlesOwned().contains(currentReward)) {
+                Button applyItem = convertView.findViewById(R.id.buy);
+                applyItem.setText("Apply");
+                applyItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        applyReward(currentReward, usersRewards);
+                    }
+                });
+            } else {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                final Integer itemPrice = prices.get(position);
+                showPrice.setText(getString(R.string.points, itemPrice));
 
+                Button buyItem = convertView.findViewById(R.id.buy);
+                buyItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        purchaseItem(currentReward, itemPrice, usersRewards);
+                    }
+                });
+            }
             return convertView;
         }
 
-        private void purchaseItem(Integer itemPrice) {
+        private void applyReward(String currentReward, EarnedRewards usersRewards) {
+            usersRewards.setTitle(currentReward);
+            user.setRewards(usersRewards);
+            Call<User> userCall = proxy.editUser(user.getId(), user);
+            ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
+                    returnedUser -> {
+                        generateRewards();
+                    });
+        }
+
+        private void purchaseItem(String currentReward, Integer itemPrice, EarnedRewards usersRewards) {
             if (user.getCurrentPoints() < itemPrice) {
                 Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
             } else {
                 user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
+                usersRewards.addListOfTitlesOwned(currentReward);
+                user.setRewards(usersRewards);
                 Call<User> userCall = proxy.editUser(user.getId(), user);
                 ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
                         returnedUser -> {
                             displayCurrentPoints();
+                            generateRewards();
                         });
             }
         }
