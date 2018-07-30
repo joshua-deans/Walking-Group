@@ -139,7 +139,7 @@ public class RewardShopActivity extends AppCompatActivity {
             Call<User> userCall = proxy.editUser(user.getId(), user);
             ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
                     returnedUser -> {
-                        generateRewards();
+                        populateRewards();
                     });
         }
 
@@ -154,7 +154,7 @@ public class RewardShopActivity extends AppCompatActivity {
                 ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
                         returnedUser -> {
                             displayCurrentPoints();
-                            generateRewards();
+                            populateRewards();
                         });
             }
         }
