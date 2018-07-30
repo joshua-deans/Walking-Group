@@ -38,7 +38,6 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
@@ -206,6 +205,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
                 AlertDialog dialogBroadCast = builder1.create();
                 dialogBroadCast.show();
+                return true;
+            case R.id.leaderboard_button:
+                intent = new Intent(MapsActivity.this, LeaderboardActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.logOutButton:
                 Toast.makeText(MapsActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
