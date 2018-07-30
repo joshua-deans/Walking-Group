@@ -17,7 +17,8 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EarnedRewards {
-    private String title = "Dragon slayer";
+    private String title = "";
+    private List<String> listOfTitlesOwned = new ArrayList<>();
     private List<File> possibleBackgroundFiles = new ArrayList<>();
     private Integer selectedBackground = 1;
     private Integer titleColor = Color.BLUE;
@@ -56,5 +57,13 @@ public class EarnedRewards {
 
     public void setTitleColor(int titleColor) {
         this.titleColor = titleColor;
+    }
+
+    public List<String> getListOfTitlesOwned() {
+        return listOfTitlesOwned;
+    }
+
+    public void addListOfTitlesOwned(String titleToAdd) {
+        this.listOfTitlesOwned.add(titleToAdd);
     }
 }

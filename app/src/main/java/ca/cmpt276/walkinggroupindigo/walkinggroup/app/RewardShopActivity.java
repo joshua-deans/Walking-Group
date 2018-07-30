@@ -94,33 +94,67 @@ public class RewardShopActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.activity_reward, parent, false);
             }
 
-            TextView makeText = convertView.findViewById(R.id.reward_name);
-            makeText.setText(getString(R.string.reward_types, "Title", rewards.get(position)));
+            EarnedRewards currentUserRewards = user.getRewards();
 
-            TextView showPrice = convertView.findViewById(R.id.reward_price);
-            final Integer itemPrice = prices.get(position);
-            showPrice.setText(getString(R.string.points, itemPrice));
+            TextView rewardName = convertView.findViewById(R.id.reward_name);
+            String currentReward = rewards.get(position);
+            rewardName.setText(getString(R.string.reward_types, "Title", currentReward));
 
-            Button buyItem = convertView.findViewById(R.id.buy);
-            buyItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    purchaseItem(itemPrice);
-                }
-            });
+            if (currentReward.equals(currentUserRewards.getTitle())) {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                showPrice.setVisibility(View.INVISIBLE);
+                Button applyItem = convertView.findViewById(R.id.buy);
+                applyItem.setClickable(false);
+                applyItem.setText(R.string.applied);
+            } else if (currentUserRewards.getListOfTitlesOwned().contains(currentReward)) {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                showPrice.setVisibility(View.INVISIBLE);
+                Button applyItem = convertView.findViewById(R.id.buy);
+                applyItem.setText(R.string.apply);
+                applyItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        applyReward(currentReward, currentUserRewards);
+                    }
+                });
+            } else {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                final Integer itemPrice = prices.get(position);
+                showPrice.setText(getString(R.string.points, itemPrice));
 
+                Button buyItem = convertView.findViewById(R.id.buy);
+                buyItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        purchaseItem(currentReward, itemPrice, currentUserRewards);
+                    }
+                });
+            }
             return convertView;
         }
 
-        private void purchaseItem(Integer itemPrice) {
+        private void applyReward(String currentReward, EarnedRewards usersRewards) {
+            usersRewards.setTitle(currentReward);
+            user.setRewards(usersRewards);
+            Call<User> userCall = proxy.editUser(user.getId(), user);
+            ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
+                    returnedUser -> {
+                        populateRewards();
+                    });
+        }
+
+        private void purchaseItem(String currentReward, Integer itemPrice, EarnedRewards usersRewards) {
             if (user.getCurrentPoints() < itemPrice) {
-                Toast.makeText(RewardShopActivity.this, "You do not have enough points. Keep walking!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RewardShopActivity.this, R.string.not_enough_points, Toast.LENGTH_SHORT).show();
             } else {
                 user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
+                usersRewards.addListOfTitlesOwned(currentReward);
+                user.setRewards(usersRewards);
                 Call<User> userCall = proxy.editUser(user.getId(), user);
                 ProxyBuilder.callProxy(RewardShopActivity.this, userCall,
                         returnedUser -> {
                             displayCurrentPoints();
+                            populateRewards();
                         });
             }
         }

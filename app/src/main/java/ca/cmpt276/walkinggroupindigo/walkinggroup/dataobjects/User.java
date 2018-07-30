@@ -68,6 +68,7 @@ public class User extends IdItemBase{
             ourInstance.setCurrentWalkingGroup(null);
             ourInstance.setTotalPointsEarned(0);
             ourInstance.setCurrentPoints(0);
+            ourInstance.setCustomJson("{}");
         }
         return ourInstance;
     }
