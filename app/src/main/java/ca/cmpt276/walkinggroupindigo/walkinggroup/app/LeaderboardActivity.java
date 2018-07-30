@@ -106,7 +106,12 @@ public class LeaderboardActivity extends AppCompatActivity {
             if (currentUser.getTotalPointsEarned() != null) {
                 try {
                     TextView nameText = itemView.findViewById(R.id.userNameLeaderboard);
-                    nameText.setText(currentUser.getName());
+                    String[] splitString = currentUser.getName().split(" ");
+                    if (splitString.length > 1) {
+                        nameText.setText(splitString[0] + " " + splitString[1].charAt(0));
+                    } else {
+                        nameText.setText(splitString[0]);
+                    }
                     TextView scoreText = itemView.findViewById(R.id.scoreLeaderboard);
                     scoreText.setText("Score: " + String.valueOf(currentUser.getTotalPointsEarned()));
                 } catch (NullPointerException e) {
