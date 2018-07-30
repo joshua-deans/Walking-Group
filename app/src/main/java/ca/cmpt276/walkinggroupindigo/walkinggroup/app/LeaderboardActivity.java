@@ -108,12 +108,12 @@ public class LeaderboardActivity extends AppCompatActivity {
                     TextView nameText = itemView.findViewById(R.id.userNameLeaderboard);
                     String[] splitString = currentUser.getName().split(" ");
                     if (splitString.length > 1) {
-                        nameText.setText(splitString[0] + " " + splitString[1].charAt(0));
+                        nameText.setText(String.format("%s %s", splitString[0], splitString[splitString.length - 1].charAt(0)));
                     } else {
                         nameText.setText(splitString[0]);
                     }
                     TextView scoreText = itemView.findViewById(R.id.scoreLeaderboard);
-                    scoreText.setText("Score: " + String.valueOf(currentUser.getTotalPointsEarned()));
+                    scoreText.setText(String.format("Score: %s", String.valueOf(currentUser.getTotalPointsEarned())));
                 } catch (NullPointerException e) {
                     Log.e("Error", e + ":" + mUserList.toString());
                 }
