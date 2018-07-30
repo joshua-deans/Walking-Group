@@ -182,7 +182,7 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
                     List<User> allLeader = new ArrayList<>();
                     for (Group g : returnedGroups) {
                         User u = g.getLeader();
-                        if (!allLeader.contains(u) && (!u.getId().equals(mUser.getId()))
+                        if (!allLeader.contains(u) && u != null && (!u.getId().equals(mUser.getId()))
                                 && groupsList.contains(g)) {
                             allLeader.add(u);
                         }
