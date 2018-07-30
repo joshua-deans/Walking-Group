@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -95,23 +94,29 @@ public class RewardShopActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.activity_reward, parent, false);
             }
 
-            EarnedRewards usersRewards = user.getRewards();
+            EarnedRewards currentUserRewards = user.getRewards();
 
             TextView rewardName = convertView.findViewById(R.id.reward_name);
             String currentReward = rewards.get(position);
-            Log.i(TAG, currentReward);
-            Log.i(TAG, usersRewards.getListOfTitlesOwned().toString());
             rewardName.setText(getString(R.string.reward_types, "Title", currentReward));
 
-            if (userRewards.getListOfTitlesOwned().contains(currentReward)) {
+            if (currentUserRewards.getListOfTitlesOwned().contains(currentReward)) {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                showPrice.setVisibility(View.INVISIBLE);
                 Button applyItem = convertView.findViewById(R.id.buy);
-                applyItem.setText("Apply");
+                applyItem.setText(R.string.apply);
                 applyItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        applyReward(currentReward, usersRewards);
+                        applyReward(currentReward, currentUserRewards);
                     }
                 });
+            } else if (currentUserRewards.getTitle().equals(currentReward.toLowerCase())) {
+                TextView showPrice = convertView.findViewById(R.id.reward_price);
+                showPrice.setVisibility(View.INVISIBLE);
+                Button applyItem = convertView.findViewById(R.id.buy);
+                applyItem.setClickable(false);
+                applyItem.setText(R.string.applied);
             } else {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
                 final Integer itemPrice = prices.get(position);
@@ -121,7 +126,7 @@ public class RewardShopActivity extends AppCompatActivity {
                 buyItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        purchaseItem(currentReward, itemPrice, usersRewards);
+                        purchaseItem(currentReward, itemPrice, currentUserRewards);
                     }
                 });
             }
