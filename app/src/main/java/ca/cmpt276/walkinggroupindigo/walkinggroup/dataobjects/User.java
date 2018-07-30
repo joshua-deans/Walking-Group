@@ -145,7 +145,6 @@ public class User extends IdItemBase{
         this.totalPointsEarned = totalPointsEarned;
     }
 
-
     // Setter will be called when deserializing User's JSON object; we'll automatically
     // expand it into the custom object.
     public void setCustomJson(String jsonString) {
