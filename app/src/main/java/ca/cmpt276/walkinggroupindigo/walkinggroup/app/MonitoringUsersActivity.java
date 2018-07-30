@@ -139,7 +139,7 @@ public class MonitoringUsersActivity extends AppCompatActivity {
                 monitorsUserGroupCaller,
                 returnMonitorsUserGroup -> {
                     Toast.makeText(MonitoringUsersActivity.this,
-                            "I am working inside", Toast.LENGTH_SHORT).show();
+                            "User added to the group", Toast.LENGTH_SHORT).show();
                 });
         updateUI();
         finish();
