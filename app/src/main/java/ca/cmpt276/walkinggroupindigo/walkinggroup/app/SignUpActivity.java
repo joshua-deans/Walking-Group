@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
@@ -125,6 +126,7 @@ public class SignUpActivity extends AppCompatActivity {
             user.setEmergencyContactInfo(emergencyContactInfo);
             user.setTotalPointsEarned(0);
             user.setCurrentPoints(0);
+            user.setRewards(new EarnedRewards());
             insertIntoServer(user);
         }
     }
