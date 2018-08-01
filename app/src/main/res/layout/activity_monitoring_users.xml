@@ -4,35 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.MonitoringUsersActivity">
+    tools:context=".app.MonitoringUsersActivity"
+    android:background="@drawable/card">
 
-    <Button
-        android:id="@+id/add_to_group_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/group_id_edittxt"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="@string/add_to_group" />
-
-    <ListView
-        android:id="@+id/monitor_user_groups_list"
-        android:layout_width="match_parent"
-        android:layout_height="509dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/add_to_group_btn"
-        android:layout_marginTop="71dp" />
-
-    <EditText
-        android:id="@+id/group_id_edittxt"
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardview1"
+        android:layout_margin="30dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:ems="10"
-        android:hint="@string/add_group_name"
-        android:inputType="textPersonName" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        app:cardBackgroundColor="@color/colorPrimary">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/group_id_edittxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="@string/add_group_name"
+            android:inputType="textPersonName"
+            android:textColor="?attr/colorBackgroundFloating"
+            android:textColorLink="?attr/colorBackgroundFloating"
+            android:textColorHint="?attr/colorBackgroundFloating"/>
+
+        <Button
+            android:id="@+id/add_to_group_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/group_id_edittxt"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/add_to_group" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <ListView
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/monitor_user_groups_list"
+        android:layout_width="match_parent"
+        android:layout_height="313dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/cardview1"
+        android:layout_marginTop="45dp" />
+
+
 </RelativeLayout>
