@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuInflater;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -366,9 +366,15 @@ public class GroupDetailsActivity extends AppCompatActivity {
                 try {
                     TextView nameText = itemView.findViewById(R.id.groupDetailUserName);
                     TextView emailText = itemView.findViewById(R.id.groupDetailUserEmail);
+                    TextView titleText = itemView.findViewById(R.id.title);
                     nameText.setText(currentUser.getName());
                     emailText.setText(currentUser.getEmail());
-                    if (currentUser.getId() == leaderId) {
+                    if (currentUser.getRewards().getTitle() != null) {
+                        titleText.setText(currentUser.getRewards().getTitle());
+                    } else {
+                        titleText.setVisibility(View.GONE);
+                    }
+                    if (leaderId != null && currentUser.getId().equals(leaderId)) {
                         TextView leaderText = itemView.findViewById(R.id.groupLeaderTag);
                         leaderText.setText(R.string.leader_tag);
                     }

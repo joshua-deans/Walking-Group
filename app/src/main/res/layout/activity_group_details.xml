@@ -34,14 +34,20 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="25dp" />
+            android:paddingBottom="25dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="25dp" />
 
         <ListView
             android:id="@+id/parentUserList"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="25dp" />
+            android:paddingBottom="25dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="25dp" />
     </LinearLayout>
 
 </RelativeLayout>
