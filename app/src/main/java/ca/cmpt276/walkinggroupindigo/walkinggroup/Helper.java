@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_KEY;
 import static ca.cmpt276.walkinggroupindigo.walkinggroup.app.LoginActivity.LOG_IN_SAVE_KEY;
@@ -15,6 +16,8 @@ public class Helper {
         SharedPreferences sharedPref = context.getSharedPreferences(
                 LOG_IN_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
+        User user = User.getInstance();
+        user = new User();
         editor.putString(LOG_IN_SAVE_KEY, "");
         editor.putString(LOG_IN_SAVE_TOKEN, "");
         editor.apply();

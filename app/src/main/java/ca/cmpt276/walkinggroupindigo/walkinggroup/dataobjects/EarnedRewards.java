@@ -1,9 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects;
-import android.graphics.Color;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +17,12 @@ import java.util.List;
 public class EarnedRewards {
     private String title = "";
     private List<String> listOfTitlesOwned = new ArrayList<>();
-    private List<File> possibleBackgroundFiles = new ArrayList<>();
-    private Integer selectedBackground = 1;
-    private Integer titleColor = Color.BLUE;
+    private List<String> listOfThemesOwned = new ArrayList<>();
+    private String selectedTheme = "Default";
 
     // Needed for JSON deserialization
     public EarnedRewards() {
+        listOfThemesOwned.add("Default");
     }
 
     public String getTitle() {
@@ -35,35 +33,27 @@ public class EarnedRewards {
         this.title = title;
     }
 
-    public List<File> getPossibleBackgroundFiles() {
-        return possibleBackgroundFiles;
-    }
-
-    public void setPossibleBackgroundFiles(List<File> possibleBackgroundFiles) {
-        this.possibleBackgroundFiles = possibleBackgroundFiles;
-    }
-
-    public int getSelectedBackground() {
-        return selectedBackground;
-    }
-
-    public void setSelectedBackground(int selectedBackground) {
-        this.selectedBackground = selectedBackground;
-    }
-
-    public int getTitleColor() {
-        return titleColor;
-    }
-
-    public void setTitleColor(int titleColor) {
-        this.titleColor = titleColor;
-    }
-
     public List<String> getListOfTitlesOwned() {
         return listOfTitlesOwned;
     }
 
     public void addListOfTitlesOwned(String titleToAdd) {
         this.listOfTitlesOwned.add(titleToAdd);
+    }
+
+    public String getSelectedTheme() {
+        return selectedTheme;
+    }
+
+    public void setSelectedTheme(String selectedTheme) {
+        this.selectedTheme = selectedTheme;
+    }
+
+    public List<String> getListOfThemesOwned() {
+        return listOfThemesOwned;
+    }
+
+    public void addListOfThemesOwned(String themeToAdd) {
+        this.listOfThemesOwned.add(themeToAdd);
     }
 }
