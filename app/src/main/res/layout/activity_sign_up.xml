@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.SignUpActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".app.SignUpActivity"
+    android:background="@drawable/card">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -12,7 +14,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        app:cardBackgroundColor="@color/colorPrimary">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -40,7 +43,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/full_name"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/user_name"
@@ -49,7 +53,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/full_name_sign"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -58,7 +65,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/e_mail"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/email_information"
@@ -67,7 +75,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/e_mail_hint"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -76,7 +87,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/password"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/create_password"
@@ -85,7 +97,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -94,7 +109,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/confirm_password"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/confirm_password"
@@ -103,7 +119,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/confirm_password_hint"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -112,7 +131,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/birthday"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -128,7 +148,10 @@
                         android:ems="10"
                         android:hint="Birth month"
                         android:inputType="date"
-                        android:maxLength="2" />
+                        android:maxLength="2"
+                        android:textColor="?attr/colorBackgroundFloating"
+                        android:textColorLink="?attr/colorBackgroundFloating"
+                        android:textColorHint="?attr/colorBackgroundFloating"/>
 
                     <EditText
                         android:id="@+id/birthday_year_sign_up"
@@ -138,7 +161,10 @@
                         android:ems="10"
                         android:hint="Birth year"
                         android:inputType="date"
-                        android:maxLength="4" />
+                        android:maxLength="4"
+                        android:textColor="?attr/colorBackgroundFloating"
+                        android:textColorLink="?attr/colorBackgroundFloating"
+                        android:textColorHint="?attr/colorBackgroundFloating"/>
                 </LinearLayout>
 
                 <TextView
@@ -148,7 +174,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/address"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/address"
@@ -157,7 +184,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/address_sign_up"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -166,7 +196,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/home_phone"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/homePhone"
@@ -175,7 +206,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/home_phone_sign_up"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -184,7 +218,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/cell_phone"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/cellPhone"
@@ -193,7 +228,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/cell_phone_sign_up"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -202,7 +240,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/grade"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating"/>
 
                 <EditText
                     android:id="@+id/currentGrade"
@@ -211,7 +250,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/grade_students_sign_up"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -220,7 +262,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/teacher"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating" />
 
                 <EditText
                     android:id="@+id/teacher"
@@ -229,7 +272,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/teacher_students_sign_up"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -238,7 +284,8 @@
                     android:gravity="center_horizontal"
                     android:text="@string/emergency_contact_info"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorBackgroundFloating" />
 
                 <EditText
                     android:id="@+id/emergencyContactInfo"
@@ -247,7 +294,10 @@
                     android:layout_marginBottom="10dp"
                     android:ems="10"
                     android:hint="@string/emergency_contact_info_sign_up"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textColorLink="?attr/colorBackgroundFloating"
+                    android:textColorHint="?attr/colorBackgroundFloating"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v7.widget.CardView>

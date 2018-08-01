@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/small">
+    android:background="@drawable/small"
+    android:padding="5sp">
 
     <TextView
         android:id="@+id/txtPermissionFrom"
@@ -39,7 +40,8 @@
         android:layout_below="@+id/btnAccept"
         android:text="TextView"
         android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:textColor="?attr/colorBackgroundFloating" />
+        android:textColor="?attr/colorBackgroundFloating"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/txtPermissionStatus"

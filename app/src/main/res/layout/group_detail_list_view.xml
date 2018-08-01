@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:background="@drawable/small">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
+            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="18sp" />
 
         <TextView
@@ -22,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:baselineAligned="false"
+            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="10sp" />
 
     </LinearLayout>
@@ -30,6 +33,7 @@
         android:id="@+id/groupDetailUserEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="?attr/colorBackgroundFloating"
         android:textSize="14sp" />
 
     <ListView
