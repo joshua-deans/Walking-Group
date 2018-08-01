@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="8dp"
-    android:paddingTop="8dp">
+    android:paddingTop="8dp"
+    android:background="@drawable/small">
 
     <TextView
         android:id="@+id/userNameLeaderboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="?attr/colorBackgroundFloating"/>
 
     <TextView
         android:id="@+id/scoreLeaderboard"
@@ -18,5 +20,6 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:foregroundGravity="center_vertical"
-        android:gravity="right|center_vertical|end" />
+        android:gravity="right|center_vertical|end"
+        android:textColor="?attr/colorBackgroundFloating"/>
 </RelativeLayout>
