@@ -186,6 +186,9 @@ public interface WGServerProxy {
             @Query("groupId") Long groupId,
             @Query("userId") Long userId);
 
+    @POST("/permissions/{id}")
+    Call<Void> deletePermissions(@Path("id") long permissionId);
+
     // -- Internal --
     @GET("/permissions/actions")
     Call<List<ActionInfo>> getPermissionActionInfo();
