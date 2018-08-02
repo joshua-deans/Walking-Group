@@ -19,7 +19,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -39,10 +41,11 @@ public class ManageMessagesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(ManageMessagesActivity.this, mUser);
         setContentView(R.layout.activity_manage_messages);
         setActionBarText(getString(R.string.manage_messages));
         mMessage = new Message();
-        mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(ManageMessagesActivity.this, getString(R.string.apikey));
         setUpToolBar();
         populateMessages();

@@ -7,21 +7,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.List;
-
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import retrofit2.Call;
 
 public class CreateGroup extends AppCompatActivity {
@@ -37,13 +36,12 @@ public class CreateGroup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(CreateGroup.this, mUser);
         setContentView(R.layout.activity_create_group);
         setActionBarText(getString(R.string.create_group_title));
         proxy = ProxyFunctions.setUpProxy(CreateGroup.this, getString(R.string.apikey));
-
-
         currentGroup = new Group();
-        mUser = User.getInstance();
         setUpDestination();
         setUpStartingLocation();
         setUpOK();

@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -51,8 +52,9 @@ public class MonitoringUsersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monitoring_users);
         user = User.getInstance();
+        Helper.setCorrectTheme(MonitoringUsersActivity.this, user);
+        setContentView(R.layout.activity_monitoring_users);
         setActionBarText(String.format(getString(R.string.monitoring_title), addedOne.getName()));
         proxy = ProxyFunctions.setUpProxy(MonitoringUsersActivity.this, getString(R.string.apikey));
         setUpAddGroupButton();
