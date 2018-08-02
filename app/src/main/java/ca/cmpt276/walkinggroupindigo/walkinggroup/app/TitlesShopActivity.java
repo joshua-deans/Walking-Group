@@ -12,9 +12,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -57,6 +59,7 @@ public class TitlesShopActivity extends AppCompatActivity {
                 Intent intent = new Intent(TitlesShopActivity.this, ThemesShopActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         titlesButton.setClickable(false);

@@ -1,9 +1,7 @@
 package ca.cmpt276.walkinggroupindigo.walkinggroup.app;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,9 +11,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -23,9 +23,6 @@ import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 
 public class ThemesShopActivity extends AppCompatActivity {
     private WGServerProxy proxy;
@@ -54,6 +51,7 @@ public class ThemesShopActivity extends AppCompatActivity {
                 Intent intent = new Intent(ThemesShopActivity.this, TitlesShopActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(0, 0); //0 for no animation
             }
         });
         themesButton.setClickable(false);
@@ -97,7 +95,7 @@ public class ThemesShopActivity extends AppCompatActivity {
 
             TextView themeName = convertView.findViewById(R.id.reward_name);
             String currentTheme = themes.get(position);
-            themeName.setText(getString(R.string.reward_types, "Title", currentTheme));
+            themeName.setText(getString(R.string.reward_types, "Theme", currentTheme));
 
             if (currentTheme.equals(currentUserThemes.getTitle())) {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
