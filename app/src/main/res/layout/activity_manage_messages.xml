@@ -15,9 +15,11 @@
     <ListView
         android:id="@+id/messages_listview"
         android:layout_width="match_parent"
-        android:layout_height="451dp"
+        android:layout_height="455dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/messagesToolbar"/>
+        android:layout_below="@+id/messagesToolbar"
+        android:layout_marginBottom="0dp" />
+
 
 </RelativeLayout>

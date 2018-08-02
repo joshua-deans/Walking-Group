@@ -64,7 +64,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
+        inflater.inflate(R.menu.action_bar_manage_messages, menu);
         return true;
     }
 
@@ -80,6 +80,9 @@ public class ManageMessagesActivity extends AppCompatActivity {
                 Toast.makeText(ManageMessagesActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 Helper.logUserOut(ManageMessagesActivity.this);
                 return true;
+            case R.id.permissionsButton:
+                Intent anIntent = PermissionActivity.makeIntent(ManageMessagesActivity.this);
+                startActivity(anIntent);
             default:
                 return super.onOptionsItemSelected(item);
 
