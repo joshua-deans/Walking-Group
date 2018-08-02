@@ -96,6 +96,10 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case R.id.create_group:
+                intent = new Intent(ParentDashboardActivity.this, CreateGroup.class);
+                startActivity(intent);
+                return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ParentDashboardActivity.this, AccountInfoActivity.class);
                 startActivity(intent);
