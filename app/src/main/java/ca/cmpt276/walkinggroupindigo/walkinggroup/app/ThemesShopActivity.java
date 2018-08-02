@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -32,8 +33,9 @@ public class ThemesShopActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_themes_shop);
         user = User.getInstance();
+        Helper.setCorrectTheme(ThemesShopActivity.this, user);
+        setContentView(R.layout.activity_themes_shop);
         proxy = ProxyFunctions.setUpProxy(ThemesShopActivity.this, getString(R.string.apikey));
         setActionBarText("Rewards Shop");
         setUpToolbar();
@@ -91,19 +93,19 @@ public class ThemesShopActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.activity_reward, parent, false);
             }
 
-            EarnedRewards currentUserThemes = user.getRewards();
+            EarnedRewards currentUserRewards = user.getRewards();
 
             TextView themeName = convertView.findViewById(R.id.reward_name);
             String currentTheme = themes.get(position);
             themeName.setText(getString(R.string.reward_types, "Theme", currentTheme));
 
-            if (currentTheme.equals(currentUserThemes.getTitle())) {
+            if (currentTheme.equals(currentUserRewards.getSelectedTheme())) {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
                 showPrice.setVisibility(View.INVISIBLE);
                 Button applyItem = convertView.findViewById(R.id.buy);
                 applyItem.setClickable(false);
                 applyItem.setText(R.string.applied);
-            } else if (currentUserThemes.getListOfTitlesOwned().contains(currentTheme)) {
+            } else if (currentUserRewards.getListOfThemesOwned().contains(currentTheme)) {
                 TextView showPrice = convertView.findViewById(R.id.reward_price);
                 showPrice.setVisibility(View.INVISIBLE);
                 Button applyItem = convertView.findViewById(R.id.buy);
@@ -111,7 +113,7 @@ public class ThemesShopActivity extends AppCompatActivity {
                 applyItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        applyTheme(currentTheme, currentUserThemes);
+                        applyTheme(currentTheme, currentUserRewards);
                     }
                 });
             } else {
@@ -123,7 +125,7 @@ public class ThemesShopActivity extends AppCompatActivity {
                 buyItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        purchaseItem(currentTheme, itemPrice, currentUserThemes);
+                        purchaseItem(currentTheme, itemPrice, currentUserRewards);
                     }
                 });
             }
@@ -131,12 +133,15 @@ public class ThemesShopActivity extends AppCompatActivity {
         }
 
         private void applyTheme(String currentTheme, EarnedRewards usersThemes) {
-            usersThemes.setTitle(currentTheme);
+            usersThemes.setSelectedTheme(currentTheme);
             user.setRewards(usersThemes);
             Call<User> userCall = proxy.editUser(user.getId(), user);
             ProxyBuilder.callProxy(ThemesShopActivity.this, userCall,
                     returnedUser -> {
-                        populateThemes();
+                        Intent intent = getIntent();
+                        finish();
+                        overridePendingTransition(0, 0); //0 for no animation
+                        startActivity(intent);
                     });
         }
 
@@ -145,7 +150,7 @@ public class ThemesShopActivity extends AppCompatActivity {
                 Toast.makeText(ThemesShopActivity.this, R.string.not_enough_points, Toast.LENGTH_SHORT).show();
             } else {
                 user.setCurrentPoints(user.getCurrentPoints() - itemPrice);
-                usersThemes.addListOfTitlesOwned(currentTheme);
+                usersThemes.addListOfThemesOwned(currentTheme);
                 user.setRewards(usersThemes);
                 Call<User> userCall = proxy.editUser(user.getId(), user);
                 ProxyBuilder.callProxy(ThemesShopActivity.this, userCall,
