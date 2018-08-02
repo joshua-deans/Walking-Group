@@ -3,16 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="5dp"
-    android:background="@drawable/small">
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/txtMonitoringName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Name"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:textColor="?attr/colorBackgroundFloating" />
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
     <TextView
         android:id="@+id/txtMonitoringEmail"
@@ -20,6 +18,5 @@
         android:layout_height="wrap_content"
         android:text="E-mail"
         android:textAppearance="@android:style/TextAppearance.Material.Medium"
-        android:textColor="?attr/colorBackgroundFloating"
         android:textSize="14sp" />
 </LinearLayout>

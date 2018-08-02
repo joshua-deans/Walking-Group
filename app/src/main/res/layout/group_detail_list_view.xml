@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="5dp"
-    android:background="@drawable/small">
+    android:padding="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,7 +14,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="18sp" />
 
         <TextView
@@ -24,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/groupDetailUserName"
-            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="10sp" />
 
     </RelativeLayout>
@@ -33,7 +30,6 @@
         android:id="@+id/groupDetailUserEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="?attr/colorBackgroundFloating"
         android:textSize="14sp" />
 
     <TextView
