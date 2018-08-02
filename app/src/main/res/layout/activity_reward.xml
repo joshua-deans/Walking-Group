@@ -3,8 +3,7 @@
     android:id="@+id/reward_description"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:background="@color/colorPrimary">
+    android:paddingBottom="5dp">
 
 
     <TextView
@@ -16,8 +15,7 @@
         android:layout_margin="5dp"
         android:text="@string/reward"
         android:textSize="24sp"
-        android:textStyle="normal"
-        android:textColor="?attr/colorBackgroundFloating"/>
+        android:textStyle="normal" />
 
     <TextView
         android:id="@+id/reward_price"
@@ -28,8 +26,7 @@
         android:layout_margin="5dp"
         android:text="@string/price"
         android:textSize="18sp"
-        android:textStyle="normal"
-        android:textColor="?attr/colorBackgroundFloating"/>
+        android:textStyle="normal" />
 
     <Button
         android:id="@+id/buy"
