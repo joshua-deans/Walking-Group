@@ -44,6 +44,8 @@ public class ManageMonitoring extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = User.getInstance();
+        Helper.setCorrectTheme(ManageMonitoring.this, user);
         setContentView(R.layout.activity_manage_monitoring);
         setActionBarText(getString(R.string.manage_monitoring));
         user = User.getInstance();

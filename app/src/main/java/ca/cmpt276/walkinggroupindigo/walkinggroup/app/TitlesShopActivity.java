@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.EarnedRewards;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -40,8 +41,9 @@ public class TitlesShopActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_titles_shop);
         user = User.getInstance();
+        Helper.setCorrectTheme(TitlesShopActivity.this, user);
+        setContentView(R.layout.activity_titles_shop);
         proxy = ProxyFunctions.setUpProxy(TitlesShopActivity.this, getString(R.string.apikey));
         setActionBarText("Rewards Shop");
         setUpToolbar();

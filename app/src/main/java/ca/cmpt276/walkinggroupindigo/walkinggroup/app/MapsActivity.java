@@ -79,8 +79,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
         mUser = User.getInstance();
+        Helper.setCorrectTheme(MapsActivity.this, mUser);
+        setContentView(R.layout.activity_maps);
         mMessage = new Message();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         inGroupMarkers = new ArrayList<>();

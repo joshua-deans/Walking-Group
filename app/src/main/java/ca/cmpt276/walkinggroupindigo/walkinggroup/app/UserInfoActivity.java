@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -20,10 +21,13 @@ public class UserInfoActivity extends AppCompatActivity {
 
     private WGServerProxy proxy;
     private Long mUserId;
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(UserInfoActivity.this, mUser);
         setContentView(R.layout.activity_user_info);
         setActionBarText("");
         proxy = ProxyFunctions.setUpProxy(UserInfoActivity.this, getString(R.string.apikey));

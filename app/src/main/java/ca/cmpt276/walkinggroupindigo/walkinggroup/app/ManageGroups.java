@@ -56,8 +56,9 @@ public class ManageGroups extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_group);
         user = User.getInstance();
+        Helper.setCorrectTheme(ManageGroups.this, user);
+        setContentView(R.layout.activity_manage_group);
         proxy = ProxyFunctions.setUpProxy(ManageGroups.this, getString(R.string.apikey));
         setUpToolBar();
         setActionBarText(getString(R.string.manage_groups));
