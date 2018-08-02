@@ -4,18 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.PermissionActivity">
-
-    <include
-        android:id="@+id/parentLinkToolbar"
-        layout="@layout/toolbar_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    tools:context=".app.PermissionActivity"
+    android:padding="5sp">
 
     <ListView
         android:id="@+id/permission_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/parentLinkToolbar" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 </RelativeLayout>

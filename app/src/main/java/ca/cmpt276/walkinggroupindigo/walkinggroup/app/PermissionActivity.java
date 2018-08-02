@@ -46,7 +46,6 @@ public class PermissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         initializeServer();
-        setUpToolBar();
         updateUI();
     }
 
@@ -60,76 +59,8 @@ public class PermissionActivity extends AppCompatActivity {
         return new Intent(context, PermissionActivity.class);
     }
 
-    private void setUpToolBar() {
-        Button mapLink = findViewById(R.id.mapLink);
-        Button groupsLink = findViewById(R.id.groupsLink);
-        Button monitoringLink = findViewById(R.id.monitoringLink);
-        Button messagesLink = findViewById(R.id.messagesLink);
-        Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
-        permissionLink.setClickable(false);
-        mapLink.setAlpha(1f);
-        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
-        getNumUnreadMessages(unreadMessages);
-        monitoringLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PermissionActivity.this, ManageMonitoring.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        groupsLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PermissionActivity.this, ManageGroups.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        messagesLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Long mEmergencyMessageId = 1L;
-                Intent intent = new Intent(PermissionActivity.this, ManageMessagesActivity.class);
-                intent.putExtra(EMERGENCY_ID, mEmergencyMessageId);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        parentsLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PermissionActivity.this, ParentDashboardActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        mapLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent( PermissionActivity.this, MapsActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-    }
 
-    private void getNumUnreadMessages(TextView unreadMessagesText) {
-        Call<List<Message>> messageCall = proxy.getUnreadMessages(user.getId(), null);
-        ProxyBuilder.callProxy(PermissionActivity.this,
-                messageCall,
-                returnedMessages -> getInNumber(returnedMessages, unreadMessagesText));
-    }
 
-    private void getInNumber(List<Message> returnedMessages, TextView unreadMessagesText) {
-        unreadMessagesText.setText(String.valueOf(returnedMessages.size()));
-    }
 
     private void updateUI() {
         Call<List<PermissionRequest>> permissionCaller = proxy.getPermissionsForUser(user.getId());
@@ -248,8 +179,7 @@ public class PermissionActivity extends AppCompatActivity {
                         // if user already accepted or declined the button
                         Button acceptRequest = itemView.findViewById(R.id.btnAccept);
                         Button declineRequest = itemView.findViewById(R.id.btnDecline);
-//                    if(currentRequest.getStatus() == WGServerProxy.PermissionStatus.APPROVED ||
-//                            currentRequest.getStatus() == WGServerProxy.PermissionStatus.DENIED){
+
                         if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
                             acceptRequest.setVisibility(View.INVISIBLE);
                             declineRequest.setVisibility(View.INVISIBLE);
@@ -340,8 +270,6 @@ public class PermissionActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         user = User.getInstance();
-        TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
-        getNumUnreadMessages(unreadMessages);
         updateUI();
     }
 
