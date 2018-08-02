@@ -69,6 +69,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean mLocationPermissionGranted;
     private WGServerProxy proxy;
     private List<Marker> inGroupMarkers;
+    private String currentTheme;
 
     EditText inputMessage;
 
@@ -83,6 +84,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Helper.setCorrectTheme(MapsActivity.this, mUser);
         setContentView(R.layout.activity_maps);
         mMessage = new Message();
+        currentTheme = mUser.getRewards().getSelectedTheme();
         proxy = ProxyFunctions.setUpProxy(MapsActivity.this, getString(R.string.apikey));
         inGroupMarkers = new ArrayList<>();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -98,6 +100,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+        if (!currentTheme.equals(mUser.getRewards().getSelectedTheme())) {
+            Helper.setCorrectTheme(MapsActivity.this, mUser);
+            currentTheme = mUser.getRewards().getSelectedTheme();
+            recreate();
+        }
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         ActivityCompat.invalidateOptionsMenu(MapsActivity.this);
