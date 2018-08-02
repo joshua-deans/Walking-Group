@@ -17,19 +17,21 @@
     </string-array>
 
     <integer-array name="theme_prices">
+        <item>0</item>
         <item>5</item>
-        <item>5</item>
-        <item>5</item>
-        <item>5</item>
-        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>50</item>
     </integer-array>
 
     <string-array name="theme_names">
         <item>Default</item>
-        <item>Red</item>
         <item>Pink</item>
-        <item>Teal</item>
-        <item>Dark</item>
+        <item>Office Teal</item>
+        <item>The Dark Knight</item>
+        <item>SFU Red</item>
+        <item>God Slayer</item>
     </string-array>
 
 </resources>

@@ -211,7 +211,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 return true;
             case R.id.rewards_shop:
-                intent = new Intent(MapsActivity.this, RewardShopActivity.class);
+                intent = new Intent(MapsActivity.this, TitlesShopActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.logOutButton:
