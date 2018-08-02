@@ -117,7 +117,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
         parentsLink.setClickable(false);
         parentsLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -151,15 +150,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ParentDashboardActivity.this, ManageMonitoring.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        permissionLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (ParentDashboardActivity.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();

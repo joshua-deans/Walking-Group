@@ -20,16 +20,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.Permission;
 import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+
+import static java.lang.Integer.valueOf;
 
 public class ManageMessagesActivity extends AppCompatActivity {
 
@@ -37,6 +41,7 @@ public class ManageMessagesActivity extends AppCompatActivity {
     private WGServerProxy proxy;
     private User mUser;
     private Message mMessage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +72,15 @@ public class ManageMessagesActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
+        inflater.inflate(R.menu.action_bar_manage_messages, menu);
+        MenuItem permissionItem = menu.findItem(R.id.permissionsButton);
+        getNumRequests(permissionItem);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.accountInfoButton:
@@ -83,6 +91,9 @@ public class ManageMessagesActivity extends AppCompatActivity {
                 Toast.makeText(ManageMessagesActivity.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 Helper.logUserOut(ManageMessagesActivity.this);
                 return true;
+            case R.id.permissionsButton:
+                intent = PermissionActivity.makeIntent(ManageMessagesActivity.this);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -95,7 +106,6 @@ public class ManageMessagesActivity extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
         getNumUnreadMessages(unreadMessages);
         messagesLink.setClickable(false);
@@ -131,15 +141,6 @@ public class ManageMessagesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ManageMessagesActivity.this, ParentDashboardActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        permissionLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = PermissionActivity.makeIntent(ManageMessagesActivity.this);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
@@ -225,6 +226,23 @@ public class ManageMessagesActivity extends AppCompatActivity {
 
     private void markedAsRead(Message returnNothing) {
         Toast.makeText(this, "Messages are read", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getNumRequests(MenuItem pendingPermissions) {
+        Call<List<PermissionRequest>> permCaller = proxy.getPermissions(mUser.getId(), WGServerProxy.PermissionStatus.PENDING);
+        ProxyBuilder.callProxy(ManageMessagesActivity.this, permCaller, returnedPerms -> getNumPerms(returnedPerms, pendingPermissions));
+    }
+
+    private void getNumPerms(List<PermissionRequest> returnedPerms, MenuItem pendingPermissions) {
+        int number;
+        number = valueOf(returnedPerms.size());
+        if(number <= 0) {
+            pendingPermissions.setTitle("requests");
+        } else if(number == 1) {
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + "new request");
+        } else {
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + "new requests");
+        }
     }
 
     private class MyListOfMessages extends ArrayAdapter<Message> {
