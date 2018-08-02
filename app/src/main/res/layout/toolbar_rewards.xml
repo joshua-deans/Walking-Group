@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rewardsToolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_margin="0dp"
+    android:background="?attr/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    android:padding="0dp"
+    android:theme="?attr/actionBarTheme"
+    map:contentInsetEnd="0dp"
+    map:contentInsetLeft="0dp"
+    map:contentInsetRight="0dp"
+    map:contentInsetStart="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/titlesButton"
+            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".9"
+            android:alpha=".7"
+            android:padding="0dp"
+            android:textSize="13sp"
+            android:text="Titles" />
+
+        <Button
+            android:id="@+id/themesButton"
+            style="@android:style/Widget.DeviceDefault.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".9"
+            android:alpha=".7"
+            android:padding="0dp"
+            android:textSize="13sp"
+            android:text="Themes"/>
+    </LinearLayout>
+
+</android.support.v7.widget.Toolbar>
