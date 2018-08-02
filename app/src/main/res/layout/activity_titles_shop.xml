@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".app.TitlesShopActivity"
-    android:background="@drawable/card"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:context=".app.TitlesShopActivity">
 
     <include
         layout="@layout/toolbar_rewards"
@@ -17,23 +15,22 @@
         android:id="@+id/current_points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rewardsToolbar"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
         android:text=""
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/rewardsToolbar"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:textColor="?attr/colorBackgroundFloating"/>
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/reward_list"
         android:layout_width="wrap_content"
         android:layout_height="275dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/current_points"/>
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/current_points" />
 
 </RelativeLayout>
