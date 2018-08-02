@@ -1,41 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5sp">
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/txtPermissionFrom"
         android:layout_width="132dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
         android:text="@string/request_from"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/btnAccept"
-        android:layout_width="wrap_content"
-        android:layout_height="34dp"
-        android:layout_alignParentTop="true"
+        android:layout_width="65dp"
+        android:layout_height="35dp"
+        android:layout_above="@+id/txtPermissionAction"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="0dp"
         android:layout_toStartOf="@+id/btnDecline"
         android:onClick="myAcceptHandler"
         android:padding="0dp"
-        android:text="Accept" />
+        android:text="Accept"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btnDecline"
-        android:layout_width="wrap_content"
-        android:layout_height="34dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_width="65dp"
+        android:layout_height="35dp"
+        android:layout_above="@+id/txtPermissionAction"
+        android:layout_alignEnd="@+id/txtPermissionAction"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="0dp"
         android:padding="0dp"
-        android:text="Decline" />
+        android:text="Decline"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/txtPermissionAction"
-        android:layout_width="288dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnAccept"
+        android:layout_below="@+id/txtPermissionStatus"
+        android:layout_marginTop="3dp"
         android:text="TextView"
         android:textAppearance="@android:style/TextAppearance.Material.Medium"
         android:textSize="14sp" />
@@ -44,8 +53,8 @@
         android:id="@+id/txtPermissionStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtPermissionAction"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/btnAccept"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtPermissionFrom"
+        android:layout_marginBottom="3dp"
         android:text="TextView" />
 </RelativeLayout>
