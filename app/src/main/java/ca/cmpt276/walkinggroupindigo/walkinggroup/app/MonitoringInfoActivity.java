@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -30,6 +31,8 @@ public class MonitoringInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(MonitoringInfoActivity.this, mUser);
         setContentView(R.layout.activity_monitoring_info);
         setActionBarText("Account Information");
         proxy = ProxyFunctions.setUpProxy(MonitoringInfoActivity.this, getString(R.string.apikey));

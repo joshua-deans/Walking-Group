@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
@@ -55,10 +56,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(GroupDetailsActivity.this, mUser);
         setContentView(R.layout.activity_group_details);
         setActionBarText("");
         mMessage = new Message();
-        mUser = User.getInstance();
         leaderUser = new User();
         messagedGroup = new Group();
         proxy = ProxyFunctions.setUpProxy(GroupDetailsActivity.this, getString(R.string.apikey));

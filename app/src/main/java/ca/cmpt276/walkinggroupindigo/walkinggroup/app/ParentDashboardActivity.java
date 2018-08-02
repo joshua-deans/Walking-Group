@@ -67,6 +67,8 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(ParentDashboardActivity.this, mUser);
         setContentView(R.layout.activity_parent_maps);
         markersPlaced = new ArrayList<>();
         initServerUser();

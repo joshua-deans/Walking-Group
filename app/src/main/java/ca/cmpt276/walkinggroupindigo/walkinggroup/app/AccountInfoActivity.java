@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -24,9 +25,10 @@ public class AccountInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(AccountInfoActivity.this, mUser);
         setContentView(R.layout.activity_account_info);
         setActionBarText("Account Information");
-        mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(AccountInfoActivity.this, getString(R.string.apikey));
         populateForm();
         setUpUpdateButton();
