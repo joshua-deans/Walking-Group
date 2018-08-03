@@ -22,10 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Set;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
-import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -38,6 +39,10 @@ public class PermissionActivity extends AppCompatActivity {
     public static final String EMERGENCY_ID = "ca.cmpt276.walkinggroupindigo.walkinggroup.app_mEmergencyMessageId";
     private WGServerProxy proxy;
     private User user;
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, PermissionActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +59,6 @@ public class PermissionActivity extends AppCompatActivity {
         user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(PermissionActivity.this, getString(R.string.apikey));
     }
-
-    public static Intent makeIntent(Context context){
-        return new Intent(context, PermissionActivity.class);
-    }
-
-
-
 
     private void updateUI() {
         Call<List<PermissionRequest>> permissionCaller = proxy.getPermissionsForUser(user.getId());
@@ -83,142 +81,33 @@ public class PermissionActivity extends AppCompatActivity {
         permissionList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.permission_layout_details);
-        permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        addGroupPermissions(adapter, permissions);
 
-                // TODO: Here we can give the full details about the Permission.
+    }
 
-                Toast.makeText(PermissionActivity.this,
-                        "I want to see more details!!", Toast.LENGTH_SHORT).show();
+    private void addGroupPermissions(ArrayAdapter<PermissionRequest> adapter, List<PermissionRequest> permissions) {
+        List<Group> leadsGroups = user.getLeadsGroups();
+        for (Group group : leadsGroups) {
+            Call<List<PermissionRequest>> permissionGroupCaller = proxy.getPermissionsForGroup(group.getId());
+            ProxyBuilder.callProxy(PermissionActivity.this, permissionGroupCaller,
+                    returnedGroupPermissions -> {
+                        addToAdapter(adapter, permissions, returnedGroupPermissions);
+                    });
+        }
+    }
+
+    private void addToAdapter(ArrayAdapter<PermissionRequest> adapter, List<PermissionRequest> permissions, List<PermissionRequest> returnedGroupPermissions) {
+        for (PermissionRequest permission : permissions) {
+            if (!permissions.contains(permission)) {
+                adapter.addAll(returnedGroupPermissions);
             }
-        });
-
-        permissionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PermissionActivity.this);
-                builder.setMessage("Would you like to delete this request?");
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Long requestId = (Long) view.getTag();
-                        Call<PermissionRequest> requestCall = proxy.getPermissionById(requestId);
-                        ProxyBuilder.callProxy(PermissionActivity.this, requestCall, returnedRequest -> setInvisible(returnedRequest));
-                        updateUI();
-                    }
-                });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
-            }
-        });
+        }
     }
 
     private void setInvisible(PermissionRequest returnedRequest) {
         boolean show = false;
         returnedRequest.setVisibility(show);
         Toast.makeText(PermissionActivity.this, "Request deleted", Toast.LENGTH_SHORT).show();
-    }
-
-    private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
-        List<PermissionRequest> permissionList;
-
-        public MyPermissionList(List<PermissionRequest> permList) {
-            super(PermissionActivity.this,
-                    R.layout.permission_layout_details
-                    , permList);
-            permissionList = permList;
-        }
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View itemView = convertView;
-            if(convertView == null){
-                itemView = getLayoutInflater().inflate(
-                        R.layout.permission_layout_details,
-                        parent,
-                        false);
-            }
-
-            PermissionRequest currentRequest;
-
-            // Find the current PermissionRequest
-            if (permissionList.isEmpty()){
-                currentRequest = new PermissionRequest();
-                currentRequest.setUserA(new User());
-                currentRequest.setMessage("No Message");
-            }
-            else {
-                currentRequest = permissionList.get(position);
-                itemView.setTag(currentRequest.getId());
-            }
-            if (currentRequest.getAction()!= null && currentRequest.getMessage() != null) {
-                if (currentRequest.isVisible()) {
-                    try {
-                        TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
-                        Call<User> userCall = proxy.getUserById(currentRequest.getRequestingUser().getId());
-                        ProxyBuilder.callProxy(PermissionActivity.this,
-                                userCall,
-                                returnedUser -> {
-                                    nameText.setText(getString(R.string.request_from) + returnedUser.getName());
-                                });
-                        TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
-                        emailText.setText(currentRequest.getMessage());
-                        // should be getAction() for debugging I changed it to getMessage()
-
-                        TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
-                        statusText.setText(currentRequest.getStatus().toString());
-
-                        // if user already accepted or declined the button
-                        Button acceptRequest = itemView.findViewById(R.id.btnAccept);
-                        Button declineRequest = itemView.findViewById(R.id.btnDecline);
-
-                        if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
-                            acceptRequest.setVisibility(View.INVISIBLE);
-                            declineRequest.setVisibility(View.INVISIBLE);
-                        } else {
-                            acceptRequest.setVisibility(View.VISIBLE);
-                            declineRequest.setVisibility(View.VISIBLE);
-                            acceptRequest.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
-                                            currentRequest.getId(), WGServerProxy.PermissionStatus.APPROVED);
-                                    ProxyBuilder.callProxy(PermissionActivity.this,
-                                            acceptCall,
-                                            returnedStatus -> {
-                                                updateUI();
-                                            });
-                                }
-                            });
-
-                            declineRequest.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
-                                            currentRequest.getId(), WGServerProxy.PermissionStatus.DENIED);
-                                    ProxyBuilder.callProxy(PermissionActivity.this,
-                                            deniedCall,
-                                            returnedStatus -> {
-                                                updateUI();
-                                            });
-                                }
-                            });
-                        }
-                    } catch (NullPointerException e) {
-                        Log.e("Error", e + ":" + permissionList.toString());
-                    }
-                }
-            }
-            return itemView;
-        }
     }
 
     private void setActionBarText(String title) {
@@ -276,5 +165,109 @@ public class PermissionActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         overridePendingTransition(0, 0);
+    }
+
+    private class MyPermissionList extends ArrayAdapter<PermissionRequest> {
+        List<PermissionRequest> permissionList;
+
+        public MyPermissionList(List<PermissionRequest> permList) {
+            super(PermissionActivity.this,
+                    R.layout.permission_layout_details
+                    , permList);
+            permissionList = permList;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (convertView == null) {
+                itemView = getLayoutInflater().inflate(
+                        R.layout.permission_layout_details,
+                        parent,
+                        false);
+            }
+
+            PermissionRequest currentRequest;
+
+            // Find the current PermissionRequest
+            if (permissionList.isEmpty()) {
+                currentRequest = new PermissionRequest();
+                currentRequest.setUserA(new User());
+                currentRequest.setMessage("No Message");
+            } else {
+                currentRequest = permissionList.get(position);
+                itemView.setTag(currentRequest.getId());
+            }
+            if (currentRequest.getAction() != null && currentRequest.getMessage() != null) {
+                if (currentRequest.isVisible()) {
+                    try {
+                        TextView nameText = itemView.findViewById(R.id.txtPermissionFrom);
+                        Call<User> userCall = proxy.getUserById(currentRequest.getRequestingUser().getId());
+                        ProxyBuilder.callProxy(PermissionActivity.this,
+                                userCall,
+                                returnedUser -> {
+                                    nameText.setText(getString(R.string.request_from) + returnedUser.getName());
+                                });
+                        TextView emailText = itemView.findViewById(R.id.txtPermissionAction);
+                        emailText.setText(currentRequest.getMessage());
+                        // should be getAction() for debugging I changed it to getMessage()
+
+                        TextView statusText = itemView.findViewById(R.id.txtPermissionStatus);
+                        statusText.setText(currentRequest.getStatus().toString());
+
+                        // if user already accepted or declined the button
+                        Button acceptRequest = itemView.findViewById(R.id.btnAccept);
+                        Button declineRequest = itemView.findViewById(R.id.btnDecline);
+
+                        if (currentRequest.getStatus() != WGServerProxy.PermissionStatus.PENDING) {
+                            acceptRequest.setVisibility(View.INVISIBLE);
+                            declineRequest.setVisibility(View.INVISIBLE);
+                        } else {
+                            acceptRequest.setVisibility(View.VISIBLE);
+                            declineRequest.setVisibility(View.VISIBLE);
+                            acceptRequest.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Call<PermissionRequest> acceptCall = proxy.approveOrDenyPermissionRequest(
+                                            currentRequest.getId(), WGServerProxy.PermissionStatus.APPROVED);
+                                    ProxyBuilder.callProxy(PermissionActivity.this,
+                                            acceptCall,
+                                            returnedStatus -> {
+                                                updateUI();
+                                            });
+                                }
+                            });
+
+                            declineRequest.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Call<PermissionRequest> deniedCall = proxy.approveOrDenyPermissionRequest(
+                                            currentRequest.getId(), WGServerProxy.PermissionStatus.DENIED);
+                                    ProxyBuilder.callProxy(PermissionActivity.this,
+                                            deniedCall,
+                                            returnedStatus -> {
+                                                updateUI();
+                                            });
+                                }
+                            });
+                        }
+
+                        Set<PermissionRequest.Authorizor> authorizors = currentRequest.getAuthorizors();
+                        User WhoApprovedOrDenied;
+                        WhoApprovedOrDenied = new User();
+                        for (PermissionRequest.Authorizor authorizor : authorizors) {
+                            WhoApprovedOrDenied = authorizor.getWhoApprovedOrDenied();
+                        }
+                        Call<User> userCaller = proxy.getUserById(WhoApprovedOrDenied.getId());
+                        ProxyBuilder.callProxy(PermissionActivity.this, userCaller, returnedUser -> statusText.setText(statusText.getText() + " by " + returnedUser.getName()));
+
+                    } catch (NullPointerException e) {
+                        Log.e("Error", e + ":" + permissionList.toString());
+                    }
+                }
+            }
+            return itemView;
+        }
     }
 }

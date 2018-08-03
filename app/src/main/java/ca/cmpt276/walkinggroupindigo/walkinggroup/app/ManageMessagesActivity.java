@@ -239,9 +239,9 @@ public class ManageMessagesActivity extends AppCompatActivity {
         if(number <= 0) {
             pendingPermissions.setTitle("requests");
         } else if(number == 1) {
-            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + "new request");
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + " new request");
         } else {
-            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + "new requests");
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + " new requests");
         }
     }
 
