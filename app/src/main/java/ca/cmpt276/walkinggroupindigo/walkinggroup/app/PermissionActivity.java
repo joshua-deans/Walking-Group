@@ -295,7 +295,7 @@ public class PermissionActivity extends AppCompatActivity {
                             WhoApprovedOrDenied = authorizor.getWhoApprovedOrDenied();
                         }
                         Call<User> userCaller = proxy.getUserById(WhoApprovedOrDenied.getId());
-                        ProxyBuilder.callProxy(PermissionActivity.this, userCaller, returnedUser -> statusText.setText(statusText.getText() + " by" + returnedUser.getName()));
+                        ProxyBuilder.callProxy(PermissionActivity.this, userCaller, returnedUser -> statusText.setText(statusText.getText() + " by " + returnedUser.getName()));
 
                     } catch (NullPointerException e) {
                         Log.e("Error", e + ":" + permissionList.toString());
