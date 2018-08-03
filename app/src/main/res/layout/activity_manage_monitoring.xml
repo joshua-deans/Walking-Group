@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".app.SignUpActivity"
-    android:background="@drawable/card">
+    tools:context=".app.SignUpActivity">
 
     <include
         layout="@layout/toolbar_navigation"
@@ -26,8 +25,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/small">
+                android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/add_monitored_btn"
@@ -59,7 +57,6 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="15dp"
                     android:text="@string/monitored"
-                    android:textColor="?attr/colorBackgroundFloating"
                     android:textSize="18sp" />
 
             <TextView
@@ -92,8 +89,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/small">
+        android:layout_height="match_parent">
 
         <Button
             android:id="@+id/add_monitoring_btn"
@@ -125,7 +121,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:text="@string/monitoring"
-            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="18sp" />
 
         <TextView
