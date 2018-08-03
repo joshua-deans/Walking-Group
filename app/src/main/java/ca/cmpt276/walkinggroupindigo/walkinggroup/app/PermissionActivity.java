@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Set;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
@@ -212,6 +213,16 @@ public class PermissionActivity extends AppCompatActivity {
                                 }
                             });
                         }
+
+                        Set<PermissionRequest.Authorizor> authorizors = currentRequest.getAuthorizors();
+                        User WhoApprovedOrDenied;
+                        WhoApprovedOrDenied = new User();
+                        for (PermissionRequest.Authorizor authorizor : authorizors) {
+                            WhoApprovedOrDenied = authorizor.getWhoApprovedOrDenied();
+                        }
+                        Call<User> userCaller = proxy.getUserById(WhoApprovedOrDenied.getId());
+                        ProxyBuilder.callProxy(PermissionActivity.this, userCaller, returnedUser -> statusText.setText(statusText.getText() + " by" + returnedUser.getName()));
+
                     } catch (NullPointerException e) {
                         Log.e("Error", e + ":" + permissionList.toString());
                     }
