@@ -8,4 +8,34 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RedTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#e53935</item>
+        <item name="colorPrimaryDark">#ab000d</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="PinkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#ff80ab</item>
+        <item name="colorPrimaryDark">#c94f7c</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="TealTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#009688</item>
+        <item name="colorPrimaryDark">#00675b</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SteelTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#607d8b</item>
+        <item name="colorPrimaryDark">#34515e</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#424242</item>
+        <item name="colorPrimaryDark">#1b1b1b</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 </resources>

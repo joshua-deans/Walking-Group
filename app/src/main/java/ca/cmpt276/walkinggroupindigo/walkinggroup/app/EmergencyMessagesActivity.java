@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
@@ -36,10 +37,11 @@ public class EmergencyMessagesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(EmergencyMessagesActivity.this, mUser);
         setContentView(R.layout.activity_emergency_messages);
         setActionBarText(getString(R.string.manage_messages));
         setUpToolBar();
-        mUser = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(EmergencyMessagesActivity.this, getString(R.string.apikey));
         populateEmergency();
         updateUI();

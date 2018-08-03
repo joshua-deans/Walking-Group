@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -28,8 +29,9 @@ public class LeaderboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leaderboard);
         mUser = User.getInstance();
+        Helper.setCorrectTheme(LeaderboardActivity.this, mUser);
+        setContentView(R.layout.activity_leaderboard);
         proxy = ProxyFunctions.setUpProxy(LeaderboardActivity.this, getString(R.string.apikey));
         updateUserScore();
         getUsersList();

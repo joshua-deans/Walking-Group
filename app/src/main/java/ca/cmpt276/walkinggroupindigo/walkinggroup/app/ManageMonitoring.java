@@ -44,6 +44,8 @@ public class ManageMonitoring extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = User.getInstance();
+        Helper.setCorrectTheme(ManageMonitoring.this, user);
         setContentView(R.layout.activity_manage_monitoring);
         setActionBarText(getString(R.string.manage_monitoring));
         user = User.getInstance();
@@ -77,7 +79,6 @@ public class ManageMonitoring extends AppCompatActivity {
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
         monitoringLink.setClickable(false);
         monitoringLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -111,15 +112,6 @@ public class ManageMonitoring extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ManageMonitoring.this, ParentDashboardActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        permissionLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ManageMonitoring.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();

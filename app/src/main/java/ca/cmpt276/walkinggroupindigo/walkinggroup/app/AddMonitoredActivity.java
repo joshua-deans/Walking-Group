@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -30,9 +31,10 @@ public class AddMonitoredActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = User.getInstance();
+        Helper.setCorrectTheme(AddMonitoredActivity.this, user);
         setContentView(R.layout.activity_add_monitored);
         setActionBarText(getString(R.string.add_user_monitor_you));
-        user = User.getInstance();
         proxy = ProxyFunctions.setUpProxy(AddMonitoredActivity.this, getString(R.string.apikey));
         setUpGetMonitoredButton();
     }

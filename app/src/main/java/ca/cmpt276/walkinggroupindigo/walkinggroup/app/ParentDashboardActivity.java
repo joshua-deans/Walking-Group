@@ -67,6 +67,8 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mUser = User.getInstance();
+        Helper.setCorrectTheme(ParentDashboardActivity.this, mUser);
         setContentView(R.layout.activity_parent_maps);
         markersPlaced = new ArrayList<>();
         initServerUser();
@@ -94,6 +96,10 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case R.id.create_group:
+                intent = new Intent(ParentDashboardActivity.this, CreateGroup.class);
+                startActivity(intent);
+                return true;
             case R.id.accountInfoButton:
                 intent = new Intent(ParentDashboardActivity.this, AccountInfoActivity.class);
                 startActivity(intent);
@@ -115,7 +121,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
         Button monitoringLink = findViewById(R.id.monitoringLink);
         Button messagesLink = findViewById(R.id.messagesLink);
         Button parentsLink = findViewById(R.id.parentsLink);
-        Button permissionLink = findViewById(R.id.permissionLink);
         parentsLink.setClickable(false);
         parentsLink.setAlpha(1f);
         TextView unreadMessages = findViewById(R.id.unreadMessagesLink);
@@ -149,15 +154,6 @@ public class ParentDashboardActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ParentDashboardActivity.this, ManageMonitoring.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0); //0 for no animation
-                finish();
-            }
-        });
-        permissionLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (ParentDashboardActivity.this, PermissionActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0); //0 for no animation
                 finish();
