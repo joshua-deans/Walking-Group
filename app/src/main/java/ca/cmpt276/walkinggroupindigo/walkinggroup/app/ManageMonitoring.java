@@ -26,11 +26,14 @@ import java.util.List;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Message;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyFunctions;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.WGServerProxy;
 import retrofit2.Call;
+
+import static java.lang.Integer.valueOf;
 
 public class ManageMonitoring extends AppCompatActivity {
 
@@ -146,6 +149,8 @@ public class ManageMonitoring extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_manage_monitoring, menu);
+        MenuItem permissionItem = menu.findItem(R.id.permissionsButtonMonitoring);
+        getNumRequests(permissionItem);
         return true;
     }
 
@@ -161,9 +166,29 @@ public class ManageMonitoring extends AppCompatActivity {
                 Toast.makeText(ManageMonitoring.this, R.string.logged_out, Toast.LENGTH_SHORT).show();
                 Helper.logUserOut(ManageMonitoring.this);
                 return true;
+            case R.id.permissionsButtonMonitoring:
+                intent = PermissionActivity.makeIntent(ManageMonitoring.this);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    public void getNumRequests(MenuItem pendingPermissions) {
+        Call<List<PermissionRequest>> permCaller = proxy.getPermissions(user.getId(), WGServerProxy.PermissionStatus.PENDING);
+        ProxyBuilder.callProxy(ManageMonitoring.this, permCaller, returnedPerms -> getNumPerms(returnedPerms, pendingPermissions));
+    }
+
+    private void getNumPerms(List<PermissionRequest> returnedPerms, MenuItem pendingPermissions) {
+        int number;
+        number = valueOf(returnedPerms.size());
+        if(number <= 0) {
+            pendingPermissions.setTitle("requests");
+        } else if(number == 1) {
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + " new request");
+        } else {
+            pendingPermissions.setTitle("" + String.valueOf(returnedPerms.size()) + " new requests");
         }
     }
 
