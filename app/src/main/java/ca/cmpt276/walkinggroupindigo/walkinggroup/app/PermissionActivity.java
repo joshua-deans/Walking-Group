@@ -82,42 +82,7 @@ public class PermissionActivity extends AppCompatActivity {
         new ArrayAdapter<>(this,
                 R.layout.permission_layout_details);
         addGroupPermissions(adapter, permissions);
-        permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                // TODO: Here we can give the full details about the Permission.
-
-                Toast.makeText(PermissionActivity.this,
-                        "I want to see more details!!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        permissionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PermissionActivity.this);
-                builder.setMessage("Would you like to delete this request?");
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Long requestId = (Long) view.getTag();
-                        Call<PermissionRequest> requestCall = proxy.getPermissionById(requestId);
-                        ProxyBuilder.callProxy(PermissionActivity.this, requestCall, returnedRequest -> setInvisible(returnedRequest));
-                        updateUI();
-                    }
-                });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
-            }
-        });
     }
 
     private void addGroupPermissions(ArrayAdapter<PermissionRequest> adapter, List<PermissionRequest> permissions) {
