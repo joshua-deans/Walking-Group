@@ -25,6 +25,7 @@ import java.util.List;
 
 import ca.cmpt276.walkinggroupindigo.walkinggroup.Helper;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.R;
+import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.Group;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.PermissionRequest;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.dataobjects.User;
 import ca.cmpt276.walkinggroupindigo.walkinggroup.proxy.ProxyBuilder;
@@ -79,6 +80,7 @@ public class PermissionActivity extends AppCompatActivity {
         permissionList.setAdapter(adapter);
         new ArrayAdapter<>(this,
                 R.layout.permission_layout_details);
+        addGroupPermissions(adapter, permissions);
         permissionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -115,6 +117,25 @@ public class PermissionActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void addGroupPermissions(ArrayAdapter<PermissionRequest> adapter, List<PermissionRequest> permissions) {
+        List<Group> leadsGroups = user.getLeadsGroups();
+        for (Group group : leadsGroups) {
+            Call<List<PermissionRequest>> permissionGroupCaller = proxy.getPermissionsForGroup(group.getId());
+            ProxyBuilder.callProxy(PermissionActivity.this, permissionGroupCaller,
+                    returnedGroupPermissions -> {
+                        addToAdapter(adapter, permissions, returnedGroupPermissions);
+                    });
+        }
+    }
+
+    private void addToAdapter(ArrayAdapter<PermissionRequest> adapter, List<PermissionRequest> permissions, List<PermissionRequest> returnedGroupPermissions) {
+        for (PermissionRequest permission : permissions) {
+            if (!permissions.contains(permission)) {
+                adapter.addAll(returnedGroupPermissions);
+            }
+        }
     }
 
     private void setInvisible(PermissionRequest returnedRequest) {
