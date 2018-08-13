@@ -17,3 +17,5 @@ Features of this application include:
 * Automatic GPS uploading (as a background service)
 * Purchasable titles
 * Purchasable themes
+
+Screenshots:
