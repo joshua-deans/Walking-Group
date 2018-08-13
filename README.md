@@ -17,5 +17,8 @@ Features of this application include:
 * Automatic GPS uploading (as a background service)
 * Purchasable titles
 * Purchasable themes
+* Leaderboard
 
 Screenshots:
+---
+<img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160021_WalkingGroup.jpg" width=200px style="display:inline"> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160110_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160127_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160139_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160336_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160413_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160501_WalkingGroup.jpg" width=200px> <img src="https://github.com/joshua-deans/Walking-Group/blob/master/pictures/Screenshot_20180813-160227_WalkingGroup.jpg" width=200px>
