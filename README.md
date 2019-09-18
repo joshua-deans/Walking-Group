@@ -2,7 +2,7 @@
 
 ### A group project for CMPT 276 (Intro to Software Engineering), Summer 2018.
 
-##### Unfortunately, this project relies on API Keys, and a server that are not provided. Therefore it is not usable in it's current state.
+##### Note: API keys and a server are required for deployment.
 
 Walking Group is an Android application that encourages health and safety by motivating students to walk to class together.
 
