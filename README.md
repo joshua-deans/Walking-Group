@@ -4,7 +4,7 @@
 
 ##### Unfortunately, this project relies on API Keys, and a server that are not provided. Therefore it is not usable in it's current state.
 
-Walking Group is an Android application that encourages students to walk to class. It gives them features to walk safely with a walking group, and communicate with group leaders and their parents. Parents of the student can also monitor their children, keeping them safe.
+Walking Group is an Android application that encourages health and safety by motivating students to walk to class together.
 
 This project interacts with a server made by SFU for this project. The project is written in native Java, and interacts with the server using a Retrofit REST interface.
 
