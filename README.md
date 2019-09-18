@@ -8,16 +8,18 @@ Walking Group is an Android application that encourages health and safety by mot
 
 This project interacts with a server made by SFU for this project. The project is written in native Java, and interacts with the server using a Retrofit REST interface.
 
-Features:
-* User authentication
+Technical Details:
 * Interaction with Google Maps and Google Place Picker APIs
-* Monitor other users
-* Join or create a walking group
-* Messaging between groups and parents
-* Emergency messaging
 * Automatic GPS uploading (background service)
-* Purchasable user titles and app themes
-* Leaderboard
+
+User Features:
+* Authenticate as user
+* Monitor location of other users
+* Join or create a walking group
+* Send messages between groups and parents
+* Send emergency messages
+* Purchase user titles and app themes
+* View leaderboard
 
 Screenshots:
 ---
