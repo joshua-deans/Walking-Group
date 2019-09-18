@@ -10,13 +10,13 @@ This project interacts with a server made by SFU for this project. The project i
 
 Features:
 * User authentication
-* Interaction with Google Maps (using Google Maps API)
-* Ability to monitor and be monitored by a user
-* Ability to join or create a walking group (using Google Place Picker API)
-* Messaging (either emergency or non-emergency messages between groups or parents)
-* Automatic GPS uploading (as a background service)
-* Purchasable titles
-* Purchasable themes
+* Interaction with Google Maps and Google Place Picker APIs
+* Monitor other users
+* Join or create a walking group
+* Messaging between groups and parents
+* Emergency messaging
+* Automatic GPS uploading (background service)
+* Purchasable user titles and app themes
 * Leaderboard
 
 Screenshots:
