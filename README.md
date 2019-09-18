@@ -6,9 +6,9 @@
 
 Walking Group is an Android application that encourages health and safety by motivating students to walk to class together.
 
-This project interacts with a server made by SFU for this project. The project is written in native Java, and interacts with the server using a Retrofit REST interface.
-
 Technical Details:
+* Developed with native Java
+* Client-server interaction via Retrofit REST interface
 * Interaction with Google Maps and Google Place Picker APIs
 * Automatic GPS uploading (background service)
 
