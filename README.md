@@ -1,23 +1,25 @@
 # Walking-Group
 
-### This was a project for CMPT 276 (Intro to Software Engineering) taken in Summer 2018 with Brian Fraser. I worked with 3 other team members to create this application.
+### A group project for CMPT 276 (Intro to Software Engineering), Summer 2018.
 
-##### Unfortunately, this project relies on API Keys, and a server that are not provided. Therefore it is not usable in it's current state.
+##### Note: API keys and a server are required for deployment.
 
-Walking Group is an Android application that encourages students to walk to class. It gives them features to walk safely with a walking group, and communicate with group leaders and their parents. Parents of the student can also monitor their children, keeping them safe.
+Walking Group is an Android application that encourages health and safety by motivating students to walk to class together.
 
-This project interacts with a server made by SFU for this project. The project is written in native Java, and interacts with the server using a Retrofit REST interface.
+Technical Details:
+* Developed with native Java
+* Client-server interaction via Retrofit REST interface
+* Interaction with Google Maps and Google Place Picker APIs
+* Automatic GPS uploading (background service)
 
-Features of this application include:
-* User authentication
-* Interaction with Google Maps (using Google Maps API)
-* Ability to monitor and be monitored by a user
-* Ability to join or create a walking group (using Google Place Picker API)
-* Messaging (either emergency or non-emergency messages between groups or parents)
-* Automatic GPS uploading (as a background service)
-* Purchasable titles
-* Purchasable themes
-* Leaderboard
+User Features:
+* Authenticate as user
+* Monitor location of other users
+* Join or create a walking group
+* Send messages between groups and parents
+* Send emergency messages
+* Purchase user titles and app themes
+* View leaderboard
 
 Screenshots:
 ---
