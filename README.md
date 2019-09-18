@@ -1,6 +1,6 @@
 # Walking-Group
 
-### This was a project for CMPT 276 (Intro to Software Engineering) taken in Summer 2018 with Brian Fraser. I worked with 3 other team members to create this application.
+### A group project for CMPT 276 (Intro to Software Engineering), Summer 2018.
 
 ##### Unfortunately, this project relies on API Keys, and a server that are not provided. Therefore it is not usable in it's current state.
 
